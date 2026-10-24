@@ -65,6 +65,8 @@ class Api extends CI_Controller {
         $cat = $this->loadCatalog();
         $list = [];
         foreach (($cat['lines'] ?? []) as $code => $info) {
+            $schedIda = $info['schedule']['ida'] ?? [];
+            $schedVolta = $info['schedule']['volta'] ?? [];
             $list[] = [
                 'code'            => (string)$info['code'],
                 'name'            => $info['name'],
@@ -73,6 +75,11 @@ class Api extends CI_Controller {
                 'has_shape_ida'   => !empty($info['has_shape_ida']),
                 'has_shape_volta' => !empty($info['has_shape_volta']),
                 'neighborhoods'   => $info['neighborhoods'] ?? [],
+                'operates_days'   => [
+                    'weekdays'  => !empty($schedIda['weekdays']) || !empty($schedVolta['weekdays']),
+                    'saturdays' => !empty($schedIda['saturdays']) || !empty($schedVolta['saturdays']),
+                    'sundays'   => !empty($schedIda['sundays']) || !empty($schedVolta['sundays'])
+                ],
                 'stops_count'     => [
                     'ida'   => count($info['stops']['ida'] ?? []),
                     'volta' => count($info['stops']['volta'] ?? [])
@@ -80,9 +87,10 @@ class Api extends CI_Controller {
             ];
         }
         $this->jsonOut([
-            'ok'    => true,
-            'count' => count($list),
-            'lines' => $list
+            'ok'           => true,
+            'time_context' => $this->getMontesClarosTimeContext(),
+            'count'        => count($list),
+            'lines'        => $list
         ]);
     }
 
@@ -537,8 +545,456 @@ class Api extends CI_Controller {
     }
 
     /**
+     * Calcula o domingo de Páscoa para qualquer ano (Algoritmo de Meeus/Jones/Butcher)
+     */
+    private function computeEasterSunday(int $year): DateTimeImmutable {
+        $a = $year % 19;
+        $b = intdiv($year, 100);
+        $c = $year % 100;
+        $d = intdiv($b, 4);
+        $e = $b % 4;
+        $f = intdiv($b + 8, 25);
+        $g = intdiv($b - $f + 1, 3);
+        $h = (19 * $a + $b - $d - $g + 15) % 30;
+        $i = intdiv($c, 4);
+        $k = $c % 4;
+        $l = (32 + 2 * $e + 2 * $i - $h - $k) % 7;
+        $m = intdiv($a + 11 * $h + 22 * $l, 451);
+        $month = intdiv($h + $l - 7 * $m + 114, 31);
+        $day = (($h + $l - 7 * $m + 114) % 31) + 1;
+
+        $tz = new DateTimeZone('America/Sao_Paulo');
+        return new DateTimeImmutable(sprintf('%04d-%02d-%02d 00:00:00', $year, $month, $day), $tz);
+    }
+
+    /**
+     * Retorna o contexto oficial de data, hora, dia da semana e feriados de Montes Claros - MG (America/Sao_Paulo)
+     */
+    public function getMontesClarosTimeContext(?string $customDate = null, ?string $customTime = null): array {
+        $tz = new DateTimeZone('America/Sao_Paulo');
+        $now = new DateTimeImmutable('now', $tz);
+
+        $dateStr = ($customDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', trim($customDate)))
+            ? trim($customDate)
+            : $now->format('Y-m-d');
+
+        $timeStr = ($customTime && preg_match('/^\d{2}:\d{2}$/', trim($customTime)))
+            ? trim($customTime)
+            : $now->format('H:i');
+
+        $dt = DateTimeImmutable::createFromFormat('Y-m-d H:i', "{$dateStr} {$timeStr}", $tz) ?: $now;
+        $year = (int)$dt->format('Y');
+        $md   = $dt->format('m-d');
+
+        // Feriados fixos (Nacionais + Estaduais MG + Municipais de Montes Claros)
+        $fixedHolidays = [
+            '01-01' => 'Confraternização Universal',
+            '04-21' => 'Tiradentes',
+            '05-01' => 'Dia do Trabalhador',
+            '07-03' => 'Aniversário de Montes Claros (Feriado Municipal)',
+            '08-15' => 'Nossa Senhora da Assunção / Festas de Agosto (Feriado Municipal)',
+            '09-07' => 'Independência do Brasil',
+            '10-12' => 'Nossa Senhora Aparecida',
+            '11-02' => 'Finados',
+            '11-15' => 'Proclamação da República',
+            '11-20' => 'Dia da Consciência Negra',
+            '12-25' => 'Natal'
+        ];
+
+        // Feriados móveis baseados na Páscoa
+        $easter = $this->computeEasterSunday($year);
+        $movableHolidays = [
+            $easter->modify('-48 days')->format('m-d') => 'Segunda-feira de Carnaval',
+            $easter->modify('-47 days')->format('m-d') => 'Terça-feira de Carnaval',
+            $easter->modify('-2 days')->format('m-d')  => 'Sexta-feira Santa',
+            $easter->modify('+60 days')->format('m-d') => 'Corpus Christi (Feriado Municipal)'
+        ];
+
+        $holidayName = $fixedHolidays[$md] ?? ($movableHolidays[$md] ?? null);
+        $isHoliday   = ($holidayName !== null);
+
+        $weekdayNum = (int)$dt->format('w'); // 0 = Domingo .. 6 = Sábado
+        $weekdayNames = [
+            0 => 'Domingo',
+            1 => 'Segunda-feira',
+            2 => 'Terça-feira',
+            3 => 'Quarta-feira',
+            4 => 'Quinta-feira',
+            5 => 'Sexta-feira',
+            6 => 'Sábado'
+        ];
+        $weekdayName = $weekdayNames[$weekdayNum] ?? '';
+
+        if ($isHoliday || $weekdayNum === 0) {
+            $dayType = 'sundays';
+            $dayTypeShort = $isHoliday ? 'Feriado (Quadro de Domingo)' : 'Domingo';
+            $dayLabel = $isHoliday
+                ? "Feriado: {$holidayName} · Quadro de Domingo"
+                : 'Domingo · Quadro de Domingos e Feriados';
+        } elseif ($weekdayNum === 6) {
+            $dayType = 'saturdays';
+            $dayTypeShort = 'Sábado';
+            $dayLabel = 'Sábado · Quadro de Sábados';
+        } else {
+            $dayType = 'weekdays';
+            $dayTypeShort = 'Dia útil';
+            $dayLabel = "Dia útil ({$weekdayName})";
+        }
+
+        [$hh, $mm] = array_map('intval', explode(':', $dt->format('H:i')));
+        $minutesOfDay = ($hh * 60) + $mm;
+
+        return [
+            'timezone'        => 'America/Sao_Paulo',
+            'city'            => 'Montes Claros - MG',
+            'is_custom'       => ($customDate !== null && $customDate !== '') || ($customTime !== null && $customTime !== ''),
+            'date'            => $dt->format('Y-m-d'),
+            'date_br'         => $dt->format('d/m/Y'),
+            'time'            => $dt->format('H:i'),
+            'minutes_of_day'  => $minutesOfDay,
+            'weekday_num'     => $weekdayNum,
+            'weekday_name'    => $weekdayName,
+            'is_holiday'      => $isHoliday,
+            'holiday_name'    => $holidayName,
+            'is_weekend'      => ($weekdayNum === 0 || $weekdayNum === 6),
+            'day_type'        => $dayType,
+            'day_type_short'  => $dayTypeShort,
+            'day_label'       => $dayLabel,
+            'official_now'    => $now->format('H:i'),
+            'official_date'   => $now->format('Y-m-d')
+        ];
+    }
+
+    /**
+     * GET /api/time-context
+     */
+    public function time_context() {
+        $customDate = $this->input->get('date');
+        $customTime = $this->input->get('time');
+        $this->jsonOut([
+            'ok'           => true,
+            'time_context' => $this->getMontesClarosTimeContext($customDate, $customTime)
+        ]);
+    }
+
+    /**
+     * Regras operacionais de variações de bairro por horário (vermelho / asterisco) e substituição em fins de semana/feriados
+     */
+    private function getLineVariantRules(string $code): array {
+        $rules = [
+            '2601' => [
+                'red_desc'       => 'Atende a Av. Universitária / UFMG (ICA)',
+                'red_keywords'   => ['universitaria', 'ufmg', 'ciencias agrarias', 'ica'],
+                'ast_desc'       => 'Atende o Hospital Veterinário da Funorte',
+                'ast_keywords'   => ['hospital veterinario', 'veterinario'],
+                'regular_desc'   => 'Itinerário padrão (sem entrar no Hospital Veterinário / Av. Universitária)'
+            ],
+            '2603' => [
+                'red_desc'       => 'Atende Posto Berrante, Posto da Produção e Anel Rodoviário Norte',
+                'red_keywords'   => ['posto berrante', 'berrante', 'posto da producao', 'anel rodoviario'],
+                'ast2_desc'      => 'Atende Jardim Primavera e Jardim Alegre (Domingos e Feriados)',
+                'ast2_keywords'  => ['jardim alegre'],
+                'sunday_desc'    => 'Aos domingos e feriados atende a região do Jardim Primavera',
+                'regular_desc'   => 'Itinerário padrão Jaraguá II / Santo Amaro'
+            ],
+            '3301' => [
+                'replace_saturdays' => ['line' => '3302', 'note' => 'Aos sábados a região do Jardim Primavera é atendida pela linha 3302.'],
+                'replace_sundays'   => ['line' => '2603', 'note' => 'Aos domingos e feriados a região do Jardim Primavera é atendida pela linha 2603.']
+            ],
+            '3302' => [
+                'replace_sundays'   => ['line' => '2603', 'note' => 'Aos domingos e feriados a região do Jardim Alegre é atendida pela linha 2603 (horários com **).']
+            ],
+            '4603' => [
+                'red_desc'       => 'Atende o Condomínio Tropical (Av. São Judas Tadeu)',
+                'red_keywords'   => ['condominio tropical', 'sao judas tadeu'],
+                'ast_desc'       => 'Atende o Bairro Vera Cruz no itinerário antigo',
+                'ast_keywords'   => ['vera cruz'],
+                'regular_desc'   => 'Itinerário padrão (via Av. Cula Mangabeira)'
+            ],
+            '4701' => [
+                'red_desc'       => 'Atende o Bairro Terra Jardins',
+                'red_keywords'   => ['terra jardins'],
+                'regular_desc'   => 'Itinerário padrão Acácias / Major Prates'
+            ],
+            '5702' => [
+                'red_desc'       => 'Passa pelas Ruas João Mendes Leal, Santarém e Brasilino Durães Vasconcelos',
+                'red_keywords'   => ['joao mendes leal', 'santarem', 'brasilino duraes'],
+                'regular_desc'   => 'Itinerário padrão Monte Carmelo / Jardim Liberdade'
+            ],
+            '5801' => [
+                'red_desc'       => 'Atende a região alta do Ibituruna (Serra do Mel, Portal da Serra e Vivendas do Lago)',
+                'red_keywords'   => ['serra do mel', 'portal da serra', 'vivendas do lago', 'vivendas'],
+                'regular_desc'   => 'Itinerário padrão (não entra em Serra do Mel / Portal da Serra / Vivendas)'
+            ],
+            '6901' => [
+                'red_desc'       => 'Viagem inicia a partir da Praça Coronel Ribeiro (Centro)',
+                'red_keywords'   => [],
+                'regular_desc'   => 'Viagem completa a partir do ponto final'
+            ],
+            '7101' => [
+                'red_desc'       => 'Extensão de itinerário para atendimento ao Reserva Real e Gran Royalle',
+                'red_keywords'   => ['reserva real', 'gran royalle', 'royalle'],
+                'regular_desc'   => 'Itinerário padrão Major Prates / Vila São Francisco de Assis'
+            ]
+        ];
+        return $rules[$code] ?? [];
+    }
+
+    private function formatMinutesToHhMm(int $totalMin): string {
+        $norm = (($totalMin % 1440) + 1440) % 1440;
+        return sprintf('%02d:%02d', intdiv($norm, 60), $norm % 60);
+    }
+
+    /**
+     * Avalia o quadro de horários de um trecho (linha + sentido) frente ao dia atual, feriado, horário e variações de bairro
+     */
+    private function evaluateLegSchedule(
+        array $lineInfo,
+        string $dir,
+        array $boardStop,
+        array $alightStop,
+        int $walkBeforeM,
+        array $timeCtx,
+        string $tripSearchNorm
+    ): array {
+        $code     = (string)$lineInfo['code'];
+        $dayType  = $timeCtx['day_type']; // 'weekdays' | 'saturdays' | 'sundays'
+        $queryMin = (int)$timeCtx['minutes_of_day'];
+
+        $schedDir = $lineInfo['schedule'][$dir] ?? [];
+        $dayTimes = $schedDir[$dayType] ?? [];
+        $obsList  = $schedDir['obs'] ?? [];
+        $rules    = $this->getLineVariantRules($code);
+
+        // Deslocamento estimado do terminal inicial (PF) até a parada de embarque (a ~21.6 km/h = 360 m/min)
+        $boardDistM = (float)($boardStop['dist_m'] ?? 0.0);
+        $offsetFromTerminalMin = max(0, (int)round($boardDistM / 360.0));
+        $walkBeforeMin = max(1, (int)ceil($walkBeforeM / 75.0));
+
+        // Horário mínimo em que o usuário consegue estar no ponto de embarque (com 2 min de tolerância)
+        $earliestBoardMin = $queryMin + max(0, $walkBeforeMin - 2);
+
+        // Verifica se a linha NÃO opera no tipo de dia atual (ex: Domingo/Feriado ou Sábado)
+        if (empty($dayTimes)) {
+            $replacementKey = 'replace_' . $dayType;
+            $replacement = $rules[$replacementKey] ?? null;
+
+            $operatesWeekdays  = !empty($schedDir['weekdays']);
+            $operatesSaturdays = !empty($schedDir['saturdays']);
+
+            if ($replacement) {
+                $reason = $replacement['note'];
+            } elseif ($dayType === 'sundays') {
+                $reason = $operatesSaturdays
+                    ? 'Não opera aos domingos e feriados (opera apenas de segunda a sábado).'
+                    : 'Não opera aos domingos e feriados (opera apenas em dias úteis).';
+            } elseif ($dayType === 'saturdays') {
+                $reason = 'Não opera aos sábados (opera apenas em dias úteis).';
+            } else {
+                $reason = 'Sem horários cadastrados para este período.';
+            }
+
+            return [
+                'operates_today'       => false,
+                'service_ended_today'  => false,
+                'status_code'          => 'not_operating_today',
+                'status_badge'         => 'Não opera hoje',
+                'status_detail'        => $reason,
+                'replaced_by_line'     => $replacement['line'] ?? null,
+                'offset_from_pf_min'   => $offsetFromTerminalMin,
+                'next_trip'            => null,
+                'next_matching_trip'   => null,
+                'upcoming_trips'       => [],
+                'requires_variant'     => false,
+                'required_variant_desc'=> null,
+                'variant_warning'      => null,
+                'obs'                  => $obsList,
+                'score_penalty'        => 25000.0
+            ];
+        }
+
+        // Verifica se o trajeto do usuário exige uma variação específica de bairro (vermelho ou asterisco)
+        $haystack = $this->stripAccents(mb_strtolower(
+            $tripSearchNorm . ' ' . ($boardStop['address'] ?? '') . ' ' . ($boardStop['neighborhood'] ?? '') . ' ' .
+            ($alightStop['address'] ?? '') . ' ' . ($alightStop['neighborhood'] ?? ''),
+            'UTF-8'
+        ));
+
+        $requiresRed  = false;
+        $requiresAst  = false;
+        $requiresAst2 = false;
+        $requiredVariantDesc = null;
+
+        foreach (($rules['red_keywords'] ?? []) as $kw) {
+            if ($kw !== '' && mb_strpos($haystack, $kw) !== false) {
+                $requiresRed = true;
+                $requiredVariantDesc = $rules['red_desc'] ?? 'Horário em destaque (vermelho)';
+                break;
+            }
+        }
+        foreach (($rules['ast_keywords'] ?? []) as $kw) {
+            if ($kw !== '' && mb_strpos($haystack, $kw) !== false) {
+                $requiresAst = true;
+                $requiredVariantDesc = $rules['ast_desc'] ?? 'Horário com asterisco (*)';
+                break;
+            }
+        }
+        if ($dayType === 'sundays') {
+            foreach (($rules['ast2_keywords'] ?? []) as $kw) {
+                if ($kw !== '' && mb_strpos($haystack, $kw) !== false) {
+                    $requiresAst2 = true;
+                    $requiredVariantDesc = $rules['ast2_desc'] ?? 'Horário com duplo asterisco (**)';
+                    break;
+                }
+            }
+        }
+
+        $requiresVariant = ($requiresRed || $requiresAst || $requiresAst2);
+
+        // Processar todos os horários do dia para encontrar as próximas viagens que passam no ponto
+        $upcomingTrips = [];
+        $nextTrip = null;
+        $nextMatchingTrip = null;
+
+        foreach ($dayTimes as $entry) {
+            $tStr = $entry['time'] ?? '';
+            if (!preg_match('/^(\d{2}):(\d{2})$/', $tStr, $tm)) continue;
+            $depMin = ((int)$tm[1] * 60) + (int)$tm[2];
+            $estPassMin = $depMin + $offsetFromTerminalMin;
+
+            $isRed  = !empty($entry['red']) || (!empty($entry['special']) && empty($entry['asterisk']));
+            $ast    = $entry['asterisk'] ?? '';
+            $isSpec = !empty($entry['special']);
+
+            // Descrição específica desta viagem
+            $tripVariantDesc = null;
+            if ($ast === '**' && !empty($rules['ast2_desc'])) {
+                $tripVariantDesc = $rules['ast2_desc'];
+            } elseif ($ast === '*' && !empty($rules['ast_desc'])) {
+                $tripVariantDesc = $rules['ast_desc'];
+            } elseif ($isRed && !empty($rules['red_desc'])) {
+                $tripVariantDesc = $rules['red_desc'];
+            } elseif ($dayType === 'sundays' && !empty($rules['sunday_desc'])) {
+                $tripVariantDesc = $rules['sunday_desc'];
+            } elseif ($isSpec && !empty($obsList[0])) {
+                $tripVariantDesc = $obsList[0];
+            }
+
+            $matchesRequiredVariant = true;
+            if ($requiresVariant) {
+                $matchesRequiredVariant = false;
+                if ($requiresRed && $isRed) $matchesRequiredVariant = true;
+                if ($requiresAst && ($ast === '*' || $ast === '**')) $matchesRequiredVariant = true;
+                if ($requiresAst2 && $ast === '**') $matchesRequiredVariant = true;
+            }
+
+            if ($estPassMin >= $earliestBoardMin) {
+                $waitMin = max(0, $estPassMin - $queryMin);
+                $tripObj = [
+                    'dep_time'          => $tStr,
+                    'est_board_time'    => $this->formatMinutesToHhMm($estPassMin),
+                    'wait_min'          => $waitMin,
+                    'special'           => $isSpec,
+                    'red'               => $isRed,
+                    'asterisk'          => $ast,
+                    'variant_desc'      => $tripVariantDesc,
+                    'matches_requirement' => $matchesRequiredVariant
+                ];
+
+                if ($nextTrip === null) {
+                    $nextTrip = $tripObj;
+                }
+                if ($matchesRequiredVariant && $nextMatchingTrip === null) {
+                    $nextMatchingTrip = $tripObj;
+                }
+                if (count($upcomingTrips) < 4) {
+                    $upcomingTrips[] = $tripObj;
+                }
+            }
+        }
+
+        // Se já passou o último ônibus do dia
+        if ($nextTrip === null) {
+            $firstMorning = $dayTimes[0]['time'] ?? '--:--';
+            return [
+                'operates_today'       => true,
+                'service_ended_today'  => true,
+                'status_code'          => 'service_ended',
+                'status_badge'         => 'Encerrado neste horário',
+                'status_detail'        => "Última viagem já passou para o horário consultado ({$timeCtx['time']}). Primeira saída do terminal às {$firstMorning}.",
+                'replaced_by_line'     => null,
+                'offset_from_pf_min'   => $offsetFromTerminalMin,
+                'next_trip'            => null,
+                'next_matching_trip'   => null,
+                'upcoming_trips'       => [],
+                'requires_variant'     => $requiresVariant,
+                'required_variant_desc'=> $requiredVariantDesc,
+                'variant_warning'      => null,
+                'obs'                  => $obsList,
+                'score_penalty'        => 12000.0
+            ];
+        }
+
+        // Se o usuário precisa de uma variação de bairro específica (ex: UFMG, Serra do Mel, Reserva Real, Cond. Tropical)
+        $variantWarning = null;
+        if ($requiresVariant) {
+            if ($nextMatchingTrip === null) {
+                $variantWarning = "Atenção: não há mais horários hoje com atendimento específico para este trecho ({$requiredVariantDesc}).";
+                $scorePenalty = 8500.0;
+                $statusBadge  = 'Sem horário para esta variação hoje';
+                $statusDetail = $variantWarning;
+                $statusCode   = 'variant_unavailable_now';
+            } elseif ($nextMatchingTrip['dep_time'] !== $nextTrip['dep_time']) {
+                $variantWarning = "O horário das {$nextTrip['dep_time']} faz apenas o itinerário padrão. O próximo horário que atende este bairro ({$requiredVariantDesc}) sai às {$nextMatchingTrip['dep_time']} (passa no ponto ~{$nextMatchingTrip['est_board_time']}).";
+                $scorePenalty = min(90, $nextMatchingTrip['wait_min']) * 16.0;
+                $statusBadge  = "Próximo horário p/ bairro às {$nextMatchingTrip['dep_time']}";
+                $statusDetail = "Passa no ponto de embarque ~{$nextMatchingTrip['est_board_time']} (em {$nextMatchingTrip['wait_min']} min)";
+                $statusCode   = 'active_wait_variant';
+            } else {
+                $scorePenalty = min(60, $nextMatchingTrip['wait_min']) * 14.0;
+                $statusBadge  = "Ativo · Saída {$nextMatchingTrip['dep_time']} (Atende bairro)";
+                $statusDetail = "Passa no ponto ~{$nextMatchingTrip['est_board_time']} (em {$nextMatchingTrip['wait_min']} min) · {$requiredVariantDesc}";
+                $statusCode   = 'active_variant_ok';
+            }
+        } else {
+            // Viagem comum, mas se a próxima viagem tiver variação de itinerário (vermelho/asterisco), informa claramente o usuário
+            $scorePenalty = min(60, $nextTrip['wait_min']) * 14.0;
+            $statusCode   = 'active_normal';
+            $statusBadge  = "Operando · Próxima saída {$nextTrip['dep_time']}";
+            $statusDetail = "Passa no ponto de embarque ~{$nextTrip['est_board_time']} (em {$nextTrip['wait_min']} min)";
+            if (!empty($nextTrip['variant_desc'])) {
+                $variantWarning = "Observação do horário das {$nextTrip['dep_time']}: {$nextTrip['variant_desc']}.";
+            } elseif (!empty($boardStop['virtual_replacement_note'])) {
+                $variantWarning = $boardStop['virtual_replacement_note'];
+            }
+        }
+
+        return [
+            'operates_today'       => true,
+            'service_ended_today'  => false,
+            'status_code'          => $statusCode,
+            'status_badge'         => $statusBadge,
+            'status_detail'        => $statusDetail,
+            'replaced_by_line'     => null,
+            'offset_from_pf_min'   => $offsetFromTerminalMin,
+            'next_trip'            => $nextTrip,
+            'next_matching_trip'   => $nextMatchingTrip ?: $nextTrip,
+            'upcoming_trips'       => $upcomingTrips,
+            'requires_variant'     => $requiresVariant,
+            'required_variant_desc'=> $requiredVariantDesc,
+            'variant_warning'      => $variantWarning,
+            'obs'                  => $obsList,
+            'score_penalty'        => $scorePenalty
+        ];
+    }
+
+    /**
      * GET|POST /api/route-plan
-     * Calcula a melhor linha e pontos entre Origem e Destino (Rotas Diretas + Baldeação de 1 conexão)
+     * Calcula a melhor linha e pontos entre Origem e Destino considerando:
+     * - Horário oficial de Montes Claros (ou data/hora simulada pelo usuário)
+     * - Dia da semana e calendário de feriados (Nacionais, MG e Municipais de Montes Claros)
+     * - Substituição de linhas em sábados, domingos e feriados (ex: 3301 -> 3302 no sábado e 2603 no domingo)
+     * - Variações de itinerário por bairro e horário (horários em vermelho e com asterisco * / **)
      */
     public function route_plan() {
         $origLat = (float)($this->input->get_post('orig_lat') ?: 0);
@@ -546,26 +1002,64 @@ class Api extends CI_Controller {
         $destLat = (float)($this->input->get_post('dest_lat') ?: 0);
         $destLng = (float)($this->input->get_post('dest_lng') ?: 0);
 
+        $origLabel = trim((string)($this->input->get_post('orig_label') ?: ''));
+        $destLabel = trim((string)($this->input->get_post('dest_label') ?: ''));
+        $queryDate = $this->input->get_post('query_date');
+        $queryTime = $this->input->get_post('query_time');
+
         if (!$origLat || !$origLng || !$destLat || !$destLng) {
             $this->jsonOut(['ok' => false, 'error' => 'Informe as coordenadas de origem e destino.'], 400);
         }
 
+        $timeCtx = $this->getMontesClarosTimeContext($queryDate, $queryTime);
+        $dayType = $timeCtx['day_type'];
+        $tripSearchNorm = $origLabel . ' ' . $destLabel;
+
         $cat = $this->loadCatalog();
         $lines = $cat['lines'] ?? [];
+
+        // Extensão automática de paradas para linhas substitutas oficiais em Sábados e Domingos/Feriados:
+        // - Aos sábados, a linha 3302 atende a região da linha 3301 (Jardim Primavera)
+        // - Aos domingos e feriados, a linha 2603 atende a região das linhas 3301 (Jardim Primavera) e 3302 (Jardim Alegre)
+        if ($dayType === 'saturdays' && isset($lines['3302'], $lines['3301'])) {
+            foreach (['ida', 'volta'] as $d) {
+                $existingIds = array_column($lines['3302']['stops'][$d] ?? [], 'stop_id');
+                foreach (($lines['3301']['stops'][$d] ?? []) as $st) {
+                    if (!in_array($st['stop_id'], $existingIds, true)) {
+                        $st['virtual_replacement_note'] = 'Atendimento de Sábado: a linha 3302 cobre a região da linha 3301 (Jardim Primavera).';
+                        $lines['3302']['stops'][$d][] = $st;
+                    }
+                }
+            }
+        } elseif ($dayType === 'sundays' && isset($lines['2603'])) {
+            foreach (['3301', '3302'] as $repCode) {
+                if (!isset($lines[$repCode])) continue;
+                foreach (['ida', 'volta'] as $d) {
+                    $existingIds = array_column($lines['2603']['stops'][$d] ?? [], 'stop_id');
+                    foreach (($lines[$repCode]['stops'][$d] ?? []) as $st) {
+                        if (!in_array($st['stop_id'], $existingIds, true)) {
+                            $st['virtual_replacement_note'] = ($repCode === '3301')
+                                ? 'Atendimento de Domingo/Feriado: a linha 2603 atende a região do Jardim Primavera (substituindo a linha 3301).'
+                                : 'Atendimento de Domingo/Feriado: a linha 2603 atende o Jardim Alegre nos horários com (**) (substituindo a linha 3302).';
+                            $lines['2603']['stops'][$d][] = $st;
+                        }
+                    }
+                }
+            }
+        }
 
         $maxWalkRadius = 1500.0; // Até 1.5 km de caminhada máxima se necessário
         $directOptions = [];
 
         // Mapa auxiliar para buscar linhas que passam próximas à Origem e linhas que chegam próximas ao Destino
-        $linesFromOrigin = []; // [ ['code', 'dir', 'stop_orig', 'idx_orig', 'walk_orig_m'], ... ]
-        $linesToDest     = []; // [ ['code', 'dir', 'stop_dest', 'idx_dest', 'walk_dest_m'], ... ]
+        $linesFromOrigin = [];
+        $linesToDest     = [];
 
         foreach ($lines as $code => $lineInfo) {
             foreach (['ida', 'volta'] as $dir) {
                 $stops = $lineInfo['stops'][$dir] ?? [];
                 if (count($stops) < 2) continue;
 
-                // Encontrar paradas mais próximas da Origem e do Destino nesta linha+sentido
                 $bestOrigCandidates = [];
                 $bestDestCandidates = [];
 
@@ -588,6 +1082,7 @@ class Api extends CI_Controller {
                     $linesFromOrigin[] = [
                         'code'        => (string)$code,
                         'name'        => $lineInfo['name'],
+                        'line_info'   => $lineInfo,
                         'dir'         => $dir,
                         'dir_label'   => $lineInfo[$dir . '_label'] ?? strtoupper($dir),
                         'idx_orig'    => $bestOrigCandidates[0]['idx'],
@@ -601,6 +1096,7 @@ class Api extends CI_Controller {
                     $linesToDest[] = [
                         'code'        => (string)$code,
                         'name'        => $lineInfo['name'],
+                        'line_info'   => $lineInfo,
                         'dir'         => $dir,
                         'dir_label'   => $lineInfo[$dir . '_label'] ?? strtoupper($dir),
                         'idx_dest'    => $bestDestCandidates[0]['idx'],
@@ -612,16 +1108,15 @@ class Api extends CI_Controller {
 
                 // Testar combinações diretas onde o embarque ocorre ANTES do desembarque (idx_orig < idx_dest)
                 $bestPair = null;
-                $bestScore = INF;
+                $bestGeoScore = INF;
                 foreach (array_slice($bestOrigCandidates, 0, 4) as $oc) {
                     foreach (array_slice($bestDestCandidates, 0, 4) as $dc) {
                         if ($oc['idx'] < $dc['idx']) {
                             $walkTotal = $oc['walk_m'] + $dc['walk_m'];
-                            $busDist = max(200.0, (float)$dc['stop']['dist_m'] - (float)$oc['stop']['dist_m']);
-                            // Penaliza caminhada muito mais que trecho de ônibus
-                            $score = ($walkTotal * 3.5) + ($busDist * 0.25);
-                            if ($score < $bestScore) {
-                                $bestScore = $score;
+                            $busDist = max(200.0, abs((float)$dc['stop']['dist_m'] - (float)$oc['stop']['dist_m']));
+                            $geoScore = ($walkTotal * 3.5) + ($busDist * 0.25);
+                            if ($geoScore < $bestGeoScore) {
+                                $bestGeoScore = $geoScore;
                                 $bestPair = [$oc, $dc, $busDist];
                             }
                         }
@@ -630,33 +1125,47 @@ class Api extends CI_Controller {
 
                 if ($bestPair) {
                     [$oc, $dc, $busDist] = $bestPair;
-                    $walkOrigM = round($oc['walk_m']);
-                    $walkDestM = round($dc['walk_m']);
-                    $busDistM  = round($busDist);
-                    $stopsBetween = $dc['idx'] - $oc['idx'];
+                    $walkOrigM = (int)round($oc['walk_m']);
+                    $walkDestM = (int)round($dc['walk_m']);
+                    $busDistM  = (int)round($busDist);
+                    $stopsBetween = max(1, $dc['idx'] - $oc['idx']);
 
-                    // Tempo estimado: caminhada a 4.5 km/h (75 m/min) + ônibus a 20 km/h (333 m/min) + 20s por parada
                     $walkTimeMin = max(1, (int)round(($walkOrigM + $walkDestM) / 75.0));
                     $busTimeMin  = max(2, (int)round(($busDistM / 350.0) + ($stopsBetween * 0.3)));
 
+                    $schedEval = $this->evaluateLegSchedule(
+                        $lineInfo,
+                        $dir,
+                        $oc['stop'],
+                        $dc['stop'],
+                        $walkOrigM,
+                        $timeCtx,
+                        $tripSearchNorm
+                    );
+
+                    $totalScore = $bestGeoScore + $schedEval['score_penalty'];
+
                     $directOptions[] = [
-                        'type'            => 'direct',
-                        'score'           => round($bestScore, 1),
-                        'total_time_min'  => $walkTimeMin + $busTimeMin,
-                        'walk_total_m'    => $walkOrigM + $walkDestM,
-                        'legs'            => [
+                        'type'                => 'direct',
+                        'score'               => round($totalScore, 1),
+                        'operates_today'      => $schedEval['operates_today'],
+                        'service_ended_today' => $schedEval['service_ended_today'],
+                        'total_time_min'      => $walkTimeMin + $busTimeMin,
+                        'walk_total_m'        => $walkOrigM + $walkDestM,
+                        'legs'                => [
                             [
-                                'line_code'      => (string)$code,
-                                'line_name'      => $lineInfo['name'],
-                                'direction'      => $dir,
-                                'direction_label'=> $lineInfo[$dir . '_label'] ?? strtoupper($dir),
-                                'board_stop'     => $oc['stop'],
-                                'alight_stop'    => $dc['stop'],
-                                'stops_count'    => $stopsBetween,
-                                'bus_distance_m' => $busDistM,
-                                'walk_before_m'  => $walkOrigM,
-                                'walk_after_m'   => $walkDestM,
-                                'bus_time_min'   => $busTimeMin
+                                'line_code'       => (string)$code,
+                                'line_name'       => $lineInfo['name'],
+                                'direction'       => $dir,
+                                'direction_label' => $lineInfo[$dir . '_label'] ?? strtoupper($dir),
+                                'board_stop'      => $oc['stop'],
+                                'alight_stop'     => $dc['stop'],
+                                'stops_count'     => $stopsBetween,
+                                'bus_distance_m'  => $busDistM,
+                                'walk_before_m'   => $walkOrigM,
+                                'walk_after_m'    => $walkDestM,
+                                'bus_time_min'    => $busTimeMin,
+                                'schedule_eval'   => $schedEval
                             ]
                         ]
                     ];
@@ -674,17 +1183,17 @@ class Api extends CI_Controller {
             if (isset($seenLines[$lc])) continue;
             $seenLines[$lc] = true;
             $uniqueDirect[] = $opt;
-            if (count($uniqueDirect) >= 4) break;
+            if (count($uniqueDirect) >= 5) break;
         }
 
-        // Passo 2: Calcular Baldeações (1 conexão) quando não houver linha direta ou se a caminhada direta for longa (> 650m)
+        // Passo 2: Calcular Baldeações (1 conexão) quando não houver linha direta operando agora ou se a caminhada direta for longa
         $transferOptions = [];
+        $activeDirectCount = count(array_filter($uniqueDirect, fn($d) => $d['operates_today'] && !$d['service_ended_today']));
         $bestDirectWalk = !empty($uniqueDirect) ? $uniqueDirect[0]['walk_total_m'] : INF;
 
-        if (count($uniqueDirect) < 2 || $bestDirectWalk > 500) {
+        if ($activeDirectCount < 2 || $bestDirectWalk > 500) {
             foreach ($linesFromOrigin as $l1) {
                 if ($l1['walk_orig_m'] > 900) continue;
-                // Indexar paradas da Linha 1 APÓS o embarque
                 $l1AfterStops = [];
                 for ($i = $l1['idx_orig'] + 1; $i < count($l1['all_stops']); $i++) {
                     $st1 = $l1['all_stops'][$i];
@@ -695,46 +1204,77 @@ class Api extends CI_Controller {
                 foreach ($linesToDest as $l2) {
                     if ($l2['code'] === $l1['code'] || $l2['walk_dest_m'] > 900) continue;
 
-                    // Procurar parada de conexão compartilhada entre L1 (após embarque) e L2 (antes do desembarque)
                     $bestTransfer = null;
-                    $bestTransScore = INF;
+                    $bestTransGeoScore = INF;
 
                     for ($j = 0; $j < $l2['idx_dest']; $j++) {
                         $st2 = $l2['all_stops'][$j];
                         $sid2 = $st2['stop_id'];
                         if (isset($l1AfterStops[$sid2])) {
                             $st1Match = $l1AfterStops[$sid2];
-                            $dist1 = max(200.0, (float)$st1Match['stop']['dist_m'] - (float)$l1['stop_orig']['dist_m']);
-                            $dist2 = max(200.0, (float)$l2['stop_dest']['dist_m'] - (float)$st2['dist_m']);
+                            $dist1 = max(200.0, abs((float)$st1Match['stop']['dist_m'] - (float)$l1['stop_orig']['dist_m']));
+                            $dist2 = max(200.0, abs((float)$l2['stop_dest']['dist_m'] - (float)$st2['dist_m']));
                             $walkSum = $l1['walk_orig_m'] + $l2['walk_dest_m'];
-                            $tScore = ($walkSum * 3.5) + (($dist1 + $dist2) * 0.25) + 900; // Penalidade fixa de baldeação
-                            if ($tScore < $bestTransScore) {
-                                $bestTransScore = $tScore;
+                            $tScore = ($walkSum * 3.5) + (($dist1 + $dist2) * 0.25) + 900;
+                            if ($tScore < $bestTransGeoScore) {
+                                $bestTransGeoScore = $tScore;
                                 $bestTransfer = [
                                     'transfer_stop' => $st2,
-                                    'stops_leg1'    => $st1Match['idx'] - $l1['idx_orig'],
-                                    'stops_leg2'    => $l2['idx_dest'] - $j,
-                                    'dist1_m'       => round($dist1),
-                                    'dist2_m'       => round($dist2)
+                                    'stops_leg1'    => max(1, $st1Match['idx'] - $l1['idx_orig']),
+                                    'stops_leg2'    => max(1, $l2['idx_dest'] - $j),
+                                    'dist1_m'       => (int)round($dist1),
+                                    'dist2_m'       => (int)round($dist2)
                                 ];
                             }
                         }
                     }
 
                     if ($bestTransfer) {
-                        $walkSum = $l1['walk_orig_m'] + $l2['walk_dest_m'];
+                        $walkSum = (int)($l1['walk_orig_m'] + $l2['walk_dest_m']);
                         $walkMin = max(1, (int)round($walkSum / 75.0));
                         $bus1Min = max(2, (int)round(($bestTransfer['dist1_m'] / 350.0) + ($bestTransfer['stops_leg1'] * 0.3)));
                         $bus2Min = max(2, (int)round(($bestTransfer['dist2_m'] / 350.0) + ($bestTransfer['stops_leg2'] * 0.3)));
-                        $waitTransferMin = 6; // Tempo médio estimado de integração no ponto
+                        $waitTransferMin = 6;
+
+                        $schedEval1 = $this->evaluateLegSchedule(
+                            $l1['line_info'],
+                            $l1['dir'],
+                            $l1['stop_orig'],
+                            $bestTransfer['transfer_stop'],
+                            (int)$l1['walk_orig_m'],
+                            $timeCtx,
+                            $origLabel
+                        );
+
+                        // Para a 2ª perna da conexão, avança o relógio estimado pelo tempo da 1ª perna
+                        $leg2Min = ($timeCtx['minutes_of_day'] + ($schedEval1['next_trip']['wait_min'] ?? 5) + $bus1Min) % 1440;
+                        $timeCtxLeg2 = $timeCtx;
+                        $timeCtxLeg2['minutes_of_day'] = $leg2Min;
+                        $timeCtxLeg2['time'] = $this->formatMinutesToHhMm($leg2Min);
+
+                        $schedEval2 = $this->evaluateLegSchedule(
+                            $l2['line_info'],
+                            $l2['dir'],
+                            $bestTransfer['transfer_stop'],
+                            $l2['stop_dest'],
+                            0,
+                            $timeCtxLeg2,
+                            $destLabel
+                        );
+
+                        $bothOperate = $schedEval1['operates_today'] && $schedEval2['operates_today'];
+                        $anyEnded    = $schedEval1['service_ended_today'] || $schedEval2['service_ended_today'];
+                        $combinedPenalty = $schedEval1['score_penalty'] + ($schedEval2['score_penalty'] * 0.6);
 
                         $transferOptions[] = [
-                            'type'            => 'transfer',
-                            'score'           => round($bestTransScore, 1),
-                            'total_time_min'  => $walkMin + $bus1Min + $bus2Min + $waitTransferMin,
-                            'walk_total_m'    => $walkSum,
-                            'transfer_stop'   => $bestTransfer['transfer_stop'],
-                            'legs'            => [
+                            'type'                => 'transfer',
+                            'score'               => round($bestTransGeoScore + $combinedPenalty, 1),
+                            'operates_today'      => $bothOperate,
+                            'service_ended_today' => $anyEnded,
+                            'total_time_min'      => $walkMin + $bus1Min + $bus2Min + $waitTransferMin,
+                            'walk_total_m'        => $walkSum,
+                            'transfer_stop'       => $bestTransfer['transfer_stop'],
+                            'legs'                => [
                                 [
                                     'line_code'       => $l1['code'],
                                     'line_name'       => $l1['name'],
@@ -744,9 +1284,10 @@ class Api extends CI_Controller {
                                     'alight_stop'     => $bestTransfer['transfer_stop'],
                                     'stops_count'     => $bestTransfer['stops_leg1'],
                                     'bus_distance_m'  => $bestTransfer['dist1_m'],
-                                    'walk_before_m'   => $l1['walk_orig_m'],
+                                    'walk_before_m'   => (int)$l1['walk_orig_m'],
                                     'walk_after_m'    => 0,
-                                    'bus_time_min'    => $bus1Min
+                                    'bus_time_min'    => $bus1Min,
+                                    'schedule_eval'   => $schedEval1
                                 ],
                                 [
                                     'line_code'       => $l2['code'],
@@ -758,8 +1299,9 @@ class Api extends CI_Controller {
                                     'stops_count'     => $bestTransfer['stops_leg2'],
                                     'bus_distance_m'  => $bestTransfer['dist2_m'],
                                     'walk_before_m'   => 0,
-                                    'walk_after_m'    => $l2['walk_dest_m'],
-                                    'bus_time_min'    => $bus2Min
+                                    'walk_after_m'    => (int)$l2['walk_dest_m'],
+                                    'bus_time_min'    => $bus2Min,
+                                    'schedule_eval'   => $schedEval2
                                 ]
                             ]
                         ];
@@ -781,12 +1323,15 @@ class Api extends CI_Controller {
             if (count($uniqueTransfers) >= 3) break;
         }
 
+        // Mesclar e ordenar priorizando linhas em operação no dia/horário consultado
         $allRecommendations = array_merge($uniqueDirect, $uniqueTransfers);
+        usort($allRecommendations, fn($a, $b) => $a['score'] <=> $b['score']);
 
         $this->jsonOut([
             'ok'               => true,
-            'origin'           => ['lat' => $origLat, 'lng' => $origLng],
-            'destination'      => ['lat' => $destLat, 'lng' => $destLng],
+            'time_context'     => $timeCtx,
+            'origin'           => ['lat' => $origLat, 'lng' => $origLng, 'label' => $origLabel],
+            'destination'      => ['lat' => $destLat, 'lng' => $destLng, 'label' => $destLabel],
             'direct_count'     => count($uniqueDirect),
             'transfer_count'   => count($uniqueTransfers),
             'recommendations'  => $allRecommendations

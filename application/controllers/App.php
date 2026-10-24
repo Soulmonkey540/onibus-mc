@@ -11,6 +11,8 @@ class App extends CI_Controller {
             $raw = json_decode(file_get_contents($catalogFile), true);
             if (!empty($raw['lines'])) {
                 foreach ($raw['lines'] as $code => $info) {
+                    $schedIda = $info['schedule']['ida'] ?? [];
+                    $schedVolta = $info['schedule']['volta'] ?? [];
                     $linesSummary[] = [
                         'code'            => (string)$info['code'],
                         'name'            => $info['name'],
@@ -20,7 +22,12 @@ class App extends CI_Controller {
                         'has_shape_volta' => !empty($info['has_shape_volta']),
                         'stops_ida_cnt'   => isset($info['stops']['ida']) ? count($info['stops']['ida']) : 0,
                         'stops_volta_cnt' => isset($info['stops']['volta']) ? count($info['stops']['volta']) : 0,
-                        'neighborhoods'   => $info['neighborhoods'] ?? []
+                        'neighborhoods'   => $info['neighborhoods'] ?? [],
+                        'operates_days'   => [
+                            'weekdays'  => !empty($schedIda['weekdays']) || !empty($schedVolta['weekdays']),
+                            'saturdays' => !empty($schedIda['saturdays']) || !empty($schedVolta['saturdays']),
+                            'sundays'   => !empty($schedIda['sundays']) || !empty($schedVolta['sundays'])
+                        ]
                     ];
                 }
             }

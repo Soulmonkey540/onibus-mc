@@ -186,7 +186,9 @@ function parseScheduleHtml(?string $html): array {
     if ($posIda !== false) {
         $startIda = max(0, $posIda - 250);
         if ($posVolta !== false && $posVolta > $posIda) {
-            $startVolta = max($posIda, $posVolta - 250);
+            $beforeVolta = substr($content, 0, $posVolta);
+            $hrPos = strripos($beforeVolta, '<hr>');
+            $startVolta = ($hrPos !== false && $hrPos > $posIda) ? $hrPos : max($posIda, $posVolta - 140);
             $sections['ida'] = substr($content, $startIda, $startVolta - $startIda);
             $sections['volta'] = substr($content, $startVolta);
         } else {
@@ -206,20 +208,29 @@ function parseScheduleHtml(?string $html): array {
                 }
             }
         }
-        if (preg_match('/obs-wrapper">.*?<ol>(.*?)<\/ol>/si', $secHtml, $obsMatch)) {
-            if (preg_match_all('/<li>(.*?)<\/li>/si', $obsMatch[1], $liMatches)) {
+        if (preg_match('/obs-wrapper">(.*?)<div class="col-md-(?:12|6)">/si', $secHtml, $obsMatch)) {
+            $obsHtml = $obsMatch[1];
+            if (preg_match_all('/<li>(.*?)<\/li>/si', $obsHtml, $liMatches) && !empty($liMatches[1])) {
                 foreach ($liMatches[1] as $li) {
-                    $schedule[$dir]['obs'][] = cleanText($li);
+                    $cleanLi = cleanText($li);
+                    if ($cleanLi !== '') {
+                        $schedule[$dir]['obs'][] = $cleanLi;
+                    }
+                }
+            } else {
+                $fallbackObs = cleanText(preg_replace('/Observa[^:]*:|Obs\.?\s*:/iu', '', $obsHtml));
+                if ($fallbackObs !== '') {
+                    $schedule[$dir]['obs'][] = $fallbackObs;
                 }
             }
         }
-        if (preg_match('/Hor.*?dias.*?<\/p>\s*<\/b>\s*<p>(.*?)<\/p>/si', $secHtml, $wdMatch)) {
+        if (preg_match('/<b>\s*<p>\s*(?:<i[^>]*><\/i>\s*)?Hor[^<]*dias[^<]*<\/p>\s*<\/b>\s*<p>(.*?)<\/p>/si', $secHtml, $wdMatch)) {
             $schedule[$dir]['weekdays'] = extractTimesList($wdMatch[1]);
         }
-        if (preg_match('/Hor.*?bados<\/p>\s*<\/b>\s*<p>(.*?)<\/p>/si', $secHtml, $satMatch)) {
+        if (preg_match('/<b>\s*<p>\s*(?:<i[^>]*><\/i>\s*)?Hor[^<]*bados[^<]*<\/p>\s*<\/b>\s*<p>(.*?)<\/p>/si', $secHtml, $satMatch)) {
             $schedule[$dir]['saturdays'] = extractTimesList($satMatch[1]);
         }
-        if (preg_match('/Hor.*?domingos.*?<\/p>\s*<\/b>\s*<p>(.*?)<\/p>/si', $secHtml, $sunMatch)) {
+        if (preg_match('/<b>\s*<p>\s*(?:<i[^>]*><\/i>\s*)?Hor[^<]*domingos[^<]*<\/p>\s*<\/b>\s*<p>(.*?)<\/p>/si', $secHtml, $sunMatch)) {
             $schedule[$dir]['sundays'] = extractTimesList($sunMatch[1]);
         }
     }
@@ -228,19 +239,39 @@ function parseScheduleHtml(?string $html): array {
 }
 
 function extractTimesList(string $rawHtml): array {
+    if (stripos($rawHtml, 'NÃO OPERA') !== false || stripos($rawHtml, 'NAO OPERA') !== false) {
+        return [];
+    }
     $times = [];
-    // Check if there's red highlight (special variant)
-    $parts = explode('|', $rawHtml);
+    // Alguns quadros separam horários por "|" e outros (ex: 5902 Volta) por "/"
+    $parts = preg_split('/[\|\/]+/', $rawHtml);
     foreach ($parts as $p) {
-        $isSpecial = (stripos($p, 'color: red') !== false || stripos($p, 'color:red') !== false);
+        $isRed = (stripos($p, 'color: red') !== false || stripos($p, 'color:red') !== false);
         $txt = cleanText($p);
-        if (preg_match('/^\d{2}:\d{2}$/', $txt)) {
-            $times[] = [
-                'time' => $txt,
+        if (preg_match('/(\*{1,2})?\s*(\d{2}:\d{2})\s*(\*{1,2})?(?:\s*\(([^)]+)\))?/u', $txt, $m)) {
+            $timeStr = $m[2];
+            $ast = '';
+            if (!empty($m[1])) {
+                $ast = $m[1];
+            } elseif (!empty($m[3])) {
+                $ast = $m[3];
+            }
+            $note = isset($m[4]) ? trim($m[4]) : '';
+            $isSpecial = $isRed || ($ast !== '') || ($note !== '');
+            $entry = [
+                'time'    => $timeStr,
                 'special' => $isSpecial
             ];
-        } elseif (mb_strlen($txt) > 3 && stripos($txt, 'NÃO OPERA') !== false) {
-            return [];
+            if ($isRed) {
+                $entry['red'] = true;
+            }
+            if ($ast !== '') {
+                $entry['asterisk'] = $ast;
+            }
+            if ($note !== '') {
+                $entry['note'] = $note;
+            }
+            $times[] = $entry;
         }
     }
     return $times;
@@ -248,15 +279,20 @@ function extractTimesList(string $rawHtml): array {
 
 echo "1. Baixando polylines do MOCBUS e paradas/horarios do OnibusMoc para as 29 linhas...\n";
 
-$urls = [
-    'eixos' => 'https://www.mocbus.com.br/assets/js/gps/eixos.json'
-];
+$urls = [];
+if (!file_exists("$dataDir/eixos.json")) {
+    $urls['eixos'] = 'https://www.mocbus.com.br/assets/js/gps/eixos.json';
+}
 foreach ($linesList as $l) {
     $c = $l['code'];
-    $urls["shape_ida_$c"]   = "https://www.mocbus.com.br/assets/js/gps/$c/ida.json";
-    $urls["shape_volta_$c"] = "https://www.mocbus.com.br/assets/js/gps/$c/volta.json";
-    $urls["paradas_$c"]     = "https://www.onibusmoc.com/linhas/$c/paradas";
-    $urls["horarios_$c"]    = "https://www.onibusmoc.com/linhas/$c";
+    if (!file_exists("$shapesDir/{$c}_ida.json")) {
+        $urls["shape_ida_$c"] = "https://www.mocbus.com.br/assets/js/gps/$c/ida.json";
+    }
+    if (!file_exists("$shapesDir/{$c}_volta.json")) {
+        $urls["shape_volta_$c"] = "https://www.mocbus.com.br/assets/js/gps/$c/volta.json";
+    }
+    $urls["paradas_$c"]  = "https://www.onibusmoc.com/linhas/$c/paradas";
+    $urls["horarios_$c"] = "https://www.onibusmoc.com/linhas/$c";
 }
 
 $responses = fetchMulti($urls, 15);
@@ -276,7 +312,8 @@ foreach ($linesList as $l) {
     $hasVolta = false;
 
     foreach (['ida', 'volta'] as $dir) {
-        $rawShape = $responses["shape_{$dir}_{$c}"] ?? null;
+        $existingShapeFile = "$shapesDir/{$c}_{$dir}.json";
+        $rawShape = $responses["shape_{$dir}_{$c}"] ?? (file_exists($existingShapeFile) ? file_get_contents($existingShapeFile) : null);
         if ($rawShape) {
             $decoded = json_decode($rawShape, true);
             if (isset($decoded['coordinates']) && is_array($decoded['coordinates']) && count($decoded['coordinates']) > 2) {
@@ -302,10 +339,12 @@ foreach ($linesList as $l) {
                     $prev = [$lat, $lng];
                 }
                 if (count($cleanCoords) > 2) {
-                    file_put_contents("$shapesDir/{$c}_{$dir}.json", json_encode([
-                        'coordinates' => $cleanCoords,
-                        'total_distance_m' => round($cumDist, 1)
-                    ]));
+                    if (!file_exists($existingShapeFile)) {
+                        file_put_contents($existingShapeFile, json_encode([
+                            'coordinates' => $cleanCoords,
+                            'total_distance_m' => round($cumDist, 1)
+                        ]));
+                    }
                     if ($dir === 'ida') $hasIda = true;
                     if ($dir === 'volta') $hasVolta = true;
                 }
@@ -358,14 +397,16 @@ foreach ($linesList as $l) {
     ];
 
     echo sprintf(
-        "   - Linha %-5s: shape(ida=%s, volta=%s) | paradas(ida=%d, volta=%d) | horarios(util=%d/%d)\n",
+        "   - Linha %-5s: paradas(%2d/%2d) | util(%2d/%2d) | sab(%2d/%2d) | dom(%2d/%2d)\n",
         $c,
-        $hasIda ? 'OK' : 'NO',
-        $hasVolta ? 'OK' : 'NO',
         count($paradasData['ida']),
         count($paradasData['volta']),
         count($scheduleData['ida']['weekdays']),
-        count($scheduleData['volta']['weekdays'])
+        count($scheduleData['volta']['weekdays']),
+        count($scheduleData['ida']['saturdays']),
+        count($scheduleData['volta']['saturdays']),
+        count($scheduleData['ida']['sundays']),
+        count($scheduleData['volta']['sundays'])
     );
 }
 

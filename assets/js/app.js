@@ -22,10 +22,14 @@
         alerts: JSON.parse(localStorage.getItem('onibus_mc_alerts') || '[]'),
         firedAlertKeys: {},
         scheduleDay: 'weekdays',
+        timeContext: null,
         planner: {
             origin: null,
             dest: null,
-            mapPickMode: null
+            mapPickMode: null,
+            timeMode: 'now',
+            customDate: '',
+            customTime: ''
         },
         userLocation: null,
         pollTimer: null
@@ -55,6 +59,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         initMap();
         initTabs();
+        initMontesClarosClock();
         initCatalogEvents();
         initPlannerEvents();
         initAlertEvents();
@@ -72,6 +77,82 @@
             }
         }, 10000);
     });
+
+    /* =========================================================================
+       0. RELÓGIO OFICIAL DE MONTES CLAROS (AMERICA/SAO_PAULO) E FERIADOS
+       ========================================================================= */
+    async function initMontesClarosClock() {
+        await syncOfficialTimeContext();
+        setInterval(() => {
+            if (state.planner.timeMode === 'now') {
+                updateLocalMontesClarosClockTick();
+            }
+        }, 15000);
+    }
+
+    async function syncOfficialTimeContext(customDate = '', customTime = '') {
+        try {
+            const params = new URLSearchParams();
+            if (customDate) params.set('date', customDate);
+            if (customTime) params.set('time', customTime);
+            const qs = params.toString() ? `?${params.toString()}` : '';
+            const res = await fetch(`${API_BASE}api/time-context${qs}`);
+            const json = await res.json();
+            if (json && json.ok && json.time_context) {
+                const ctx = json.time_context;
+                if (!customDate && !customTime) {
+                    state.timeContext = ctx;
+                    // Ajusta automaticamente a aba de Horários para o dia operacional atual de Montes Claros
+                    state.scheduleDay = ctx.day_type || 'weekdays';
+                    document.querySelectorAll('#subtab-times .day-pill').forEach((b) => {
+                        b.classList.toggle('active', b.dataset.day === state.scheduleDay);
+                    });
+                    renderLinesList();
+                    renderScheduleTab();
+                }
+                updateTimeContextUI(ctx);
+                return ctx;
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    function updateLocalMontesClarosClockTick() {
+        try {
+            const now = new Date();
+            const hhmm = new Intl.DateTimeFormat('pt-BR', {
+                timeZone: 'America/Sao_Paulo',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).format(now);
+            if (state.timeContext) {
+                state.timeContext.time = hhmm;
+                const [hh, mm] = hhmm.split(':').map(Number);
+                state.timeContext.minutes_of_day = hh * 60 + mm;
+                updateTimeContextUI(state.timeContext);
+            }
+        } catch (e) {}
+    }
+
+    function updateTimeContextUI(ctx) {
+        if (!ctx) return;
+        const clockPill = document.getElementById('mcClockPill');
+        if (clockPill && !ctx.is_custom) {
+            clockPill.textContent = `${ctx.time} · ${ctx.day_type_short}`;
+        }
+
+        const nowText = document.getElementById('plannerTimeNowText');
+        const calInfo = document.getElementById('plannerCalendarInfo');
+        if (nowText && !ctx.is_custom) {
+            nowText.textContent = `Montes Claros: ${ctx.time} · ${ctx.day_label}`;
+        }
+        if (calInfo) {
+            calInfo.textContent = ctx.is_custom
+                ? `Consulta para ${ctx.date_br} às ${ctx.time} — ${ctx.day_label}`
+                : `Calendário ativo: ${ctx.date_br} · ${ctx.day_label}`;
+        }
+    }
 
     /* =========================================================================
        1. MAPA E CAMADAS (GOOGLE MAPS STREETS / SATÉLITE / LIMPO)
@@ -271,18 +352,23 @@
             return;
         }
 
+        const dayType = state.timeContext?.day_type || 'weekdays';
         container.innerHTML = filtered
             .map((item) => {
                 const isFav = state.favorites.includes(item.code);
                 const isActive = item.code === state.activeCode;
                 const bairrosPreview = (item.neighborhoods || []).slice(0, 4).join(', ');
+                const operatesToday = item.operates_days ? item.operates_days[dayType] !== false : true;
                 return `
                 <div class="line-row ${isActive ? 'active' : ''}" data-code="${item.code}">
                     <div class="line-row__left">
                         <span class="line-row__code">${item.code}</span>
                         <div style="min-width:0;">
                             <div class="line-row__name">${escapeHtml(formatTitleCase(item.name))}</div>
-                            <div class="line-row__sub">${bairrosPreview ? escapeHtml(bairrosPreview) : 'Ida e volta'}</div>
+                            <div class="line-row__sub">
+                                ${!operatesToday ? '<span style="color:#b91c1c;font-weight:500;">Não opera hoje</span> · ' : ''}
+                                ${bairrosPreview ? escapeHtml(bairrosPreview) : 'Ida e volta'}
+                            </div>
                         </div>
                     </div>
                     ${isFav ? `<span class="fav-indicator">Salva</span>` : ''}
@@ -675,6 +761,59 @@
             setPlannerPoint('dest', tmp);
         });
 
+        const btnModeNow = document.getElementById('btnTimeModeNow');
+        const btnModeCustom = document.getElementById('btnTimeModeCustom');
+        const nowBar = document.getElementById('plannerTimeNowBar');
+        const customRow = document.getElementById('plannerTimeCustomRow');
+        const inputDate = document.getElementById('inputPlanDate');
+        const inputTime = document.getElementById('inputPlanTime');
+
+        if (btnModeNow && btnModeCustom) {
+            btnModeNow.addEventListener('click', async () => {
+                state.planner.timeMode = 'now';
+                btnModeNow.classList.add('active-mode');
+                btnModeCustom.classList.remove('active-mode');
+                nowBar.style.display = 'flex';
+                customRow.style.display = 'none';
+                await syncOfficialTimeContext();
+                if (state.planner.origin && state.planner.dest) {
+                    executeRouteCalculation();
+                }
+            });
+
+            btnModeCustom.addEventListener('click', async () => {
+                state.planner.timeMode = 'custom';
+                btnModeCustom.classList.add('active-mode');
+                btnModeNow.classList.remove('active-mode');
+                nowBar.style.display = 'none';
+                customRow.style.display = 'grid';
+
+                if (!inputDate.value) {
+                    inputDate.value = state.timeContext?.official_date || new Date().toISOString().slice(0, 10);
+                }
+                if (!inputTime.value) {
+                    inputTime.value = state.timeContext?.official_now || '07:00';
+                }
+                state.planner.customDate = inputDate.value;
+                state.planner.customTime = inputTime.value;
+                await syncOfficialTimeContext(state.planner.customDate, state.planner.customTime);
+                if (state.planner.origin && state.planner.dest) {
+                    executeRouteCalculation();
+                }
+            });
+
+            const onCustomDateTimeChange = async () => {
+                state.planner.customDate = inputDate.value;
+                state.planner.customTime = inputTime.value;
+                await syncOfficialTimeContext(state.planner.customDate, state.planner.customTime);
+                if (state.planner.origin && state.planner.dest) {
+                    executeRouteCalculation();
+                }
+            };
+            inputDate.addEventListener('change', onCustomDateTimeChange);
+            inputTime.addEventListener('change', onCustomDateTimeChange);
+        }
+
         document.querySelectorAll('.preset-chip').forEach((chip) => {
             chip.addEventListener('click', () => {
                 setPlannerPoint('origin', {
@@ -915,54 +1054,111 @@
                 orig_lat: origin.lat,
                 orig_lng: origin.lng,
                 dest_lat: dest.lat,
-                dest_lng: dest.lng
+                dest_lng: dest.lng,
+                orig_label: origin.label || '',
+                dest_label: dest.label || ''
             });
+            if (state.planner.timeMode === 'custom') {
+                if (state.planner.customDate) params.set('query_date', state.planner.customDate);
+                if (state.planner.customTime) params.set('query_time', state.planner.customTime);
+            }
+
             const res = await fetch(`${API_BASE}api/route-plan?${params.toString()}`);
             const json = await res.json();
+
+            if (json.time_context) {
+                updateTimeContextUI(json.time_context);
+            }
 
             if (!json.ok || !json.recommendations || json.recommendations.length === 0) {
                 container.innerHTML = `<div style="padding:12px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;font-size:12.5px;color:#4b5563;">Nenhuma linha encontrada próxima aos locais informados.</div>`;
                 return;
             }
 
-            container.innerHTML = json.recommendations
-                .map((rec, idx) => {
-                    const isDirect = rec.type === 'direct';
-                    const tagClass = isDirect ? 'tag--direct' : 'tag--transfer';
-                    const tagText = isDirect ? 'Linha direta' : 'Conexão (1 troca)';
+            const tCtx = json.time_context || state.timeContext;
+            const contextHeaderHtml = tCtx
+                ? `<div style="font-size:11.5px;color:#4b5563;padding:2px 2px 0;">
+                    Cálculo para <strong>${escapeHtml(tCtx.time)}</strong> (${escapeHtml(tCtx.date_br)}) · ${escapeHtml(tCtx.day_label)}
+                   </div>`
+                : '';
 
-                    const legsHtml = rec.legs
-                        .map(
-                            (leg) => `
-                            <div class="route-step">
-                                <div class="route-step__line">
-                                    <span class="code-badge">${escapeHtml(leg.line_code)}</span>
-                                    <span>${escapeHtml(formatTitleCase(leg.line_name))}</span>
-                                </div>
-                                <div class="route-step__details">
-                                    Sentido: ${escapeHtml(leg.direction_label)}<br>
-                                    Embarque: <strong>${escapeHtml(leg.board_stop.address)}</strong> ${leg.walk_before_m > 0 ? `(${leg.walk_before_m} m a pé)` : ''}<br>
-                                    Desembarque: <strong>${escapeHtml(leg.alight_stop.address)}</strong> ${leg.walk_after_m > 0 ? `(${leg.walk_after_m} m a pé)` : ''}<br>
-                                    Trecho: ${leg.stops_count} paradas · ${(leg.bus_distance_m / 1000).toFixed(1)} km (~${leg.bus_time_min} min)
-                                </div>
-                            </div>`
-                        )
-                        .join('');
+            container.innerHTML =
+                contextHeaderHtml +
+                json.recommendations
+                    .map((rec, idx) => {
+                        const isDirect = rec.type === 'direct';
+                        const tagClass = isDirect ? 'tag--direct' : 'tag--transfer';
+                        const tagText = isDirect ? 'Linha direta' : 'Conexão (1 troca)';
+                        const isInactive = !rec.operates_today || rec.service_ended_today;
 
-                    return `
-                        <div class="route-card">
-                            <div class="route-card__head">
-                                <span class="tag ${tagClass}">${tagText}</span>
-                                <strong style="font-size:12.5px;color:#1f2937;">Aprox. ${rec.total_time_min} min</strong>
+                        const legsHtml = rec.legs
+                            .map((leg) => {
+                                const se = leg.schedule_eval || {};
+                                let badgeClass = 'op-badge--ok';
+                                if (!se.operates_today || se.service_ended_today || se.status_code === 'variant_unavailable_now') {
+                                    badgeClass = 'op-badge--off';
+                                } else if (se.status_code === 'active_wait_variant') {
+                                    badgeClass = 'op-badge--warn';
+                                }
+
+                                const upcomingList = Array.isArray(se.upcoming_trips) ? se.upcoming_trips : [];
+                                const upcomingHtml =
+                                    upcomingList.length > 0
+                                        ? `<div class="upcoming-strip">
+                                            <span>Saídas do ponto final:</span>
+                                            ${upcomingList
+                                                .map((u) => {
+                                                    const label = `${u.asterisk || ''}${u.dep_time}`;
+                                                    const cls = u.special ? 'upcoming-chip upcoming-chip--special' : 'upcoming-chip';
+                                                    const tip = u.variant_desc ? ` title="${escapeHtml(u.variant_desc)}"` : '';
+                                                    return `<span class="${cls}"${tip}>${escapeHtml(label)}</span>`;
+                                                })
+                                                .join('')}
+                                           </div>`
+                                        : '';
+
+                                const warnHtml = se.variant_warning
+                                    ? `<div class="variant-box ${!se.operates_today || se.status_code === 'variant_unavailable_now' ? 'variant-box--off' : ''}">
+                                        ${escapeHtml(se.variant_warning)}
+                                       </div>`
+                                    : '';
+
+                                return `
+                                <div class="route-step">
+                                    <div class="route-step__line" style="justify-content:space-between;flex-wrap:wrap;">
+                                        <div style="display:flex;align-items:center;gap:8px;">
+                                            <span class="code-badge">${escapeHtml(leg.line_code)}</span>
+                                            <span>${escapeHtml(formatTitleCase(leg.line_name))}</span>
+                                        </div>
+                                        ${se.status_badge ? `<span class="op-badge ${badgeClass}">${escapeHtml(se.status_badge)}</span>` : ''}
+                                    </div>
+                                    <div class="route-step__details">
+                                        ${se.status_detail ? `<div style="color:#1f2937;font-weight:500;margin-bottom:3px;">${escapeHtml(se.status_detail)}</div>` : ''}
+                                        Sentido: ${escapeHtml(leg.direction_label)}<br>
+                                        Embarque: <strong>${escapeHtml(leg.board_stop.address)}</strong> ${leg.walk_before_m > 0 ? `(${leg.walk_before_m} m a pé)` : ''}<br>
+                                        Desembarque: <strong>${escapeHtml(leg.alight_stop.address)}</strong> ${leg.walk_after_m > 0 ? `(${leg.walk_after_m} m a pé)` : ''}<br>
+                                        Trecho: ${leg.stops_count} paradas · ${(leg.bus_distance_m / 1000).toFixed(1)} km (~${leg.bus_time_min} min no ônibus)
+                                    </div>
+                                    ${warnHtml}
+                                    ${upcomingHtml}
+                                </div>`;
+                            })
+                            .join('');
+
+                        return `
+                            <div class="route-card ${isInactive ? 'route-card--inactive' : ''}">
+                                <div class="route-card__head">
+                                    <span class="tag ${tagClass}">${tagText}</span>
+                                    <strong style="font-size:12.5px;color:#1f2937;">Trajeto ~${rec.total_time_min} min</strong>
+                                </div>
+                                ${legsHtml}
+                                <button type="button" class="btn-outline btn-sm btn-apply-route" data-idx="${idx}">
+                                    Visualizar no mapa
+                                </button>
                             </div>
-                            ${legsHtml}
-                            <button type="button" class="btn-outline btn-sm btn-apply-route" data-idx="${idx}">
-                                Visualizar no mapa
-                            </button>
-                        </div>
-                    `;
-                })
-                .join('');
+                        `;
+                    })
+                    .join('');
 
             container.querySelectorAll('.btn-apply-route').forEach((btn) => {
                 btn.addEventListener('click', async () => {
@@ -1262,21 +1458,43 @@
         const stopsContainer = document.getElementById('scheduleStopsContainer');
 
         const dayKey = state.scheduleDay;
+        const isCurrentOperationalDay = state.timeContext && state.timeContext.day_type === dayKey;
+        const nowMin = state.timeContext ? Number(state.timeContext.minutes_of_day || 0) : -1;
+
         timesContainer.innerHTML = ['ida', 'volta']
             .map((dir) => {
                 const block = sched[dir] || {};
                 const list = block[dayKey] || [];
                 const obs = block.obs || [];
 
+                let highlightedNext = false;
                 const chipsHtml =
                     list.length > 0
                         ? list
-                              .map(
-                                  (t) =>
-                                      `<span class="time-tag ${t.special ? 'time-tag--special' : ''}" title="${t.special ? 'Atendimento específico (ver observações)' : ''}">${escapeHtml(t.time)}</span>`
-                              )
+                              .map((t) => {
+                                  let isNext = false;
+                                  if (isCurrentOperationalDay && !highlightedNext && nowMin >= 0 && t.time) {
+                                      const [hh, mm] = t.time.split(':').map(Number);
+                                      if (hh * 60 + mm >= nowMin) {
+                                          isNext = true;
+                                          highlightedNext = true;
+                                      }
+                                  }
+                                  const displayTime = `${t.asterisk || ''}${t.time}`;
+                                  const classes = [
+                                      'time-tag',
+                                      t.special ? 'time-tag--special' : '',
+                                      isNext ? 'time-tag--next' : ''
+                                  ]
+                                      .filter(Boolean)
+                                      .join(' ');
+                                  const titleParts = [];
+                                  if (isNext) titleParts.push('Próxima saída do ponto final hoje');
+                                  if (t.special) titleParts.push('Atendimento específico (ver observações abaixo)');
+                                  return `<span class="${classes}" title="${escapeHtml(titleParts.join(' · '))}">${escapeHtml(displayTime)}</span>`;
+                              })
                               .join('')
-                        : `<div style="font-size:12px;color:#6b7280;">Sem horários cadastrados para este período.</div>`;
+                        : `<div style="font-size:12px;color:#6b7280;">Não opera neste período.</div>`;
 
                 const obsHtml =
                     obs.length > 0

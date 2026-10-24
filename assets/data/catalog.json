@@ -1,5 +1,5 @@
 {
-    "generated_at": "2026-10-24T14:27:40+00:00",
+    "generated_at": "2026-10-24T19:19:12+00:00",
     "city": "Montes Claros - MG",
     "total_lines": 29,
     "total_unique_stops": 915,
@@ -1423,7 +1423,7 @@
                         "neighborhood": "Edgar Pereira",
                         "lat": -16.698738,
                         "lng": -43.858588,
-                        "dist_m": 811,
+                        "dist_m": 810.8,
                         "lines": [
                             "1601"
                         ]
@@ -1435,7 +1435,7 @@
                         "neighborhood": "Edgar Pereira",
                         "lat": -16.700812,
                         "lng": -43.859731,
-                        "dist_m": 1444.6,
+                        "dist_m": 1444.4,
                         "lines": [
                             "1601"
                         ]
@@ -1447,7 +1447,7 @@
                         "neighborhood": "Edgar Pereira",
                         "lat": -16.70352,
                         "lng": -43.86037,
-                        "dist_m": 1819.9,
+                        "dist_m": 1819.8,
                         "lines": [
                             "1601"
                         ]
@@ -1459,7 +1459,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.706038,
                         "lng": -43.857941,
-                        "dist_m": 2267.3,
+                        "dist_m": 2267.1,
                         "lines": [
                             "1601"
                         ]
@@ -1471,7 +1471,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.707531,
                         "lng": -43.8587,
-                        "dist_m": 2779.9,
+                        "dist_m": 2779.8,
                         "lines": [
                             "1601"
                         ]
@@ -1483,7 +1483,7 @@
                         "neighborhood": "Edgar Pereira",
                         "lat": -16.707784,
                         "lng": -43.861778,
-                        "dist_m": 3133.3,
+                        "dist_m": 3133.1,
                         "lines": [
                             "1601"
                         ]
@@ -1495,7 +1495,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.709125,
                         "lng": -43.865402,
-                        "dist_m": 3547.3,
+                        "dist_m": 3547.1,
                         "lines": [
                             "1601"
                         ]
@@ -1507,7 +1507,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.719268,
                         "lng": -43.863533,
-                        "dist_m": 4719.5,
+                        "dist_m": 4719.3,
                         "lines": [
                             "1501",
                             "1601",
@@ -1523,7 +1523,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.719268,
                         "lng": -43.863533,
-                        "dist_m": 4719.5,
+                        "dist_m": 4719.3,
                         "lines": [
                             "1501",
                             "1601",
@@ -1539,7 +1539,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.722709,
                         "lng": -43.865166,
-                        "dist_m": 5142,
+                        "dist_m": 5141.8,
                         "lines": [
                             "1501",
                             "1601",
@@ -1558,7 +1558,7 @@
                         "neighborhood": "Lojão do Brás",
                         "lat": -16.722709,
                         "lng": -43.865166,
-                        "dist_m": 5142,
+                        "dist_m": 5141.8,
                         "lines": [
                             "1501",
                             "1601",
@@ -1597,7 +1597,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.728375,
                         "lng": -43.866368,
-                        "dist_m": 5785.4,
+                        "dist_m": 5785.2,
                         "lines": [
                             "1601",
                             "1701",
@@ -1632,7 +1632,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.727808,
                         "lng": -43.870003,
-                        "dist_m": 6177.6,
+                        "dist_m": 6177.4,
                         "lines": [
                             "1601",
                             "1701",
@@ -1667,7 +1667,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.730731,
                         "lng": -43.871769,
-                        "dist_m": 6591,
+                        "dist_m": 6590.9,
                         "lines": [
                             "1601",
                             "1701",
@@ -1695,7 +1695,7 @@
                         "neighborhood": "Vila Guilhermina Prefeitura",
                         "lat": -16.734995,
                         "lng": -43.872208,
-                        "dist_m": 7068.5,
+                        "dist_m": 7068.4,
                         "lines": [
                             "1601",
                             "1701",
@@ -1719,7 +1719,7 @@
                         "neighborhood": "Vila Guilhermina",
                         "lat": -16.739996,
                         "lng": -43.871925,
-                        "dist_m": 7626.3,
+                        "dist_m": 7626.1,
                         "lines": [
                             "1601",
                             "1701",
@@ -1742,7 +1742,7 @@
                         "neighborhood": "Vila Guilhermina",
                         "lat": -16.741824,
                         "lng": -43.868966,
-                        "dist_m": 8090.9,
+                        "dist_m": 8090.7,
                         "lines": [
                             "1601",
                             "1701",
@@ -1766,7 +1766,7 @@
                         "neighborhood": "Cidade Nova Shopping Center",
                         "lat": -16.742453,
                         "lng": -43.868651,
-                        "dist_m": 8477.1,
+                        "dist_m": 8476.9,
                         "lines": [
                             "1601",
                             "1701",
@@ -2105,7 +2105,7 @@
                         "neighborhood": "Edgar Pereira",
                         "lat": -16.701415,
                         "lng": -43.858438,
-                        "dist_m": 7624.7,
+                        "dist_m": 7624.9,
                         "lines": [
                             "1601"
                         ]
@@ -2117,7 +2117,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.697567,
                         "lng": -43.856496,
-                        "dist_m": 8173.5,
+                        "dist_m": 8173.8,
                         "lines": [
                             "1601"
                         ]
@@ -2129,7 +2129,7 @@
                         "neighborhood": "Edgar Pereira",
                         "lat": -16.697776,
                         "lng": -43.860106,
-                        "dist_m": 8740,
+                        "dist_m": 8740.2,
                         "lines": [
                             "1601"
                         ]
@@ -2141,7 +2141,7 @@
                         "neighborhood": "Edgar Pereira",
                         "lat": -16.698546,
                         "lng": -43.859188,
-                        "dist_m": 8740,
+                        "dist_m": 8740.2,
                         "lines": [
                             "1601"
                         ]
@@ -3581,7 +3581,9 @@
                         "RODOVIÁRIA",
                         "AV. FRANCISCO GAETANI"
                     ],
-                    "obs": [],
+                    "obs": [
+                        "OSO em caráter experimental."
+                    ],
                     "weekdays": [
                         {
                             "time": "05:10",
@@ -3805,7 +3807,9 @@
                         "AV. \"A\"",
                         "AV. AMINTAS JAQUES DE MORAES"
                     ],
-                    "obs": [],
+                    "obs": [
+                        "OSO em caráter experimental."
+                    ],
                     "weekdays": [
                         {
                             "time": "06:00",
@@ -5589,7 +5593,9 @@
                         "AV. DR. MARIO TOURINHO",
                         "(AV. GABRIELA PRATES COSTA MACHADO - ASILO)"
                     ],
-                    "obs": [],
+                    "obs": [
+                        "OSO em caráter Experimental, ajustes de horários"
+                    ],
                     "weekdays": [
                         {
                             "time": "05:10",
@@ -5818,7 +5824,76 @@
                             "special": false
                         }
                     ],
-                    "sundays": []
+                    "sundays": [
+                        {
+                            "time": "05:45",
+                            "special": false
+                        },
+                        {
+                            "time": "06:15",
+                            "special": false
+                        },
+                        {
+                            "time": "07:20",
+                            "special": false
+                        },
+                        {
+                            "time": "08:00",
+                            "special": false
+                        },
+                        {
+                            "time": "09:20",
+                            "special": false
+                        },
+                        {
+                            "time": "10:00",
+                            "special": false
+                        },
+                        {
+                            "time": "11:15",
+                            "special": false
+                        },
+                        {
+                            "time": "11:50",
+                            "special": false
+                        },
+                        {
+                            "time": "13:10",
+                            "special": false
+                        },
+                        {
+                            "time": "13:55",
+                            "special": false
+                        },
+                        {
+                            "time": "15:10",
+                            "special": false
+                        },
+                        {
+                            "time": "15:50",
+                            "special": false
+                        },
+                        {
+                            "time": "17:10",
+                            "special": false
+                        },
+                        {
+                            "time": "17:45",
+                            "special": false
+                        },
+                        {
+                            "time": "19:20",
+                            "special": false
+                        },
+                        {
+                            "time": "19:45",
+                            "special": false
+                        },
+                        {
+                            "time": "21:20",
+                            "special": false
+                        }
+                    ]
                 },
                 "volta": {
                     "title": "MANGUES para o RESIDENCIAL VITÓRIA II",
@@ -5854,7 +5929,9 @@
                         "AV. LINCOLN ALVES DOS SANTOS",
                         "AV. \"B\"."
                     ],
-                    "obs": [],
+                    "obs": [
+                        "OSO em caráter Experimental, ajustes de horários"
+                    ],
                     "weekdays": [
                         {
                             "time": "05:00",
@@ -7467,7 +7544,7 @@
                         "neighborhood": "Village do Lago II",
                         "lat": -16.673376,
                         "lng": -43.825454,
-                        "dist_m": 1094.4,
+                        "dist_m": 1094.3,
                         "lines": [
                             "2203",
                             "2601"
@@ -7480,7 +7557,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.673376,
                         "lng": -43.825454,
-                        "dist_m": 1094.4,
+                        "dist_m": 1094.3,
                         "lines": [
                             "2203",
                             "2601"
@@ -7493,7 +7570,7 @@
                         "neighborhood": "Village II",
                         "lat": -16.679774,
                         "lng": -43.826615,
-                        "dist_m": 1823.2,
+                        "dist_m": 1823.1,
                         "lines": [
                             "2601",
                             "2603"
@@ -7506,7 +7583,7 @@
                         "neighborhood": "Village II Esquina Av",
                         "lat": -16.679774,
                         "lng": -43.826615,
-                        "dist_m": 1823.2,
+                        "dist_m": 1823.1,
                         "lines": [
                             "2601",
                             "2603"
@@ -7627,7 +7704,7 @@
                         "neighborhood": "Universitario",
                         "lat": -16.684232,
                         "lng": -43.842358,
-                        "dist_m": 5098.1,
+                        "dist_m": 5098,
                         "lines": [
                             "2601"
                         ]
@@ -7639,7 +7716,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.681216,
                         "lng": -43.840966,
-                        "dist_m": 5467.6,
+                        "dist_m": 5467.7,
                         "lines": [
                             "2601"
                         ]
@@ -7723,7 +7800,7 @@
                         "neighborhood": "Universitario Santo Agostinho",
                         "lat": -16.687703,
                         "lng": -43.846518,
-                        "dist_m": 7995.8,
+                        "dist_m": 7995.9,
                         "lines": [
                             "2601"
                         ]
@@ -7773,7 +7850,7 @@
                         "neighborhood": "Renasceça",
                         "lat": -16.695558,
                         "lng": -43.850043,
-                        "dist_m": 9322.4,
+                        "dist_m": 9322.5,
                         "lines": [
                             "2601"
                         ]
@@ -7785,7 +7862,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.697025,
                         "lng": -43.853712,
-                        "dist_m": 9745.9,
+                        "dist_m": 9746,
                         "lines": [
                             "2601"
                         ]
@@ -7874,7 +7951,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.713066,
                         "lng": -43.852646,
-                        "dist_m": 11812.1,
+                        "dist_m": 11812.2,
                         "lines": [
                             "2601",
                             "8201"
@@ -7974,7 +8051,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.728377,
                         "lng": -43.86635,
-                        "dist_m": 14259.3,
+                        "dist_m": 14259.4,
                         "lines": [
                             "1601",
                             "1701",
@@ -8102,7 +8179,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.736272,
                         "lng": -43.866022,
-                        "dist_m": 15800.4,
+                        "dist_m": 15800.5,
                         "lines": [
                             "2601"
                         ]
@@ -8291,7 +8368,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.761485,
                         "lng": -43.866987,
-                        "dist_m": 20718.1,
+                        "dist_m": 20718.2,
                         "lines": [
                             "2601",
                             "6901"
@@ -9031,7 +9108,7 @@
                         "neighborhood": "Universitario UFMG",
                         "lat": -16.682238,
                         "lng": -43.84132,
-                        "dist_m": 16644.9,
+                        "dist_m": 16645,
                         "lines": [
                             "2601"
                         ]
@@ -9055,7 +9132,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.684212,
                         "lng": -43.84234,
-                        "dist_m": 17298.1,
+                        "dist_m": 17298.2,
                         "lines": [
                             "2601"
                         ]
@@ -9067,7 +9144,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.685646,
                         "lng": -43.845335,
-                        "dist_m": 17657.7,
+                        "dist_m": 17657.8,
                         "lines": [
                             "2601"
                         ]
@@ -9137,7 +9214,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.683812,
                         "lng": -43.830549,
-                        "dist_m": 19944.9,
+                        "dist_m": 19945,
                         "lines": [
                             "2601",
                             "2603"
@@ -9150,7 +9227,7 @@
                         "neighborhood": "Instituto Federal",
                         "lat": -16.683965,
                         "lng": -43.831607,
-                        "dist_m": 19944.9,
+                        "dist_m": 19945,
                         "lines": [
                             "2601"
                         ]
@@ -9224,7 +9301,7 @@
                         "neighborhood": "Vilage do Lago II",
                         "lat": -16.669968,
                         "lng": -43.829991,
-                        "dist_m": 22148.6,
+                        "dist_m": 22148.5,
                         "lines": [
                             "2601"
                         ]
@@ -9248,7 +9325,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.669071,
                         "lng": -43.828066,
-                        "dist_m": 22520.4,
+                        "dist_m": 22520.5,
                         "lines": [
                             "2601"
                         ]
@@ -9316,7 +9393,8 @@
                     "weekdays": [
                         {
                             "time": "05:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "05:38",
@@ -9371,6 +9449,12 @@
                             "special": false
                         },
                         {
+                            "time": "11:00",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "*"
+                        },
+                        {
                             "time": "11:30",
                             "special": false
                         },
@@ -9379,12 +9463,25 @@
                             "special": false
                         },
                         {
+                            "time": "12:30",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "*"
+                        },
+                        {
+                            "time": "13:00",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "*"
+                        },
+                        {
                             "time": "13:30",
                             "special": false
                         },
                         {
                             "time": "14:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "14:30",
@@ -9400,7 +9497,8 @@
                         },
                         {
                             "time": "16:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:22",
@@ -9408,11 +9506,13 @@
                         },
                         {
                             "time": "16:44",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:06",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:28",
@@ -9420,11 +9520,13 @@
                         },
                         {
                             "time": "17:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:12",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:34",
@@ -9436,21 +9538,31 @@
                         },
                         {
                             "time": "19:18",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "20:08",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "21:18",
-                            "special": true
+                            "special": true,
+                            "red": true
+                        },
+                        {
+                            "time": "22:28",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "*"
                         }
                     ],
                     "saturdays": [
                         {
                             "time": "05:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:00",
@@ -9458,27 +9570,33 @@
                         },
                         {
                             "time": "06:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:30",
@@ -9486,23 +9604,28 @@
                         },
                         {
                             "time": "10:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "10:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "12:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "12:30",
@@ -9545,7 +9668,72 @@
                             "special": false
                         }
                     ],
-                    "sundays": []
+                    "sundays": [
+                        {
+                            "time": "05:10",
+                            "special": false
+                        },
+                        {
+                            "time": "06:00",
+                            "special": false
+                        },
+                        {
+                            "time": "07:00",
+                            "special": false
+                        },
+                        {
+                            "time": "08:00",
+                            "special": false
+                        },
+                        {
+                            "time": "09:00",
+                            "special": false
+                        },
+                        {
+                            "time": "10:00",
+                            "special": false
+                        },
+                        {
+                            "time": "11:00",
+                            "special": false
+                        },
+                        {
+                            "time": "12:00",
+                            "special": false
+                        },
+                        {
+                            "time": "13:00",
+                            "special": false
+                        },
+                        {
+                            "time": "14:00",
+                            "special": false
+                        },
+                        {
+                            "time": "15:00",
+                            "special": false
+                        },
+                        {
+                            "time": "16:00",
+                            "special": false
+                        },
+                        {
+                            "time": "17:00",
+                            "special": false
+                        },
+                        {
+                            "time": "18:00",
+                            "special": false
+                        },
+                        {
+                            "time": "19:00",
+                            "special": false
+                        },
+                        {
+                            "time": "20:00",
+                            "special": false
+                        }
+                    ]
                 },
                 "volta": {
                     "title": "MARACANÃ para o RECANTO DAS ÁGUAS",
@@ -9595,24 +9783,40 @@
                     ],
                     "weekdays": [
                         {
+                            "time": "05:00",
+                            "special": true,
+                            "red": true,
+                            "note": "Res.Sul"
+                        },
+                        {
                             "time": "05:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "05:52",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:14",
                             "special": false
                         },
                         {
+                            "time": "06:36",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "*"
+                        },
+                        {
                             "time": "06:58",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:42",
@@ -9648,15 +9852,29 @@
                         },
                         {
                             "time": "11:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "12:00",
-                            "special": true
+                            "special": true,
+                            "red": true
+                        },
+                        {
+                            "time": "12:30",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "*"
+                        },
+                        {
+                            "time": "13:00",
+                            "special": true,
+                            "asterisk": "*"
                         },
                         {
                             "time": "13:30",
@@ -9692,11 +9910,13 @@
                         },
                         {
                             "time": "17:06",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:28",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:50",
@@ -9704,7 +9924,8 @@
                         },
                         {
                             "time": "18:12",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:34",
@@ -9712,7 +9933,8 @@
                         },
                         {
                             "time": "18:56",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "19:18",
@@ -9724,7 +9946,14 @@
                         },
                         {
                             "time": "21:18",
-                            "special": true
+                            "special": true,
+                            "red": true
+                        },
+                        {
+                            "time": "22:28",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "*"
                         }
                     ],
                     "saturdays": [
@@ -9738,7 +9967,8 @@
                         },
                         {
                             "time": "06:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:45",
@@ -9746,19 +9976,23 @@
                         },
                         {
                             "time": "07:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:15",
@@ -9766,23 +10000,28 @@
                         },
                         {
                             "time": "09:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "10:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "10:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "12:15",
@@ -9790,7 +10029,8 @@
                         },
                         {
                             "time": "12:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "13:15",
@@ -11753,23 +11993,28 @@
                         },
                         {
                             "time": "06:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:40",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:25",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:35",
@@ -11817,23 +12062,28 @@
                         },
                         {
                             "time": "16:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:55",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "19:25",
@@ -11871,11 +12121,13 @@
                         },
                         {
                             "time": "07:40",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:20",
@@ -11911,11 +12163,13 @@
                         },
                         {
                             "time": "17:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:40",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "19:50",
@@ -11932,115 +12186,33 @@
                     ],
                     "sundays": [
                         {
-                            "time": "05:00",
+                            "time": "06:20",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "**"
+                        },
+                        {
+                            "time": "09:10",
                             "special": false
                         },
                         {
-                            "time": "05:40",
+                            "time": "12:00",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "**"
+                        },
+                        {
+                            "time": "14:50",
                             "special": false
                         },
                         {
-                            "time": "06:10",
-                            "special": true
+                            "time": "17:40",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "**"
                         },
                         {
-                            "time": "06:40",
-                            "special": true
-                        },
-                        {
-                            "time": "07:15",
-                            "special": true
-                        },
-                        {
-                            "time": "07:50",
-                            "special": true
-                        },
-                        {
-                            "time": "08:25",
-                            "special": true
-                        },
-                        {
-                            "time": "09:35",
-                            "special": false
-                        },
-                        {
-                            "time": "10:10",
-                            "special": false
-                        },
-                        {
-                            "time": "10:45",
-                            "special": false
-                        },
-                        {
-                            "time": "11:20",
-                            "special": false
-                        },
-                        {
-                            "time": "11:55",
-                            "special": false
-                        },
-                        {
-                            "time": "12:30",
-                            "special": false
-                        },
-                        {
-                            "time": "13:05",
-                            "special": false
-                        },
-                        {
-                            "time": "13:40",
-                            "special": false
-                        },
-                        {
-                            "time": "14:15",
-                            "special": false
-                        },
-                        {
-                            "time": "15:25",
-                            "special": false
-                        },
-                        {
-                            "time": "16:00",
-                            "special": false
-                        },
-                        {
-                            "time": "16:35",
-                            "special": true
-                        },
-                        {
-                            "time": "17:10",
-                            "special": true
-                        },
-                        {
-                            "time": "17:45",
-                            "special": true
-                        },
-                        {
-                            "time": "18:20",
-                            "special": true
-                        },
-                        {
-                            "time": "18:55",
-                            "special": true
-                        },
-                        {
-                            "time": "19:25",
-                            "special": false
-                        },
-                        {
-                            "time": "20:00",
-                            "special": false
-                        },
-                        {
-                            "time": "21:00",
-                            "special": false
-                        },
-                        {
-                            "time": "22:00",
-                            "special": false
-                        },
-                        {
-                            "time": "23:00",
+                            "time": "20:20",
                             "special": false
                         }
                     ]
@@ -12110,23 +12282,28 @@
                     "weekdays": [
                         {
                             "time": "05:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:10",
@@ -12174,27 +12351,33 @@
                         },
                         {
                             "time": "15:05",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "15:40",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:25",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:35",
@@ -12228,11 +12411,13 @@
                         },
                         {
                             "time": "06:25",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:05",
@@ -12272,11 +12457,13 @@
                         },
                         {
                             "time": "16:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:40",
@@ -12298,114 +12485,36 @@
                     "sundays": [
                         {
                             "time": "05:10",
-                            "special": true
+                            "special": true,
+                            "red": true,
+                            "asterisk": "**"
                         },
                         {
-                            "time": "06:00",
-                            "special": true
-                        },
-                        {
-                            "time": "06:30",
-                            "special": true
-                        },
-                        {
-                            "time": "07:00",
-                            "special": true
-                        },
-                        {
-                            "time": "07:35",
-                            "special": true
-                        },
-                        {
-                            "time": "08:10",
+                            "time": "07:50",
                             "special": false
                         },
                         {
-                            "time": "08:45",
+                            "time": "10:30",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "**"
+                        },
+                        {
+                            "time": "13:30",
                             "special": false
                         },
                         {
-                            "time": "09:20",
+                            "time": "16:10",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "**"
+                        },
+                        {
+                            "time": "19:10",
                             "special": false
                         },
                         {
-                            "time": "09:55",
-                            "special": false
-                        },
-                        {
-                            "time": "11:00",
-                            "special": false
-                        },
-                        {
-                            "time": "11:35",
-                            "special": false
-                        },
-                        {
-                            "time": "12:10",
-                            "special": false
-                        },
-                        {
-                            "time": "12:45",
-                            "special": false
-                        },
-                        {
-                            "time": "13:20",
-                            "special": false
-                        },
-                        {
-                            "time": "13:55",
-                            "special": false
-                        },
-                        {
-                            "time": "14:30",
-                            "special": false
-                        },
-                        {
-                            "time": "15:05",
-                            "special": true
-                        },
-                        {
-                            "time": "15:40",
-                            "special": true
-                        },
-                        {
-                            "time": "16:15",
-                            "special": true
-                        },
-                        {
-                            "time": "16:50",
-                            "special": true
-                        },
-                        {
-                            "time": "17:25",
-                            "special": true
-                        },
-                        {
-                            "time": "18:00",
-                            "special": true
-                        },
-                        {
-                            "time": "18:35",
-                            "special": false
-                        },
-                        {
-                            "time": "19:35",
-                            "special": false
-                        },
-                        {
-                            "time": "20:00",
-                            "special": false
-                        },
-                        {
-                            "time": "21:00",
-                            "special": false
-                        },
-                        {
-                            "time": "22:00",
-                            "special": false
-                        },
-                        {
-                            "time": "23:00",
+                            "time": "21:30",
                             "special": false
                         }
                     ]
@@ -14089,7 +14198,7 @@
                         "neighborhood": "Marcenaria MC",
                         "lat": -16.697588,
                         "lng": -43.824804,
-                        "dist_m": 4037.2,
+                        "dist_m": 4037.3,
                         "lines": [
                             "3301"
                         ]
@@ -14101,7 +14210,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.700736,
                         "lng": -43.824051,
-                        "dist_m": 4632.5,
+                        "dist_m": 4632.4,
                         "lines": [
                             "3301",
                             "3302"
@@ -14114,7 +14223,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.702392,
                         "lng": -43.821974,
-                        "dist_m": 4938.1,
+                        "dist_m": 4938,
                         "lines": [
                             "3301"
                         ]
@@ -14166,7 +14275,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.702789,
                         "lng": -43.830938,
-                        "dist_m": 6958.8,
+                        "dist_m": 6958.7,
                         "lines": [
                             "2203",
                             "3301"
@@ -14179,7 +14288,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.705064,
                         "lng": -43.836642,
-                        "dist_m": 7622.8,
+                        "dist_m": 7622.7,
                         "lines": [
                             "2203",
                             "3301",
@@ -14193,7 +14302,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.705802,
                         "lng": -43.837504,
-                        "dist_m": 7747.8,
+                        "dist_m": 7747.7,
                         "lines": [
                             "2203",
                             "3301",
@@ -14222,7 +14331,7 @@
                         "neighborhood": "Esplanada",
                         "lat": -16.709474,
                         "lng": -43.842437,
-                        "dist_m": 8437.1,
+                        "dist_m": 8437,
                         "lines": [
                             "2203",
                             "2603",
@@ -14254,7 +14363,7 @@
                         "neighborhood": "Posto de Saúde",
                         "lat": -16.714054,
                         "lng": -43.845005,
-                        "dist_m": 9104.9,
+                        "dist_m": 9104.8,
                         "lines": [
                             "3301",
                             "4603"
@@ -14267,7 +14376,7 @@
                         "neighborhood": "Vera Cruz",
                         "lat": -16.717878,
                         "lng": -43.848456,
-                        "dist_m": 9867.9,
+                        "dist_m": 9867.8,
                         "lines": [
                             "2603",
                             "3301",
@@ -14330,7 +14439,7 @@
                         "neighborhood": "Lojão do Brás",
                         "lat": -16.722159,
                         "lng": -43.865017,
-                        "dist_m": 11899.7,
+                        "dist_m": 11899.6,
                         "lines": [
                             "1501",
                             "1601",
@@ -14839,7 +14948,7 @@
                         "neighborhood": "Oficina Multimarcas",
                         "lat": -16.698477,
                         "lng": -43.820608,
-                        "dist_m": 10819.5,
+                        "dist_m": 10819.6,
                         "lines": [
                             "3301"
                         ]
@@ -14851,7 +14960,7 @@
                         "neighborhood": "Jardim Primavera",
                         "lat": -16.696211,
                         "lng": -43.818723,
-                        "dist_m": 11144,
+                        "dist_m": 11144.1,
                         "lines": [
                             "3301",
                             "3302"
@@ -14864,7 +14973,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.697914,
                         "lng": -43.809907,
-                        "dist_m": 12765,
+                        "dist_m": 12765.1,
                         "lines": [
                             "3301",
                             "3302"
@@ -14877,7 +14986,7 @@
                         "neighborhood": "Jardim Primavera",
                         "lat": -16.697914,
                         "lng": -43.809907,
-                        "dist_m": 12765,
+                        "dist_m": 12765.1,
                         "lines": [
                             "3301",
                             "3302"
@@ -14890,7 +14999,7 @@
                         "neighborhood": "Jardim Primavera",
                         "lat": -16.697914,
                         "lng": -43.809907,
-                        "dist_m": 12765,
+                        "dist_m": 12765.1,
                         "lines": [
                             "3301",
                             "3302"
@@ -14903,7 +15012,7 @@
                         "neighborhood": "Jardim Primavera",
                         "lat": -16.694515,
                         "lng": -43.804629,
-                        "dist_m": 13645.8,
+                        "dist_m": 13645.9,
                         "lines": [
                             "3301",
                             "3302"
@@ -14916,7 +15025,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.69517,
                         "lng": -43.802916,
-                        "dist_m": 13842.3,
+                        "dist_m": 13842.4,
                         "lines": [
                             "3301"
                         ]
@@ -15120,52 +15229,7 @@
                         }
                     ],
                     "saturdays": [],
-                    "sundays": [
-                        {
-                            "time": "06:55",
-                            "special": false
-                        },
-                        {
-                            "time": "07:30",
-                            "special": false
-                        },
-                        {
-                            "time": "08:40",
-                            "special": false
-                        },
-                        {
-                            "time": "10:25",
-                            "special": false
-                        },
-                        {
-                            "time": "12:10",
-                            "special": false
-                        },
-                        {
-                            "time": "13:55",
-                            "special": false
-                        },
-                        {
-                            "time": "15:40",
-                            "special": false
-                        },
-                        {
-                            "time": "16:15",
-                            "special": false
-                        },
-                        {
-                            "time": "17:25",
-                            "special": false
-                        },
-                        {
-                            "time": "18:00",
-                            "special": false
-                        },
-                        {
-                            "time": "19:10",
-                            "special": false
-                        }
-                    ]
+                    "sundays": []
                 }
             },
             "neighborhoods": [
@@ -15209,7 +15273,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.696183,
                         "lng": -43.800184,
-                        "dist_m": 1464.5,
+                        "dist_m": 1464.6,
                         "lines": [
                             "3301",
                             "3302"
@@ -15222,7 +15286,7 @@
                         "neighborhood": "Jardim Primavera",
                         "lat": -16.699201,
                         "lng": -43.807931,
-                        "dist_m": 2653.5,
+                        "dist_m": 2653.6,
                         "lines": [
                             "3301",
                             "3302"
@@ -15235,7 +15299,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.698605,
                         "lng": -43.80752,
-                        "dist_m": 2653.5,
+                        "dist_m": 2653.6,
                         "lines": [
                             "3302"
                         ]
@@ -15247,7 +15311,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.696281,
                         "lng": -43.808736,
-                        "dist_m": 3124.4,
+                        "dist_m": 3124.5,
                         "lines": [
                             "3301",
                             "3302"
@@ -15260,7 +15324,7 @@
                         "neighborhood": "Jardim Primavera",
                         "lat": -16.693341,
                         "lng": -43.813265,
-                        "dist_m": 3707.1,
+                        "dist_m": 3707.2,
                         "lines": [
                             "3301",
                             "3302"
@@ -15273,7 +15337,7 @@
                         "neighborhood": "Jardim Primavera",
                         "lat": -16.694055,
                         "lng": -43.812159,
-                        "dist_m": 3707.1,
+                        "dist_m": 3707.2,
                         "lines": [
                             "3301",
                             "3302"
@@ -15286,7 +15350,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.698602,
                         "lng": -43.820861,
-                        "dist_m": 4888.9,
+                        "dist_m": 4889,
                         "lines": [
                             "3301",
                             "3302"
@@ -15299,7 +15363,7 @@
                         "neighborhood": "Jardim Primavera",
                         "lat": -16.697828,
                         "lng": -43.820224,
-                        "dist_m": 4888.9,
+                        "dist_m": 4889,
                         "lines": [
                             "3301",
                             "3302"
@@ -15312,7 +15376,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.70071,
                         "lng": -43.824053,
-                        "dist_m": 5317.3,
+                        "dist_m": 5317.4,
                         "lines": [
                             "3301",
                             "3302"
@@ -15325,7 +15389,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.700436,
                         "lng": -43.823168,
-                        "dist_m": 5317.3,
+                        "dist_m": 5317.4,
                         "lines": [
                             "3302"
                         ]
@@ -15337,7 +15401,7 @@
                         "neighborhood": "Jardim Primavera MAX MIN",
                         "lat": -16.700436,
                         "lng": -43.823168,
-                        "dist_m": 5317.3,
+                        "dist_m": 5317.4,
                         "lines": [
                             "3301",
                             "3302"
@@ -15378,7 +15442,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.705029,
                         "lng": -43.83657,
-                        "dist_m": 6741.8,
+                        "dist_m": 6741.9,
                         "lines": [
                             "2203",
                             "3301",
@@ -15406,7 +15470,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.708458,
                         "lng": -43.840545,
-                        "dist_m": 7320.2,
+                        "dist_m": 7320.3,
                         "lines": [
                             "2203",
                             "3301",
@@ -15420,7 +15484,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.708458,
                         "lng": -43.840545,
-                        "dist_m": 7320.2,
+                        "dist_m": 7320.3,
                         "lines": [
                             "2203",
                             "2603",
@@ -15437,7 +15501,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.707892,
                         "lng": -43.839543,
-                        "dist_m": 7320.2,
+                        "dist_m": 7320.3,
                         "lines": [
                             "3302"
                         ]
@@ -15473,7 +15537,7 @@
                         "neighborhood": "vi N26",
                         "lat": -16.709288,
                         "lng": -43.847308,
-                        "dist_m": 8381.6,
+                        "dist_m": 8381.7,
                         "lines": [
                             "3302"
                         ]
@@ -15485,7 +15549,7 @@
                         "neighborhood": "Alcides Rabelo",
                         "lat": -16.713247,
                         "lng": -43.853004,
-                        "dist_m": 9276.7,
+                        "dist_m": 9276.8,
                         "lines": [
                             "2203",
                             "2604",
@@ -15499,7 +15563,7 @@
                         "neighborhood": "Parque de Exposições",
                         "lat": -16.713247,
                         "lng": -43.853004,
-                        "dist_m": 9276.7,
+                        "dist_m": 9276.8,
                         "lines": [
                             "2203",
                             "2604",
@@ -15513,7 +15577,7 @@
                         "neighborhood": "Vila Exposicao",
                         "lat": -16.716451,
                         "lng": -43.857999,
-                        "dist_m": 9917.7,
+                        "dist_m": 9917.8,
                         "lines": [
                             "2203",
                             "2601",
@@ -15529,7 +15593,7 @@
                         "neighborhood": "Vila Regina",
                         "lat": -16.718466,
                         "lng": -43.860429,
-                        "dist_m": 10260.1,
+                        "dist_m": 10260.2,
                         "lines": [
                             "2203",
                             "2601",
@@ -15545,7 +15609,7 @@
                         "neighborhood": "Sao Joao CODEVASF",
                         "lat": -16.720964,
                         "lng": -43.864504,
-                        "dist_m": 10830.1,
+                        "dist_m": 10830.2,
                         "lines": [
                             "2203",
                             "2601",
@@ -15561,7 +15625,7 @@
                         "neighborhood": "Lojão do Brás",
                         "lat": -16.722642,
                         "lng": -43.865118,
-                        "dist_m": 11028.7,
+                        "dist_m": 11028.8,
                         "lines": [
                             "1501",
                             "1601",
@@ -15600,7 +15664,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.728381,
                         "lng": -43.866363,
-                        "dist_m": 11683.6,
+                        "dist_m": 11683.7,
                         "lines": [
                             "1601",
                             "1701",
@@ -15635,7 +15699,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.728381,
                         "lng": -43.866363,
-                        "dist_m": 11683.6,
+                        "dist_m": 11683.7,
                         "lines": [
                             "1601",
                             "1701",
@@ -16249,48 +16313,7 @@
                             "special": false
                         }
                     ],
-                    "sundays": [
-                        {
-                            "time": "06:20",
-                            "special": false
-                        },
-                        {
-                            "time": "08:05",
-                            "special": false
-                        },
-                        {
-                            "time": "09:50",
-                            "special": false
-                        },
-                        {
-                            "time": "11:35",
-                            "special": false
-                        },
-                        {
-                            "time": "13:20",
-                            "special": false
-                        },
-                        {
-                            "time": "15:05",
-                            "special": false
-                        },
-                        {
-                            "time": "16:50",
-                            "special": false
-                        },
-                        {
-                            "time": "18:35",
-                            "special": false
-                        },
-                        {
-                            "time": "20:20",
-                            "special": false
-                        },
-                        {
-                            "time": "22:00",
-                            "special": false
-                        }
-                    ]
+                    "sundays": []
                 }
             },
             "neighborhoods": [
@@ -17641,7 +17664,9 @@
                         "RUA DO BELA VISTA",
                         "RUA JUSTINO NUNES DA SILVA."
                     ],
-                    "obs": [],
+                    "obs": [
+                        "OSO em caráter experimental"
+                    ],
                     "weekdays": [
                         {
                             "time": "05:00",
@@ -17930,7 +17955,68 @@
                             "special": false
                         }
                     ],
-                    "sundays": []
+                    "sundays": [
+                        {
+                            "time": "05:40",
+                            "special": false
+                        },
+                        {
+                            "time": "07:00",
+                            "special": false
+                        },
+                        {
+                            "time": "07:40",
+                            "special": false
+                        },
+                        {
+                            "time": "09:00",
+                            "special": false
+                        },
+                        {
+                            "time": "09:40",
+                            "special": false
+                        },
+                        {
+                            "time": "11:05",
+                            "special": false
+                        },
+                        {
+                            "time": "11:45",
+                            "special": false
+                        },
+                        {
+                            "time": "13:10",
+                            "special": false
+                        },
+                        {
+                            "time": "13:50",
+                            "special": false
+                        },
+                        {
+                            "time": "15:15",
+                            "special": false
+                        },
+                        {
+                            "time": "15:55",
+                            "special": false
+                        },
+                        {
+                            "time": "17:20",
+                            "special": false
+                        },
+                        {
+                            "time": "18:00",
+                            "special": false
+                        },
+                        {
+                            "time": "19:40",
+                            "special": false
+                        },
+                        {
+                            "time": "21:30",
+                            "special": false
+                        }
+                    ]
                 },
                 "volta": {
                     "title": "NOSSA SENHORA DAS GRAÇAS para o INDEPENDÊNCIA",
@@ -17982,7 +18068,9 @@
                         "RODOANEL LESTE",
                         "PORTAL DOS IPÊS."
                     ],
-                    "obs": [],
+                    "obs": [
+                        "OSO em caráter experimental"
+                    ],
                     "weekdays": [
                         {
                             "time": "05:50",
@@ -20115,8 +20203,21 @@
                     ],
                     "weekdays": [
                         {
+                            "time": "05:10",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "*"
+                        },
+                        {
+                            "time": "05:35",
+                            "special": true,
+                            "red": true,
+                            "asterisk": "*"
+                        },
+                        {
                             "time": "05:55",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:15",
@@ -20128,7 +20229,8 @@
                         },
                         {
                             "time": "06:55",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:15",
@@ -20156,7 +20258,8 @@
                         },
                         {
                             "time": "09:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:55",
@@ -20164,7 +20267,8 @@
                         },
                         {
                             "time": "10:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:15",
@@ -20172,7 +20276,8 @@
                         },
                         {
                             "time": "11:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:55",
@@ -20180,7 +20285,8 @@
                         },
                         {
                             "time": "12:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "12:35",
@@ -20216,7 +20322,8 @@
                         },
                         {
                             "time": "15:55",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:15",
@@ -20224,7 +20331,8 @@
                         },
                         {
                             "time": "16:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:15",
@@ -20232,7 +20340,8 @@
                         },
                         {
                             "time": "17:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:55",
@@ -20270,11 +20379,13 @@
                         },
                         {
                             "time": "05:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:55",
@@ -20282,11 +20393,13 @@
                         },
                         {
                             "time": "07:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:05",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:40",
@@ -20298,11 +20411,13 @@
                         },
                         {
                             "time": "09:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "10:25",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:00",
@@ -20310,11 +20425,13 @@
                         },
                         {
                             "time": "11:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "12:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "12:45",
@@ -20322,7 +20439,8 @@
                         },
                         {
                             "time": "13:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "13:55",
@@ -20369,7 +20487,80 @@
                             "special": false
                         }
                     ],
-                    "sundays": []
+                    "sundays": [
+                        {
+                            "time": "05:10",
+                            "special": false
+                        },
+                        {
+                            "time": "06:00",
+                            "special": false
+                        },
+                        {
+                            "time": "07:00",
+                            "special": false
+                        },
+                        {
+                            "time": "08:00",
+                            "special": false
+                        },
+                        {
+                            "time": "09:00",
+                            "special": false
+                        },
+                        {
+                            "time": "10:00",
+                            "special": false
+                        },
+                        {
+                            "time": "11:00",
+                            "special": false
+                        },
+                        {
+                            "time": "12:00",
+                            "special": false
+                        },
+                        {
+                            "time": "13:00",
+                            "special": false
+                        },
+                        {
+                            "time": "14:00",
+                            "special": false
+                        },
+                        {
+                            "time": "15:00",
+                            "special": false
+                        },
+                        {
+                            "time": "16:00",
+                            "special": false
+                        },
+                        {
+                            "time": "17:00",
+                            "special": false
+                        },
+                        {
+                            "time": "18:00",
+                            "special": false
+                        },
+                        {
+                            "time": "19:00",
+                            "special": false
+                        },
+                        {
+                            "time": "20:00",
+                            "special": false
+                        },
+                        {
+                            "time": "21:00",
+                            "special": false
+                        },
+                        {
+                            "time": "22:00",
+                            "special": false
+                        }
+                    ]
                 },
                 "volta": {
                     "title": "SANTA RAFAELA para o INDEPENDÊNCIA",
@@ -20457,7 +20648,8 @@
                         },
                         {
                             "time": "06:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:30",
@@ -20465,7 +20657,8 @@
                         },
                         {
                             "time": "06:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:10",
@@ -20473,7 +20666,8 @@
                         },
                         {
                             "time": "07:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:55",
@@ -20481,7 +20675,8 @@
                         },
                         {
                             "time": "08:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:35",
@@ -20489,7 +20684,8 @@
                         },
                         {
                             "time": "09:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:35",
@@ -20501,7 +20697,8 @@
                         },
                         {
                             "time": "10:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "10:55",
@@ -20509,7 +20706,8 @@
                         },
                         {
                             "time": "11:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:55",
@@ -20549,7 +20747,8 @@
                         },
                         {
                             "time": "15:55",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:15",
@@ -20561,7 +20760,8 @@
                         },
                         {
                             "time": "16:55",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:15",
@@ -20569,7 +20769,8 @@
                         },
                         {
                             "time": "17:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:45",
@@ -20599,7 +20800,8 @@
                     "saturdays": [
                         {
                             "time": "05:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "05:45",
@@ -20607,7 +20809,8 @@
                         },
                         {
                             "time": "06:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:55",
@@ -20615,7 +20818,8 @@
                         },
                         {
                             "time": "07:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:05",
@@ -20623,11 +20827,13 @@
                         },
                         {
                             "time": "08:40",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:45",
@@ -20635,11 +20841,13 @@
                         },
                         {
                             "time": "10:25",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:35",
@@ -20651,11 +20859,13 @@
                         },
                         {
                             "time": "12:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "13:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "13:55",
@@ -22176,15 +22386,19 @@
                         "AV.CASTELAR PRATES",
                         "AV.OLÍMPIO PRATES"
                     ],
-                    "obs": [],
+                    "obs": [
+                        "Nos horários em vermelho a linha atenderá o bairro Terra Jardins."
+                    ],
                     "weekdays": [
                         {
                             "time": "05:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:15",
@@ -22192,7 +22406,8 @@
                         },
                         {
                             "time": "08:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:05",
@@ -22228,11 +22443,13 @@
                         },
                         {
                             "time": "16:25",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:15",
@@ -22254,11 +22471,13 @@
                     "saturdays": [
                         {
                             "time": "07:05",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "10:35",
@@ -22329,7 +22548,9 @@
                         "AV.PROJETADA A",
                         "RUA PROJETADA 1."
                     ],
-                    "obs": [],
+                    "obs": [
+                        "Nos horários em vermelho a linha atenderá o bairro Terra Jardins."
+                    ],
                     "weekdays": [
                         {
                             "time": "06:30",
@@ -22373,19 +22594,23 @@
                         },
                         {
                             "time": "15:25",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "19:05",
@@ -22419,15 +22644,18 @@
                         },
                         {
                             "time": "11:25",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "13:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "14:55",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:40",
@@ -22483,7 +22711,7 @@
                         "neighborhood": "Santo Antonio",
                         "lat": -16.745697,
                         "lng": -43.842178,
-                        "dist_m": 3396.6,
+                        "dist_m": 3396.5,
                         "lines": [
                             "5101",
                             "5801",
@@ -22497,7 +22725,7 @@
                         "neighborhood": "Santo Antonio",
                         "lat": -16.745686,
                         "lng": -43.840795,
-                        "dist_m": 3396.6,
+                        "dist_m": 3396.5,
                         "lines": [
                             "5101"
                         ]
@@ -22509,7 +22737,7 @@
                         "neighborhood": "Jardim Alvorada",
                         "lat": -16.745686,
                         "lng": -43.840795,
-                        "dist_m": 3396.6,
+                        "dist_m": 3396.5,
                         "lines": [
                             "5101"
                         ]
@@ -22521,7 +22749,7 @@
                         "neighborhood": "Alvorada",
                         "lat": -16.745686,
                         "lng": -43.840795,
-                        "dist_m": 3396.6,
+                        "dist_m": 3396.5,
                         "lines": [
                             "5101",
                             "5901"
@@ -22534,7 +22762,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.745697,
                         "lng": -43.842178,
-                        "dist_m": 3396.6,
+                        "dist_m": 3396.5,
                         "lines": [
                             "5101"
                         ]
@@ -22546,7 +22774,7 @@
                         "neighborhood": "Alvorada",
                         "lat": -16.745697,
                         "lng": -43.842178,
-                        "dist_m": 3396.6,
+                        "dist_m": 3396.5,
                         "lines": [
                             "5101"
                         ]
@@ -22558,7 +22786,7 @@
                         "neighborhood": "Alvorada",
                         "lat": -16.745697,
                         "lng": -43.842178,
-                        "dist_m": 3396.6,
+                        "dist_m": 3396.5,
                         "lines": [
                             "5101",
                             "5901"
@@ -22571,7 +22799,7 @@
                         "neighborhood": "Alvorada",
                         "lat": -16.745697,
                         "lng": -43.842178,
-                        "dist_m": 3396.6,
+                        "dist_m": 3396.5,
                         "lines": [
                             "5101",
                             "5901"
@@ -22584,7 +22812,7 @@
                         "neighborhood": "Cintra",
                         "lat": -16.741592,
                         "lng": -43.844244,
-                        "dist_m": 4044.2,
+                        "dist_m": 4044.1,
                         "lines": [
                             "5101",
                             "5901"
@@ -22597,7 +22825,7 @@
                         "neighborhood": "Cintra",
                         "lat": -16.741582,
                         "lng": -43.844909,
-                        "dist_m": 4115,
+                        "dist_m": 4114.9,
                         "lines": [
                             "5101",
                             "5901"
@@ -22610,7 +22838,7 @@
                         "neighborhood": "Santa Rita I",
                         "lat": -16.740428,
                         "lng": -43.848642,
-                        "dist_m": 5105.4,
+                        "dist_m": 5105.3,
                         "lines": [
                             "5101",
                             "5901"
@@ -22623,7 +22851,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.732499,
                         "lng": -43.850928,
-                        "dist_m": 6560.2,
+                        "dist_m": 6560.1,
                         "lines": [
                             "5101",
                             "5901"
@@ -22636,7 +22864,7 @@
                         "neighborhood": "Santa Rita",
                         "lat": -16.733348,
                         "lng": -43.851485,
-                        "dist_m": 6560.2,
+                        "dist_m": 6560.1,
                         "lines": [
                             "5101",
                             "5901"
@@ -22649,7 +22877,7 @@
                         "neighborhood": "Santa Rita",
                         "lat": -16.732499,
                         "lng": -43.850928,
-                        "dist_m": 6560.2,
+                        "dist_m": 6560.1,
                         "lines": [
                             "5101",
                             "5901"
@@ -22662,7 +22890,7 @@
                         "neighborhood": "Santa Rita",
                         "lat": -16.733348,
                         "lng": -43.851485,
-                        "dist_m": 6560.2,
+                        "dist_m": 6560.1,
                         "lines": [
                             "5101",
                             "5801",
@@ -22690,7 +22918,7 @@
                         "neighborhood": "Rua João Souto",
                         "lat": -16.726322,
                         "lng": -43.866493,
-                        "dist_m": 9322.8,
+                        "dist_m": 9322.7,
                         "lines": [
                             "1601",
                             "1701",
@@ -22724,7 +22952,7 @@
                         "neighborhood": "Rua Camilo Prates",
                         "lat": -16.721782,
                         "lng": -43.865586,
-                        "dist_m": 9837.8,
+                        "dist_m": 9837.7,
                         "lines": [
                             "1601",
                             "1701",
@@ -22758,7 +22986,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.719085,
                         "lng": -43.862132,
-                        "dist_m": 10453.2,
+                        "dist_m": 10453.1,
                         "lines": [
                             "1501",
                             "1601",
@@ -22789,7 +23017,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.719085,
                         "lng": -43.862132,
-                        "dist_m": 10453.2,
+                        "dist_m": 10453.1,
                         "lines": [
                             "1501",
                             "1601",
@@ -22822,7 +23050,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.718888,
                         "lng": -43.863225,
-                        "dist_m": 10584.2,
+                        "dist_m": 10584.1,
                         "lines": [
                             "5101"
                         ]
@@ -22834,7 +23062,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.719085,
                         "lng": -43.862132,
-                        "dist_m": 10584.2,
+                        "dist_m": 10584.1,
                         "lines": [
                             "5101"
                         ]
@@ -22846,7 +23074,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.718849,
                         "lng": -43.863235,
-                        "dist_m": 10588.7,
+                        "dist_m": 10588.6,
                         "lines": [
                             "5101"
                         ]
@@ -22858,7 +23086,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.713899,
                         "lng": -43.868486,
-                        "dist_m": 12041.1,
+                        "dist_m": 12041,
                         "lines": [
                             "5101"
                         ]
@@ -22870,7 +23098,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.704399,
                         "lng": -43.871161,
-                        "dist_m": 13149.7,
+                        "dist_m": 13149.6,
                         "lines": [
                             "1501",
                             "5101",
@@ -22884,7 +23112,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.704399,
                         "lng": -43.871207,
-                        "dist_m": 13154.6,
+                        "dist_m": 13154.5,
                         "lines": [
                             "1501",
                             "5101",
@@ -22898,7 +23126,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.704546,
                         "lng": -43.871778,
-                        "dist_m": 13218.6,
+                        "dist_m": 13218.5,
                         "lines": [
                             "1501",
                             "5101",
@@ -22912,7 +23140,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.704035,
                         "lng": -43.875089,
-                        "dist_m": 13584.3,
+                        "dist_m": 13584.2,
                         "lines": [
                             "1501",
                             "5101"
@@ -22938,7 +23166,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.698721,
                         "lng": -43.879122,
-                        "dist_m": 14543.8,
+                        "dist_m": 14543.7,
                         "lines": [
                             "1501",
                             "5101"
@@ -22951,7 +23179,7 @@
                         "neighborhood": "Vila Atlantida",
                         "lat": -16.699797,
                         "lng": -43.879338,
-                        "dist_m": 14543.8,
+                        "dist_m": 14543.7,
                         "lines": [
                             "5101"
                         ]
@@ -22963,7 +23191,7 @@
                         "neighborhood": "Nova Morada",
                         "lat": -16.690383,
                         "lng": -43.877691,
-                        "dist_m": 15484.5,
+                        "dist_m": 15484.4,
                         "lines": [
                             "5101"
                         ]
@@ -22975,7 +23203,7 @@
                         "neighborhood": "Nova Morada",
                         "lat": -16.690383,
                         "lng": -43.877691,
-                        "dist_m": 15484.5,
+                        "dist_m": 15484.4,
                         "lines": [
                             "5101"
                         ]
@@ -22987,7 +23215,7 @@
                         "neighborhood": "Eldorado",
                         "lat": -16.690383,
                         "lng": -43.877691,
-                        "dist_m": 15484.5,
+                        "dist_m": 15484.4,
                         "lines": [
                             "5101"
                         ]
@@ -23130,7 +23358,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.713891,
                         "lng": -43.868511,
-                        "dist_m": 4385.6,
+                        "dist_m": 4385.7,
                         "lines": [
                             "5101"
                         ]
@@ -23178,7 +23406,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.722787,
                         "lng": -43.865156,
-                        "dist_m": 6052.5,
+                        "dist_m": 6052.6,
                         "lines": [
                             "1501",
                             "1601",
@@ -23197,7 +23425,7 @@
                         "neighborhood": "Lojão do Brás",
                         "lat": -16.722787,
                         "lng": -43.865156,
-                        "dist_m": 6052.5,
+                        "dist_m": 6052.6,
                         "lines": [
                             "1501",
                             "1601",
@@ -23351,7 +23579,7 @@
                         "neighborhood": "Santa Rita",
                         "lat": -16.740341,
                         "lng": -43.851476,
-                        "dist_m": 10166.2,
+                        "dist_m": 10166.3,
                         "lines": [
                             "5101",
                             "5901"
@@ -23364,7 +23592,7 @@
                         "neighborhood": "Santa Rita",
                         "lat": -16.739555,
                         "lng": -43.851447,
-                        "dist_m": 10166.2,
+                        "dist_m": 10166.3,
                         "lines": [
                             "5101",
                             "5901"
@@ -23377,7 +23605,7 @@
                         "neighborhood": "Cintra",
                         "lat": -16.739555,
                         "lng": -43.851447,
-                        "dist_m": 10166.2,
+                        "dist_m": 10166.3,
                         "lines": [
                             "5101",
                             "5901"
@@ -23390,7 +23618,7 @@
                         "neighborhood": "Cintra",
                         "lat": -16.741612,
                         "lng": -43.844901,
-                        "dist_m": 11253.4,
+                        "dist_m": 11253.5,
                         "lines": [
                             "5101",
                             "5901"
@@ -23403,7 +23631,7 @@
                         "neighborhood": "Cintra",
                         "lat": -16.741619,
                         "lng": -43.844252,
-                        "dist_m": 11322.5,
+                        "dist_m": 11322.6,
                         "lines": [
                             "5101",
                             "5901"
@@ -23416,7 +23644,7 @@
                         "neighborhood": "Alvorada",
                         "lat": -16.745752,
                         "lng": -43.84222,
-                        "dist_m": 11997.7,
+                        "dist_m": 11997.8,
                         "lines": [
                             "5101",
                             "5901"
@@ -23429,7 +23657,7 @@
                         "neighborhood": "Alvorada",
                         "lat": -16.745752,
                         "lng": -43.84222,
-                        "dist_m": 11997.7,
+                        "dist_m": 11997.8,
                         "lines": [
                             "5101",
                             "5901"
@@ -23442,7 +23670,7 @@
                         "neighborhood": "Alvorada",
                         "lat": -16.745752,
                         "lng": -43.84222,
-                        "dist_m": 11997.7,
+                        "dist_m": 11997.8,
                         "lines": [
                             "5101"
                         ]
@@ -23454,7 +23682,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.745752,
                         "lng": -43.84222,
-                        "dist_m": 11997.7,
+                        "dist_m": 11997.8,
                         "lines": [
                             "5101"
                         ]
@@ -23466,7 +23694,7 @@
                         "neighborhood": "Alvorada",
                         "lat": -16.748127,
                         "lng": -43.83945,
-                        "dist_m": 12434.2,
+                        "dist_m": 12434.3,
                         "lines": [
                             "5101",
                             "5901"
@@ -23479,7 +23707,7 @@
                         "neighborhood": "Alvorada Posto Trucks Helio",
                         "lat": -16.748127,
                         "lng": -43.83945,
-                        "dist_m": 12434.2,
+                        "dist_m": 12434.3,
                         "lines": [
                             "5101"
                         ]
@@ -23491,7 +23719,7 @@
                         "neighborhood": "Santo Antonio",
                         "lat": -16.748127,
                         "lng": -43.83945,
-                        "dist_m": 12434.2,
+                        "dist_m": 12434.3,
                         "lines": [
                             "5101"
                         ]
@@ -23503,7 +23731,7 @@
                         "neighborhood": "Santo Antonio",
                         "lat": -16.748127,
                         "lng": -43.83945,
-                        "dist_m": 12434.2,
+                        "dist_m": 12434.3,
                         "lines": [
                             "5101"
                         ]
@@ -23515,7 +23743,7 @@
                         "neighborhood": "Santo Antonio Alfeu de Quadros",
                         "lat": -16.748127,
                         "lng": -43.83945,
-                        "dist_m": 12434.2,
+                        "dist_m": 12434.3,
                         "lines": [
                             "5101"
                         ]
@@ -25132,7 +25360,7 @@
                         "neighborhood": "Roxo Verde",
                         "lat": -16.726875,
                         "lng": -43.854353,
-                        "dist_m": 3140.8,
+                        "dist_m": 3140.7,
                         "lines": [
                             "1501",
                             "4701",
@@ -25165,7 +25393,7 @@
                         "neighborhood": "Roxo Verde",
                         "lat": -16.726107,
                         "lng": -43.858997,
-                        "dist_m": 3656,
+                        "dist_m": 3655.9,
                         "lines": [
                             "5702"
                         ]
@@ -25177,7 +25405,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.726107,
                         "lng": -43.858997,
-                        "dist_m": 3656,
+                        "dist_m": 3655.9,
                         "lines": [
                             "1501",
                             "5702",
@@ -25211,7 +25439,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.71907,
                         "lng": -43.862158,
-                        "dist_m": 4947.6,
+                        "dist_m": 4947.5,
                         "lines": [
                             "1501",
                             "1601",
@@ -25351,7 +25579,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.73071,
                         "lng": -43.871755,
-                        "dist_m": 6997,
+                        "dist_m": 6996.9,
                         "lines": [
                             "1601",
                             "1701",
@@ -25490,7 +25718,7 @@
                         "neighborhood": "Cidade Nova",
                         "lat": -16.742846,
                         "lng": -43.872414,
-                        "dist_m": 9832.4,
+                        "dist_m": 9832.3,
                         "lines": [
                             "1701",
                             "1702",
@@ -25568,7 +25796,7 @@
                         "neighborhood": "Major Prates",
                         "lat": -16.754599,
                         "lng": -43.881299,
-                        "dist_m": 11452.6,
+                        "dist_m": 11452.5,
                         "lines": [
                             "5702",
                             "7103"
@@ -25581,7 +25809,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.754372,
                         "lng": -43.881148,
-                        "dist_m": 11452.6,
+                        "dist_m": 11452.5,
                         "lines": [
                             "5702"
                         ]
@@ -25645,7 +25873,7 @@
                         "neighborhood": "Morada do Parque",
                         "lat": -16.759658,
                         "lng": -43.886307,
-                        "dist_m": 13388.2,
+                        "dist_m": 13388.1,
                         "lines": [
                             "5702",
                             "8201"
@@ -25671,7 +25899,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.755787,
                         "lng": -43.891709,
-                        "dist_m": 14266.8,
+                        "dist_m": 14266.7,
                         "lines": [
                             "5702",
                             "8201"
@@ -26388,7 +26616,7 @@
                         "neighborhood": "Vila Ipiranga",
                         "lat": -16.720107,
                         "lng": -43.841458,
-                        "dist_m": 13681.1,
+                        "dist_m": 13680.9,
                         "lines": [
                             "5702",
                             "6404"
@@ -26401,7 +26629,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.720107,
                         "lng": -43.841458,
-                        "dist_m": 13681.1,
+                        "dist_m": 13680.9,
                         "lines": [
                             "5601",
                             "5702",
@@ -26417,7 +26645,7 @@
                         "neighborhood": "Monte Carmelo",
                         "lat": -16.718569,
                         "lng": -43.837682,
-                        "dist_m": 14193.7,
+                        "dist_m": 14193.6,
                         "lines": [
                             "5702",
                             "6404"
@@ -26475,7 +26703,8 @@
                     "weekdays": [
                         {
                             "time": "05:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:00",
@@ -28201,47 +28430,58 @@
                     "weekdays": [
                         {
                             "time": "05:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "05:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "05:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:30",
@@ -28315,19 +28555,23 @@
                     "saturdays": [
                         {
                             "time": "06:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "09:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "11:30",
@@ -28462,59 +28706,73 @@
                         },
                         {
                             "time": "12:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "13:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "14:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "14:35",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "15:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "15:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "15:40",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:40",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:05",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:40",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "19:35",
@@ -28536,15 +28794,18 @@
                     "saturdays": [
                         {
                             "time": "07:55",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "10:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "10:45",
@@ -28552,23 +28813,28 @@
                         },
                         {
                             "time": "12:30",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "12:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "14:05",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "18:05",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "19:55",
@@ -29759,7 +30025,56 @@
                             "special": false
                         }
                     ],
-                    "sundays": []
+                    "sundays": [
+                        {
+                            "time": "05:30",
+                            "special": false
+                        },
+                        {
+                            "time": "06:50",
+                            "special": false
+                        },
+                        {
+                            "time": "08:20",
+                            "special": false
+                        },
+                        {
+                            "time": "09:50",
+                            "special": false
+                        },
+                        {
+                            "time": "11:25",
+                            "special": false
+                        },
+                        {
+                            "time": "12:50",
+                            "special": false
+                        },
+                        {
+                            "time": "14:15",
+                            "special": false
+                        },
+                        {
+                            "time": "15:45",
+                            "special": false
+                        },
+                        {
+                            "time": "17:15",
+                            "special": false
+                        },
+                        {
+                            "time": "18:45",
+                            "special": false
+                        },
+                        {
+                            "time": "20:15",
+                            "special": false
+                        },
+                        {
+                            "time": "21:45",
+                            "special": false
+                        }
+                    ]
                 },
                 "volta": {
                     "title": "RODOVIÁRIA para a VILA SION II",
@@ -31785,7 +32100,7 @@
                         "neighborhood": "Vila Oliveira",
                         "lat": -16.714822,
                         "lng": -43.880537,
-                        "dist_m": 1527.9,
+                        "dist_m": 1527.8,
                         "lines": [
                             "5901",
                             "6901"
@@ -33750,8 +34065,62 @@
                         "AV. UM."
                     ],
                     "obs": [],
-                    "weekdays": [],
-                    "saturdays": [],
+                    "weekdays": [
+                        {
+                            "time": "06:30",
+                            "special": false
+                        },
+                        {
+                            "time": "08:10",
+                            "special": false
+                        },
+                        {
+                            "time": "09:50",
+                            "special": false
+                        },
+                        {
+                            "time": "11:25",
+                            "special": false
+                        },
+                        {
+                            "time": "13:10",
+                            "special": false
+                        },
+                        {
+                            "time": "15:05",
+                            "special": false
+                        },
+                        {
+                            "time": "17:00",
+                            "special": false
+                        },
+                        {
+                            "time": "19:10",
+                            "special": false
+                        },
+                        {
+                            "time": "22:30",
+                            "special": false
+                        }
+                    ],
+                    "saturdays": [
+                        {
+                            "time": "08:10",
+                            "special": false
+                        },
+                        {
+                            "time": "09:50",
+                            "special": false
+                        },
+                        {
+                            "time": "11:25",
+                            "special": false
+                        },
+                        {
+                            "time": "13:15",
+                            "special": false
+                        }
+                    ],
                     "sundays": []
                 }
             },
@@ -33946,7 +34315,7 @@
                         "neighborhood": "Cidade Nova",
                         "lat": -16.736823,
                         "lng": -43.865389,
-                        "dist_m": 6110.7,
+                        "dist_m": 6110.6,
                         "lines": [
                             "2603",
                             "4601",
@@ -33960,7 +34329,7 @@
                         "neighborhood": "Vila Guilhermina",
                         "lat": -16.732209,
                         "lng": -43.869797,
-                        "dist_m": 6808.5,
+                        "dist_m": 6808.4,
                         "lines": [
                             "2603",
                             "4601",
@@ -33974,7 +34343,7 @@
                         "neighborhood": "Vila Guilhermina",
                         "lat": -16.732527,
                         "lng": -43.869584,
-                        "dist_m": 6808.5,
+                        "dist_m": 6808.4,
                         "lines": [
                             "2601",
                             "2603",
@@ -33989,7 +34358,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.730642,
                         "lng": -43.867336,
-                        "dist_m": 7405.4,
+                        "dist_m": 7405.3,
                         "lines": [
                             "2601",
                             "2603",
@@ -34003,7 +34372,7 @@
                         "neighborhood": "Vilefort",
                         "lat": -16.73054,
                         "lng": -43.867963,
-                        "dist_m": 7405.4,
+                        "dist_m": 7405.3,
                         "lines": [
                             "2203",
                             "2601",
@@ -34021,7 +34390,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.730642,
                         "lng": -43.867336,
-                        "dist_m": 7405.4,
+                        "dist_m": 7405.3,
                         "lines": [
                             "1601",
                             "1701",
@@ -34052,7 +34421,7 @@
                         "neighborhood": "Rua João Souto",
                         "lat": -16.726318,
                         "lng": -43.866502,
-                        "dist_m": 7894.3,
+                        "dist_m": 7894.2,
                         "lines": [
                             "1601",
                             "1701",
@@ -34086,7 +34455,7 @@
                         "neighborhood": "Rua Camilo Prates",
                         "lat": -16.722069,
                         "lng": -43.865681,
-                        "dist_m": 8374.9,
+                        "dist_m": 8374.8,
                         "lines": [
                             "1601",
                             "1701",
@@ -34120,7 +34489,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.719054,
                         "lng": -43.862097,
-                        "dist_m": 9028.9,
+                        "dist_m": 9028.8,
                         "lines": [
                             "1501",
                             "1601",
@@ -34151,7 +34520,7 @@
                         "neighborhood": "Vila Regina",
                         "lat": -16.719923,
                         "lng": -43.862547,
-                        "dist_m": 9028.9,
+                        "dist_m": 9028.8,
                         "lines": [
                             "6201R"
                         ]
@@ -34163,7 +34532,7 @@
                         "neighborhood": "Vila Regina",
                         "lat": -16.719923,
                         "lng": -43.862547,
-                        "dist_m": 9028.9,
+                        "dist_m": 9028.8,
                         "lines": [
                             "6201R"
                         ]
@@ -34175,7 +34544,7 @@
                         "neighborhood": "Vila Regina",
                         "lat": -16.71611,
                         "lng": -43.859291,
-                        "dist_m": 9578.3,
+                        "dist_m": 9578.2,
                         "lines": [
                             "6201R"
                         ]
@@ -34187,7 +34556,7 @@
                         "neighborhood": "Vila Exposicao",
                         "lat": -16.714773,
                         "lng": -43.858615,
-                        "dist_m": 9743.5,
+                        "dist_m": 9743.4,
                         "lines": [
                             "6201R"
                         ]
@@ -34199,7 +34568,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.712666,
                         "lng": -43.85722,
-                        "dist_m": 10022.9,
+                        "dist_m": 10022.8,
                         "lines": [
                             "6201R"
                         ]
@@ -34211,7 +34580,7 @@
                         "neighborhood": "Vila Exposicao",
                         "lat": -16.707548,
                         "lng": -43.853965,
-                        "dist_m": 10740.8,
+                        "dist_m": 10740.7,
                         "lines": [
                             "6201R"
                         ]
@@ -34223,7 +34592,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.707616,
                         "lng": -43.85043,
-                        "dist_m": 11117.4,
+                        "dist_m": 11117.3,
                         "lines": [
                             "6201R"
                         ]
@@ -34235,7 +34604,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.700427,
                         "lng": -43.847844,
-                        "dist_m": 11985.5,
+                        "dist_m": 11985.4,
                         "lines": [
                             "6201R",
                             "8201"
@@ -34248,7 +34617,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.700427,
                         "lng": -43.847844,
-                        "dist_m": 11985.5,
+                        "dist_m": 11985.4,
                         "lines": [
                             "6201R",
                             "8201"
@@ -34261,7 +34630,7 @@
                         "neighborhood": "Tiradentes",
                         "lat": -16.699747,
                         "lng": -43.849518,
-                        "dist_m": 12198.4,
+                        "dist_m": 12198.3,
                         "lines": [
                             "6201R",
                             "8201"
@@ -34274,7 +34643,7 @@
                         "neighborhood": "RenasceNa",
                         "lat": -16.698317,
                         "lng": -43.851671,
-                        "dist_m": 12478.8,
+                        "dist_m": 12478.7,
                         "lines": [
                             "6201R",
                             "8201"
@@ -34287,7 +34656,7 @@
                         "neighborhood": "RenasceNa",
                         "lat": -16.693997,
                         "lng": -43.853608,
-                        "dist_m": 13001.7,
+                        "dist_m": 13001.6,
                         "lines": [
                             "6201R"
                         ]
@@ -34299,7 +34668,7 @@
                         "neighborhood": "RenasceNa",
                         "lat": -16.692956,
                         "lng": -43.853067,
-                        "dist_m": 13347.1,
+                        "dist_m": 13347,
                         "lines": [
                             "6201R"
                         ]
@@ -34350,7 +34719,7 @@
                         "neighborhood": "Tiradentes",
                         "lat": -16.699772,
                         "lng": -43.84951,
-                        "dist_m": 950.3,
+                        "dist_m": 950.4,
                         "lines": [
                             "6201R",
                             "8201"
@@ -34376,7 +34745,7 @@
                         "neighborhood": "Tiradentes",
                         "lat": -16.707522,
                         "lng": -43.854644,
-                        "dist_m": 2466.6,
+                        "dist_m": 2466.7,
                         "lines": [
                             "6201R",
                             "8201"
@@ -34389,7 +34758,7 @@
                         "neighborhood": "Tiradentes",
                         "lat": -16.708202,
                         "lng": -43.854645,
-                        "dist_m": 2542.2,
+                        "dist_m": 2542.3,
                         "lines": [
                             "6201R"
                         ]
@@ -34401,7 +34770,7 @@
                         "neighborhood": "Vila Exposicao",
                         "lat": -16.707531,
                         "lng": -43.854001,
-                        "dist_m": 2542.2,
+                        "dist_m": 2542.3,
                         "lines": [
                             "6201R"
                         ]
@@ -34451,7 +34820,7 @@
                         "neighborhood": "Vila Regina",
                         "lat": -16.720962,
                         "lng": -43.864508,
-                        "dist_m": 4765.2,
+                        "dist_m": 4765.3,
                         "lines": [
                             "6201R"
                         ]
@@ -34463,7 +34832,7 @@
                         "neighborhood": "Lojão do Brás",
                         "lat": -16.722671,
                         "lng": -43.865131,
-                        "dist_m": 4967.1,
+                        "dist_m": 4967.2,
                         "lines": [
                             "1501",
                             "1601",
@@ -34502,7 +34871,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.728373,
                         "lng": -43.866345,
-                        "dist_m": 5616.1,
+                        "dist_m": 5616.2,
                         "lines": [
                             "1601",
                             "1701",
@@ -34572,7 +34941,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.730113,
                         "lng": -43.870736,
-                        "dist_m": 6290.5,
+                        "dist_m": 6290.6,
                         "lines": [
                             "1601",
                             "1701",
@@ -34630,7 +34999,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.735872,
                         "lng": -43.867976,
-                        "dist_m": 7043.4,
+                        "dist_m": 7043.5,
                         "lines": [
                             "2603",
                             "4601",
@@ -34683,7 +35052,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.739579,
                         "lng": -43.866034,
-                        "dist_m": 8885.5,
+                        "dist_m": 8885.6,
                         "lines": [
                             "6201R"
                         ]
@@ -34782,7 +35151,7 @@
                         "neighborhood": "Antonio Pimenta",
                         "lat": -16.751589,
                         "lng": -43.851767,
-                        "dist_m": 12173.3,
+                        "dist_m": 12173.4,
                         "lines": [
                             "6201R",
                             "6202"
@@ -34795,7 +35164,7 @@
                         "neighborhood": "Jose Carlos de Lima",
                         "lat": -16.756333,
                         "lng": -43.848871,
-                        "dist_m": 12786,
+                        "dist_m": 12786.1,
                         "lines": [
                             "6201R",
                             "6202"
@@ -34808,7 +35177,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.758049,
                         "lng": -43.846339,
-                        "dist_m": 13116.4,
+                        "dist_m": 13116.5,
                         "lines": [
                             "6201R"
                         ]
@@ -34820,7 +35189,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.760105,
                         "lng": -43.844313,
-                        "dist_m": 13495.4,
+                        "dist_m": 13495.5,
                         "lines": [
                             "6201R"
                         ]
@@ -34876,7 +35245,9 @@
                         "AV. JOÃO BATISTA CORDEIRO",
                         "RUA \"F\"."
                     ],
-                    "obs": [],
+                    "obs": [
+                        "Adequação de itinerário"
+                    ],
                     "weekdays": [
                         {
                             "time": "05:30",
@@ -35064,7 +35435,9 @@
                         "RUA JOSÉ BRANDÃO",
                         "RUA PAULINO SILVA MAIA."
                     ],
-                    "obs": [],
+                    "obs": [
+                        "Adequação de itinerário"
+                    ],
                     "weekdays": [
                         {
                             "time": "05:30",
@@ -36616,7 +36989,44 @@
                             "special": false
                         }
                     ],
-                    "sundays": []
+                    "sundays": [
+                        {
+                            "time": "06:00",
+                            "special": false
+                        },
+                        {
+                            "time": "08:00",
+                            "special": false
+                        },
+                        {
+                            "time": "10:00",
+                            "special": false
+                        },
+                        {
+                            "time": "12:00",
+                            "special": false
+                        },
+                        {
+                            "time": "14:00",
+                            "special": false
+                        },
+                        {
+                            "time": "16:00",
+                            "special": false
+                        },
+                        {
+                            "time": "18:00",
+                            "special": false
+                        },
+                        {
+                            "time": "19:50",
+                            "special": false
+                        },
+                        {
+                            "time": "21:30",
+                            "special": false
+                        }
+                    ]
                 },
                 "volta": {
                     "title": "MONTE SIÃO IV para o VILA TELMA",
@@ -36679,7 +37089,8 @@
                         },
                         {
                             "time": "06:15",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:50",
@@ -37414,7 +37825,7 @@
                         "neighborhood": "Independencia",
                         "lat": -16.721596,
                         "lng": -43.808678,
-                        "dist_m": 13571.2,
+                        "dist_m": 13571.1,
                         "lines": [
                             "6404"
                         ]
@@ -37555,7 +37966,7 @@
                         "neighborhood": "Roxo Verde",
                         "lat": -16.726491,
                         "lng": -43.854037,
-                        "dist_m": 7497.9,
+                        "dist_m": 7497.8,
                         "lines": [
                             "1501",
                             "4701",
@@ -37574,7 +37985,7 @@
                         "neighborhood": "Roxo Verde",
                         "lat": -16.726593,
                         "lng": -43.857311,
-                        "dist_m": 7876.5,
+                        "dist_m": 7876.4,
                         "lines": [
                             "1501",
                             "5702",
@@ -37588,7 +37999,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.726208,
                         "lng": -43.858992,
-                        "dist_m": 8062.7,
+                        "dist_m": 8062.6,
                         "lines": [
                             "1501",
                             "5702",
@@ -37605,7 +38016,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.725397,
                         "lng": -43.863513,
-                        "dist_m": 8553.7,
+                        "dist_m": 8553.6,
                         "lines": [
                             "1501",
                             "5702",
@@ -37692,7 +38103,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.728376,
                         "lng": -43.866353,
-                        "dist_m": 10588.7,
+                        "dist_m": 10588.6,
                         "lines": [
                             "1601",
                             "1701",
@@ -37762,7 +38173,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.730707,
                         "lng": -43.871755,
-                        "dist_m": 11394.9,
+                        "dist_m": 11394.8,
                         "lines": [
                             "1601",
                             "1701",
@@ -37814,7 +38225,7 @@
                         "neighborhood": "Santo Expedito Igreja do Santo Expedito",
                         "lat": -16.740067,
                         "lng": -43.870652,
-                        "dist_m": 12602,
+                        "dist_m": 12601.9,
                         "lines": [
                             "1601",
                             "1701",
@@ -38259,7 +38670,7 @@
                         "neighborhood": "Ferro Velho",
                         "lat": -16.771339,
                         "lng": -43.866905,
-                        "dist_m": 513,
+                        "dist_m": 513.1,
                         "lines": [
                             "6604"
                         ]
@@ -38271,7 +38682,7 @@
                         "neighborhood": "Padaria",
                         "lat": -16.771339,
                         "lng": -43.866905,
-                        "dist_m": 513,
+                        "dist_m": 513.1,
                         "lines": [
                             "6604"
                         ]
@@ -38283,7 +38694,7 @@
                         "neighborhood": "Depósito",
                         "lat": -16.771339,
                         "lng": -43.866905,
-                        "dist_m": 513,
+                        "dist_m": 513.1,
                         "lines": [
                             "6604"
                         ]
@@ -38295,7 +38706,7 @@
                         "neighborhood": "Igreja",
                         "lat": -16.771339,
                         "lng": -43.866905,
-                        "dist_m": 513,
+                        "dist_m": 513.1,
                         "lines": [
                             "6604"
                         ]
@@ -38331,7 +38742,7 @@
                         "neighborhood": "MaracaN",
                         "lat": -16.763318,
                         "lng": -43.864725,
-                        "dist_m": 3405.5,
+                        "dist_m": 3405.6,
                         "lines": [
                             "2601",
                             "6604",
@@ -38737,7 +39148,7 @@
                         "neighborhood": "Rua Camilo Prates",
                         "lat": -16.721487,
                         "lng": -43.865498,
-                        "dist_m": 10700.8,
+                        "dist_m": 10700.9,
                         "lines": [
                             "1601",
                             "1701",
@@ -39213,7 +39624,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.780856,
                         "lng": -43.868575,
-                        "dist_m": 13136.8,
+                        "dist_m": 13136.7,
                         "lines": [
                             "6604"
                         ]
@@ -39237,7 +39648,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.776054,
                         "lng": -43.867728,
-                        "dist_m": 13997.1,
+                        "dist_m": 13997,
                         "lines": [
                             "6604"
                         ]
@@ -39274,7 +39685,9 @@
                         "RUA FILOMENO RIBEIRO",
                         "AV. PADRE CHICO."
                     ],
-                    "obs": [],
+                    "obs": [
+                        "1. Os ônibus irão fazer a parada de operação na Av. Um no bairro Residencial Sul, após circular no bairro no sentido volta, podendo efetuar embarque e desembarque. 2. Adequação de horário ao sábado em caráter experimental."
+                    ],
                     "weekdays": [
                         {
                             "time": "06:00",
@@ -39398,7 +39811,9 @@
                         "RUA 26",
                         "AV. HUM."
                     ],
-                    "obs": [],
+                    "obs": [
+                        "1. Os ônibus irão fazer a parada de operação na Av. Um no bairro Residencial Sul, após circular no bairro no sentido volta, podendo efetuar embarque e desembarque. 2. Adequação de horário ao sábado em caráter experimental."
+                    ],
                     "weekdays": [
                         {
                             "time": "06:40",
@@ -40943,7 +41358,8 @@
                     "weekdays": [
                         {
                             "time": "05:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "05:55",
@@ -41575,7 +41991,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.703196,
                         "lng": -43.874023,
-                        "dist_m": 430,
+                        "dist_m": 430.1,
                         "lines": [
                             "7101"
                         ]
@@ -41599,7 +42015,7 @@
                         "neighborhood": "Bela Paisagem",
                         "lat": -16.697418,
                         "lng": -43.873748,
-                        "dist_m": 1271.7,
+                        "dist_m": 1271.8,
                         "lines": [
                             "7101"
                         ]
@@ -41611,7 +42027,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.695828,
                         "lng": -43.87362,
-                        "dist_m": 1730.5,
+                        "dist_m": 1730.6,
                         "lines": [
                             "7101"
                         ]
@@ -41635,7 +42051,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.701383,
                         "lng": -43.872454,
-                        "dist_m": 2360.6,
+                        "dist_m": 2360.7,
                         "lines": [
                             "1501",
                             "5101",
@@ -41649,7 +42065,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.70305,
                         "lng": -43.872216,
-                        "dist_m": 2547.9,
+                        "dist_m": 2548,
                         "lines": [
                             "1501",
                             "5101",
@@ -41689,7 +42105,7 @@
                         "neighborhood": "Barcelona Park",
                         "lat": -16.710662,
                         "lng": -43.877771,
-                        "dist_m": 4259.3,
+                        "dist_m": 4259.4,
                         "lines": [
                             "7101"
                         ]
@@ -41713,7 +42129,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.717614,
                         "lng": -43.876965,
-                        "dist_m": 5295.1,
+                        "dist_m": 5295.2,
                         "lines": [
                             "5901",
                             "7101"
@@ -41726,7 +42142,7 @@
                         "neighborhood": "Todos os Santos",
                         "lat": -16.719465,
                         "lng": -43.873245,
-                        "dist_m": 5750.9,
+                        "dist_m": 5751,
                         "lines": [
                             "5901",
                             "5902",
@@ -41741,7 +42157,7 @@
                         "neighborhood": "Todos os Santos",
                         "lat": -16.722713,
                         "lng": -43.875021,
-                        "dist_m": 6158.6,
+                        "dist_m": 6158.7,
                         "lines": [
                             "5901",
                             "5902",
@@ -41771,7 +42187,7 @@
                         "neighborhood": "Melo",
                         "lat": -16.721418,
                         "lng": -43.870311,
-                        "dist_m": 6708.4,
+                        "dist_m": 6708.5,
                         "lines": [
                             "5901",
                             "5902",
@@ -41929,7 +42345,7 @@
                         "neighborhood": "Vila Guilhermina Prefeitura",
                         "lat": -16.734972,
                         "lng": -43.872184,
-                        "dist_m": 9864.8,
+                        "dist_m": 9864.9,
                         "lines": [
                             "1601",
                             "1701",
@@ -41953,7 +42369,7 @@
                         "neighborhood": "Vila Guilhermina",
                         "lat": -16.74,
                         "lng": -43.87196,
-                        "dist_m": 10425.2,
+                        "dist_m": 10425.3,
                         "lines": [
                             "1601",
                             "1701",
@@ -41976,7 +42392,7 @@
                         "neighborhood": "Vila Guilhermina",
                         "lat": -16.741604,
                         "lng": -43.872003,
-                        "dist_m": 10604.3,
+                        "dist_m": 10604.4,
                         "lines": [
                             "1601",
                             "1701",
@@ -42000,7 +42416,7 @@
                         "neighborhood": "Cidade Nova",
                         "lat": -16.742892,
                         "lng": -43.872427,
-                        "dist_m": 10754.7,
+                        "dist_m": 10754.8,
                         "lines": [
                             "1701",
                             "1702",
@@ -42019,7 +42435,7 @@
                         "neighborhood": "Vargem Grande",
                         "lat": -16.742892,
                         "lng": -43.872427,
-                        "dist_m": 10754.7,
+                        "dist_m": 10754.8,
                         "lines": [
                             "1702",
                             "5702",
@@ -42035,7 +42451,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.749609,
                         "lng": -43.877752,
-                        "dist_m": 11698,
+                        "dist_m": 11698.1,
                         "lines": [
                             "1701",
                             "1702",
@@ -42147,11 +42563,13 @@
                         },
                         {
                             "time": "15:55",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "16:50",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "17:40",
@@ -42185,7 +42603,8 @@
                         },
                         {
                             "time": "12:10",
-                            "special": true
+                            "special": true,
+                            "red": true
                         }
                     ],
                     "sundays": []
@@ -42235,11 +42654,13 @@
                     "weekdays": [
                         {
                             "time": "06:00",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "06:45",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "07:45",
@@ -42259,7 +42680,8 @@
                         },
                         {
                             "time": "11:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "12:15",
@@ -42301,7 +42723,8 @@
                     "saturdays": [
                         {
                             "time": "06:20",
-                            "special": true
+                            "special": true,
+                            "red": true
                         },
                         {
                             "time": "08:00",
@@ -42376,7 +42799,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.788672,
                         "lng": -43.887913,
-                        "dist_m": 1351,
+                        "dist_m": 1350.9,
                         "lines": [
                             "7103"
                         ]
@@ -42388,7 +42811,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.791305,
                         "lng": -43.888518,
-                        "dist_m": 1697.7,
+                        "dist_m": 1697.6,
                         "lines": [
                             "7103"
                         ]
@@ -42472,7 +42895,7 @@
                         "neighborhood": "Cidade Nova",
                         "lat": -16.745978,
                         "lng": -43.874839,
-                        "dist_m": 7771,
+                        "dist_m": 7770.9,
                         "lines": [
                             "1701",
                             "1702",
@@ -42664,7 +43087,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.730646,
                         "lng": -43.867323,
-                        "dist_m": 11452.9,
+                        "dist_m": 11452.8,
                         "lines": [
                             "1601",
                             "1701",
@@ -42729,7 +43152,7 @@
                         "neighborhood": "Rua Camilo Prates",
                         "lat": -16.721951,
                         "lng": -43.86565,
-                        "dist_m": 12439.4,
+                        "dist_m": 12439.3,
                         "lines": [
                             "1601",
                             "1701",
@@ -42763,7 +43186,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.719056,
                         "lng": -43.862144,
-                        "dist_m": 13075.5,
+                        "dist_m": 13075.4,
                         "lines": [
                             "1501",
                             "1601",
@@ -42794,7 +43217,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.719056,
                         "lng": -43.862144,
-                        "dist_m": 13075.5,
+                        "dist_m": 13075.4,
                         "lines": [
                             "1501",
                             "1601",
@@ -42813,7 +43236,7 @@
                         "neighborhood": "Vila Toncheff",
                         "lat": -16.715747,
                         "lng": -43.863243,
-                        "dist_m": 13550.1,
+                        "dist_m": 13550,
                         "lines": [
                             "1501",
                             "1601",
@@ -42829,7 +43252,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.713511,
                         "lng": -43.863657,
-                        "dist_m": 13804.1,
+                        "dist_m": 13804,
                         "lines": [
                             "1501",
                             "1601",
@@ -42889,7 +43312,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.700137,
                         "lng": -43.868919,
-                        "dist_m": 15393.4,
+                        "dist_m": 15393.3,
                         "lines": [
                             "1701",
                             "1702",
@@ -42903,7 +43326,7 @@
                         "neighborhood": "Bela Paisagem",
                         "lat": -16.700137,
                         "lng": -43.868919,
-                        "dist_m": 15393.4,
+                        "dist_m": 15393.3,
                         "lines": [
                             "1701",
                             "1702",
@@ -42917,7 +43340,7 @@
                         "neighborhood": "Santos Reis",
                         "lat": -16.690115,
                         "lng": -43.872811,
-                        "dist_m": 16582.5,
+                        "dist_m": 16582.4,
                         "lines": [
                             "1701",
                             "1702",
@@ -42931,7 +43354,7 @@
                         "neighborhood": "Vila Aurea",
                         "lat": -16.690984,
                         "lng": -43.872478,
-                        "dist_m": 16582.5,
+                        "dist_m": 16582.4,
                         "lines": [
                             "1701",
                             "1702",
@@ -43494,7 +43917,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.786882,
                         "lng": -43.88604,
-                        "dist_m": 17188.5,
+                        "dist_m": 17188.4,
                         "lines": [
                             "7103"
                         ]
@@ -43794,7 +44217,44 @@
                             "special": false
                         }
                     ],
-                    "sundays": []
+                    "sundays": [
+                        {
+                            "time": "06:40",
+                            "special": false
+                        },
+                        {
+                            "time": "08:10",
+                            "special": false
+                        },
+                        {
+                            "time": "10:00",
+                            "special": false
+                        },
+                        {
+                            "time": "11:45",
+                            "special": false
+                        },
+                        {
+                            "time": "13:30",
+                            "special": false
+                        },
+                        {
+                            "time": "15:25",
+                            "special": false
+                        },
+                        {
+                            "time": "17:20",
+                            "special": false
+                        },
+                        {
+                            "time": "19:05",
+                            "special": false
+                        },
+                        {
+                            "time": "20:40",
+                            "special": false
+                        }
+                    ]
                 },
                 "volta": {
                     "title": "JARDIM ELDORADO para o SÃO GERALDO II",
@@ -44174,7 +44634,7 @@
                         "neighborhood": "Morada do Parque",
                         "lat": -16.756079,
                         "lng": -43.889571,
-                        "dist_m": 1055.2,
+                        "dist_m": 1055.1,
                         "lines": [
                             "5702",
                             "8201"
@@ -44187,7 +44647,7 @@
                         "neighborhood": "Morada do Parque",
                         "lat": -16.759687,
                         "lng": -43.886323,
-                        "dist_m": 1640.1,
+                        "dist_m": 1640,
                         "lines": [
                             "5702",
                             "8201"
@@ -44439,7 +44899,7 @@
                         "neighborhood": "Rua Camilo Prates",
                         "lat": -16.721812,
                         "lng": -43.865608,
-                        "dist_m": 8393.5,
+                        "dist_m": 8393.4,
                         "lines": [
                             "1601",
                             "1701",
@@ -44698,7 +45158,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.69492,
                         "lng": -43.84849,
-                        "dist_m": 14064.4,
+                        "dist_m": 14064.3,
                         "lines": [
                             "2601",
                             "8201"
@@ -44751,7 +45211,7 @@
                         "neighborhood": "RenasceNa",
                         "lat": -16.69838,
                         "lng": -43.851648,
-                        "dist_m": 1637.7,
+                        "dist_m": 1637.8,
                         "lines": [
                             "6201R",
                             "8201"
@@ -44777,7 +45237,7 @@
                         "neighborhood": "Tiradentes",
                         "lat": -16.702994,
                         "lng": -43.849291,
-                        "dist_m": 2435.9,
+                        "dist_m": 2435.8,
                         "lines": [
                             "6201R",
                             "8201"
@@ -44790,7 +45250,7 @@
                         "neighborhood": "Tiradentes",
                         "lat": -16.707501,
                         "lng": -43.854652,
-                        "dist_m": 3562.2,
+                        "dist_m": 3562.1,
                         "lines": [
                             "6201R",
                             "8201"
@@ -44803,7 +45263,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.707501,
                         "lng": -43.854652,
-                        "dist_m": 3562.2,
+                        "dist_m": 3562.1,
                         "lines": [
                             "8201"
                         ]
@@ -44815,7 +45275,7 @@
                         "neighborhood": "Rensceça",
                         "lat": -16.707501,
                         "lng": -43.854652,
-                        "dist_m": 3562.2,
+                        "dist_m": 3562.1,
                         "lines": [
                             "2601",
                             "8201"
@@ -44828,7 +45288,7 @@
                         "neighborhood": "Alice Maia",
                         "lat": -16.709708,
                         "lng": -43.853986,
-                        "dist_m": 3852.2,
+                        "dist_m": 3852.1,
                         "lines": [
                             "2601",
                             "8201"
@@ -44841,7 +45301,7 @@
                         "neighborhood": "Vila Regina SESI MINAS",
                         "lat": -16.709708,
                         "lng": -43.853986,
-                        "dist_m": 3852.2,
+                        "dist_m": 3852.1,
                         "lines": [
                             "2601",
                             "8201"
@@ -44854,7 +45314,7 @@
                         "neighborhood": "Vila Regina",
                         "lat": -16.709367,
                         "lng": -43.854674,
-                        "dist_m": 3852.2,
+                        "dist_m": 3852.1,
                         "lines": [
                             "2601",
                             "6201R",
@@ -44868,7 +45328,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.713045,
                         "lng": -43.852658,
-                        "dist_m": 4322.2,
+                        "dist_m": 4322.1,
                         "lines": [
                             "2601",
                             "8201"
@@ -44881,7 +45341,7 @@
                         "neighborhood": "Vila Exposicao",
                         "lat": -16.716492,
                         "lng": -43.858042,
-                        "dist_m": 5013.1,
+                        "dist_m": 5012.9,
                         "lines": [
                             "2203",
                             "2601",
@@ -44897,7 +45357,7 @@
                         "neighborhood": "Vila Regina",
                         "lat": -16.718495,
                         "lng": -43.860495,
-                        "dist_m": 5356.7,
+                        "dist_m": 5356.6,
                         "lines": [
                             "2203",
                             "2601",
@@ -44913,7 +45373,7 @@
                         "neighborhood": "Sao Joao CODEVASF",
                         "lat": -16.720903,
                         "lng": -43.86447,
-                        "dist_m": 5915.1,
+                        "dist_m": 5915,
                         "lines": [
                             "2203",
                             "2601",
@@ -44929,7 +45389,7 @@
                         "neighborhood": "Lojão do Brás",
                         "lat": -16.722698,
                         "lng": -43.865127,
-                        "dist_m": 6127.6,
+                        "dist_m": 6127.5,
                         "lines": [
                             "1501",
                             "1601",
@@ -44968,7 +45428,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.721597,
                         "lng": -43.864801,
-                        "dist_m": 6127.6,
+                        "dist_m": 6127.5,
                         "lines": [
                             "1501",
                             "5801",
@@ -45001,7 +45461,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.724856,
                         "lng": -43.86967,
-                        "dist_m": 6732.7,
+                        "dist_m": 6732.6,
                         "lines": [
                             "5801",
                             "5802",
@@ -45016,7 +45476,7 @@
                         "neighborhood": "Jardim Sao Luis",
                         "lat": -16.726406,
                         "lng": -43.871268,
-                        "dist_m": 6974.9,
+                        "dist_m": 6974.8,
                         "lines": [
                             "5801",
                             "5802",
@@ -45031,7 +45491,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.730942,
                         "lng": -43.875876,
-                        "dist_m": 7678.6,
+                        "dist_m": 7678.5,
                         "lines": [
                             "5801",
                             "8201"
@@ -45044,7 +45504,7 @@
                         "neighborhood": "Jardim Sao Luiz",
                         "lat": -16.728559,
                         "lng": -43.878372,
-                        "dist_m": 8054.1,
+                        "dist_m": 8054,
                         "lines": [
                             "5801",
                             "8201"
@@ -45057,7 +45517,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.733754,
                         "lng": -43.878764,
-                        "dist_m": 8867.3,
+                        "dist_m": 8867.2,
                         "lines": [
                             "5802",
                             "5803",
@@ -45071,7 +45531,7 @@
                         "neighborhood": "Funcionarios",
                         "lat": -16.736484,
                         "lng": -43.881582,
-                        "dist_m": 9320.6,
+                        "dist_m": 9320.4,
                         "lines": [
                             "5803",
                             "8201"
@@ -45084,7 +45544,7 @@
                         "neighborhood": "Augusta Mota",
                         "lat": -16.735599,
                         "lng": -43.880891,
-                        "dist_m": 9320.6,
+                        "dist_m": 9320.4,
                         "lines": [
                             "8201"
                         ]
@@ -45096,7 +45556,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.740015,
                         "lng": -43.882674,
-                        "dist_m": 9733.3,
+                        "dist_m": 9733.1,
                         "lines": [
                             "8201"
                         ]
@@ -45108,7 +45568,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.743937,
                         "lng": -43.883576,
-                        "dist_m": 10179.9,
+                        "dist_m": 10179.7,
                         "lines": [
                             "8201"
                         ]
@@ -45120,7 +45580,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.746559,
                         "lng": -43.884234,
-                        "dist_m": 10479.7,
+                        "dist_m": 10479.6,
                         "lines": [
                             "8201"
                         ]
@@ -45132,7 +45592,7 @@
                         "neighborhood": "Morada do Parque",
                         "lat": -16.751305,
                         "lng": -43.885496,
-                        "dist_m": 11027.1,
+                        "dist_m": 11027,
                         "lines": [
                             "5702",
                             "8201"
@@ -45145,7 +45605,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.751786,
                         "lng": -43.886041,
-                        "dist_m": 11108.7,
+                        "dist_m": 11108.6,
                         "lines": [
                             "5702",
                             "8201"
@@ -45158,7 +45618,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.756371,
                         "lng": -43.885057,
-                        "dist_m": 11844.4,
+                        "dist_m": 11844.2,
                         "lines": [
                             "5702",
                             "8201"
@@ -45171,7 +45631,7 @@
                         "neighborhood": "Morada do Parque",
                         "lat": -16.756371,
                         "lng": -43.885057,
-                        "dist_m": 11844.4,
+                        "dist_m": 11844.2,
                         "lines": [
                             "5702",
                             "8201"
@@ -45184,7 +45644,7 @@
                         "neighborhood": "Morada do Parque",
                         "lat": -16.759615,
                         "lng": -43.886317,
-                        "dist_m": 12232.5,
+                        "dist_m": 12232.3,
                         "lines": [
                             "5702",
                             "8201"
@@ -45197,7 +45657,7 @@
                         "neighborhood": "Morada do Parque",
                         "lat": -16.759615,
                         "lng": -43.886317,
-                        "dist_m": 12232.5,
+                        "dist_m": 12232.3,
                         "lines": [
                             "5702",
                             "8201"
@@ -45210,7 +45670,7 @@
                         "neighborhood": "Morada do Parque",
                         "lat": -16.756034,
                         "lng": -43.889549,
-                        "dist_m": 12830.7,
+                        "dist_m": 12830.6,
                         "lines": [
                             "5702",
                             "8201"
@@ -45223,7 +45683,7 @@
                         "neighborhood": "Montes Claros",
                         "lat": -16.755753,
                         "lng": -43.891738,
-                        "dist_m": 13105.2,
+                        "dist_m": 13105,
                         "lines": [
                             "5702",
                             "8201"

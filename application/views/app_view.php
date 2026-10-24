@@ -13,13 +13,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-    <link rel="stylesheet" href="<?= $base_url ?>assets/css/app.css?v=2.3.0">
+    <link rel="stylesheet" href="<?= $base_url ?>assets/css/app.css?v=2.4.0">
 </head>
 <body>
     <header class="topbar">
         <div class="topbar__left">
             <span class="brand-mark">MC</span>
             <span class="brand-title">Ônibus Montes Claros</span>
+            <span id="mcClockPill" class="clock-pill" title="Horário oficial de Montes Claros (UTC-3) e calendário operacional">--:--</span>
         </div>
 
         <div class="topbar__right">
@@ -147,11 +148,33 @@
                             <span id="destCoordsInfo" class="field-hint">Digite o nome do local ou endereço</span>
                         </div>
 
+                        <div class="field-block">
+                            <div class="field-header">
+                                <label>Horário e dia da viagem</label>
+                                <div class="field-links">
+                                    <button type="button" id="btnTimeModeNow" class="link-btn active-mode">Usar agora (MC)</button>
+                                    <button type="button" id="btnTimeModeCustom" class="link-btn">Outro dia/hora</button>
+                                </div>
+                            </div>
+                            <div id="plannerTimeNowBar" class="time-context-bar">
+                                <span id="plannerTimeNowText">Sincronizando horário oficial de Montes Claros...</span>
+                            </div>
+                            <div id="plannerTimeCustomRow" class="grid-2" style="display:none;">
+                                <div>
+                                    <input type="date" id="inputPlanDate" class="input-text" aria-label="Data da viagem">
+                                </div>
+                                <div>
+                                    <input type="time" id="inputPlanTime" class="input-text" aria-label="Horário da viagem">
+                                </div>
+                            </div>
+                            <span id="plannerCalendarInfo" class="field-hint">Considera dias úteis, sábados, domingos, feriados e variações de bairro</span>
+                        </div>
+
                         <div class="presets-row">
                             <span class="presets-label">Sugestões:</span>
                             <button type="button" class="chip-btn preset-chip" data-orig-name="Colégio Marista São José" data-orig-lat="-16.7186" data-orig-lng="-43.8639" data-dest-name="Ibituruna Shopping" data-dest-lat="-16.7168" data-dest-lng="-43.8842">Marista → Ibituruna</button>
                             <button type="button" class="chip-btn preset-chip" data-orig-name="Hospital Aroldo Tourinho" data-orig-lat="-16.7145" data-orig-lng="-43.8648" data-dest-name="Montes Claros Shopping" data-dest-lat="-16.7372" data-dest-lng="-43.8705">Aroldo Tourinho → Shopping</button>
-                            <button type="button" class="chip-btn preset-chip" data-orig-name="UFMG (Universitário)" data-orig-lat="-16.6852" data-orig-lng="-43.8398" data-dest-name="Parque Municipal Milton Prates" data-dest-lat="-16.7524" data-dest-lng="-43.8768">UFMG → Parque Municipal</button>
+                            <button type="button" class="chip-btn preset-chip" data-orig-name="UFMG (Av. Universitária)" data-orig-lat="-16.6852" data-orig-lng="-43.8398" data-dest-name="Parque Municipal Milton Prates" data-dest-lat="-16.7524" data-dest-lng="-43.8768">UFMG → Parque Municipal</button>
                         </div>
 
                         <button type="button" id="btnCalculateRoute" class="btn-primary btn-full">
@@ -316,6 +339,6 @@
     </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
-    <script src="<?= $base_url ?>assets/js/app.js?v=2.3.0"></script>
+    <script src="<?= $base_url ?>assets/js/app.js?v=2.4.0"></script>
 </body>
 </html>
