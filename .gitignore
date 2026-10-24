@@ -1,0 +1,9 @@
+.env
+/vendor/
+/node_modules/
+/application/logs/*.php
+/application/logs/*.log
+/application/cache/gps/*.json
+/application/cache/alerts_store.json
+.DS_Store
+Thumbs.db

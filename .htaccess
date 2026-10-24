@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]
+
+# Bloqueia acesso direto à pasta "application" e "system" (fica fora do
+# webroot público na maioria das instalações, mas isso é uma segunda
+# camada de proteção caso o host não permita mover a pasta pra fora).
+<IfModule mod_alias.c>
+    RedirectMatch 403 ^/application/.*$
+    RedirectMatch 403 ^/system/.*$
+</IfModule>
