@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-    <link rel="stylesheet" href="<?= $base_url ?>assets/css/app.css?v=2.4.0">
+    <link rel="stylesheet" href="<?= $base_url ?>assets/css/app.css?v=2.5.0">
 </head>
 <body>
     <header class="topbar">
@@ -24,14 +24,18 @@
         </div>
 
         <div class="topbar__right">
-            <label class="switch-control" title="Exibe ônibus simulados na rota quando não houver veículos ativos no momento">
-                <input type="checkbox" id="toggleSimulate">
+            <label class="switch-control" title="Alternar visualização simultânea da rota de Ida e Volta da linha no mapa">
+                <input type="checkbox" id="toggleRouteBoth">
                 <span class="switch-track"></span>
-                <span class="switch-text">Simular veículos</span>
+                <span class="switch-text">Rota Ida e Volta</span>
             </label>
 
             <button type="button" id="btnMyLocation" class="btn-outline btn-sm">
-                Minha localização
+                Meu GPS
+            </button>
+
+            <button type="button" id="btnToggleDarkMode" class="btn-outline btn-sm" title="Alternar modo escuro">
+                Modo escuro
             </button>
 
             <button type="button" id="btnOpenApiKeyModal" class="btn-ghost btn-sm" title="Configurar chave opcional do Google Maps">
@@ -45,10 +49,11 @@
     </header>
 
     <div class="layout">
-        <aside class="sidebar">
-            <nav class="tabs-nav" role="tablist">
+        <aside class="sidebar" id="mainSidebar">
+            <nav class="tabs-nav" role="tablist" aria-label="Menu principal">
                 <button type="button" class="tab-link active" data-tab="lines" role="tab" aria-selected="true">Linhas</button>
                 <button type="button" class="tab-link" data-tab="planner" role="tab" aria-selected="false">Rotas</button>
+                <button type="button" class="tab-link" data-tab="nearby" role="tab" aria-selected="false">Próximos</button>
                 <button type="button" class="tab-link" data-tab="alerts" role="tab" aria-selected="false">
                     Alertas <span id="alertBadgeCount" class="count-pill" style="display:none;">0</span>
                 </button>
@@ -186,10 +191,93 @@
                 </div>
             </section>
 
-            <!-- ABA 3: ALERTAS -->
-            <section class="tab-panel" id="tab-alerts" role="tabpanel">
+            <!-- ABA 3: GPS SECUNDÁRIO — PONTOS MAIS PRÓXIMOS E GUIA ATÉ O EMBARQUE -->
+            <section class="tab-panel" id="tab-nearby" role="tabpanel">
                 <div class="panel-body">
                     <div class="form-card">
+                        <div class="field-header">
+                            <strong>Guia GPS até o Ponto de Embarque</strong>
+                            <button type="button" id="btnRefreshNearbyGps" class="link-btn">Atualizar GPS</button>
+                        </div>
+                        <span id="nearbyGpsStatusText" class="field-hint">
+                            Localiza os pontos de ônibus mais próximos de você e traça o caminho a pé até o embarque.
+                        </span>
+
+                        <div id="walkingGuideActiveBox" class="stop-focus-box" style="display:none;">
+                            <div class="stop-focus-box__content">
+                                <span class="stop-focus-box__label">Guiando a pé até o embarque</span>
+                                <strong id="walkingGuideStopTitle" class="stop-focus-box__title">--</strong>
+                                <span id="walkingGuideMetrics" class="stop-focus-box__eta">Calculando distância...</span>
+                            </div>
+                            <div class="stop-focus-box__actions">
+                                <button type="button" id="btnStopWalkingGuide" class="btn-ghost btn-xs">Encerrar</button>
+                            </div>
+                        </div>
+
+                        <div id="nearestLineStopCard" style="display:none;"></div>
+
+                        <button type="button" id="btnFindNearbyStops" class="btn-primary btn-full">
+                            Localizar pontos próximos de mim
+                        </button>
+                    </div>
+
+                    <div class="section-caption">
+                        <span>Pontos mais próximos da sua localização</span>
+                    </div>
+                    <div id="nearbyStopsListContainer" class="stops-list">
+                        <div style="padding:14px;text-align:center;color:var(--text-muted);font-size:12px;">
+                            Toque em "Localizar pontos próximos de mim" para ativar o GPS secundário.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABA 4: ALERTAS (DESEMBARQUE AUTOMÁTICO POR GPS + EMBARQUE) -->
+            <section class="tab-panel" id="tab-alerts" role="tabpanel">
+                <div class="panel-body">
+                    <!-- Alerta Automático de Desembarque por GPS -->
+                    <div class="form-card">
+                        <div class="field-header">
+                            <strong>Alerta Automático de Desembarque (GPS)</strong>
+                            <span id="autoAlightBadge" class="status-pill">Inativo</span>
+                        </div>
+                        <span class="field-hint">
+                            Detecta o seu GPS em tempo real durante a viagem e envia uma notificação automática quando o ônibus estiver chegando perto do seu ponto de descida.
+                        </span>
+
+                        <div class="field-block">
+                            <label for="alightSelectStop">Meu ponto de desembarque na linha <strong id="alightLineBadge">5801 (Ida)</strong></label>
+                            <select id="alightSelectStop" class="input-select"></select>
+                        </div>
+
+                        <div class="field-block">
+                            <label for="alightDistThreshold">Avisar antes do desembarque</label>
+                            <select id="alightDistThreshold" class="input-select">
+                                <option value="300">300 metros antes (~1 parada)</option>
+                                <option value="450" selected>450 metros antes (~2 paradas)</option>
+                                <option value="700">700 metros antes (~3 paradas)</option>
+                            </select>
+                        </div>
+
+                        <div id="autoAlightStatusBox" class="time-context-bar" style="display:none;">
+                            <span id="autoAlightStatusText">Monitorando GPS até o desembarque...</span>
+                        </div>
+
+                        <div class="grid-2">
+                            <button type="button" id="btnActivateAutoAlight" class="btn-primary btn-full">
+                                Ativar alerta de descida
+                            </button>
+                            <button type="button" id="btnClearAutoAlight" class="btn-outline btn-full">
+                                Desativar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Alerta de Embarque (Ônibus vindo até o ponto) -->
+                    <div class="form-card">
+                        <div class="field-header">
+                            <strong>Alerta de Aproximação no Embarque</strong>
+                        </div>
                         <div class="field-block">
                             <label for="alertSelectStop">Ponto de embarque na linha <strong id="alertLineBadge">5801 (Ida)</strong></label>
                             <select id="alertSelectStop" class="input-select"></select>
@@ -216,7 +304,7 @@
                         </div>
 
                         <button type="button" id="btnSaveAlert" class="btn-primary btn-full">
-                            Criar alerta de aproximação
+                            Criar alerta de embarque
                         </button>
                     </div>
 
@@ -247,7 +335,7 @@
                             <select id="schedLineSelect" class="input-select">
                                 <?php foreach ($lines_summary as $ln): ?>
                                     <option value="<?= htmlspecialchars($ln['code']) ?>">
-                                        <?= htmlspecialchars($ln['code'] . ' — ' . $ln['name']) ?>
+                                        <?= htmlspecialchars(($ln['display_code'] ?? $ln['code']) . ' — ' . $ln['name']) ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -291,6 +379,11 @@
             <div id="mapModeBanner" class="map-floating-prompt" style="display:none;">
                 <span id="mapModeText">Clique no mapa para definir o local</span>
                 <button type="button" id="btnCancelMapPick" class="btn-ghost btn-xs">Cancelar</button>
+            </div>
+
+            <div id="gpsGuideFloatingBar" class="map-floating-prompt" style="display:none;top:54px;">
+                <span id="gpsGuideFloatingText">Guiando até o ponto...</span>
+                <button type="button" id="btnCloseGpsGuideBar" class="btn-ghost btn-xs">Fechar</button>
             </div>
 
             <div class="map-legend">
@@ -339,6 +432,6 @@
     </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
-    <script src="<?= $base_url ?>assets/js/app.js?v=2.4.0"></script>
+    <script src="<?= $base_url ?>assets/js/app.js?v=2.5.0"></script>
 </body>
 </html>

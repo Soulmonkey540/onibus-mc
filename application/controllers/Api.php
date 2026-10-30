@@ -30,12 +30,120 @@ class Api extends CI_Controller {
         exit;
     }
 
+    private function getDualLineDefinitions(): array {
+        return [
+            '5801' => [
+                'variant_key'   => '5801-IBITURUNA',
+                'display_code'  => '5801 (-Ibituruna)',
+                'base_name'     => 'VILA SION II / VILA MAURICÉIA - VIA SANTA RITA',
+                'variant_name'  => 'VILA SION II / VILA MAURICÉIA (-Ibituruna: Serra do Mel, Portal da Serra e Vivendas)',
+                'extra_bairros' => ['Ibituruna', 'Serra do Mel', 'Portal da Serra', 'Vivendas do Lago']
+            ],
+            '2601' => [
+                'variant_key'   => '2601-UNIVERSITARIA',
+                'display_code'  => '2601 (-Universitária)',
+                'base_name'     => 'RECANTO DAS ÁGUAS / MARACANÃ - VIA RENASCENÇA',
+                'variant_name'  => 'RECANTO DAS ÁGUAS / MARACANÃ (-Av. Universitária / UFMG / Hosp. Veterinário)',
+                'extra_bairros' => ['Universitário', 'Av. Universitária', 'UFMG', 'Hospital Veterinário Funorte']
+            ],
+            '2603' => [
+                'variant_key'   => '2603-BERRANTE',
+                'display_code'  => '2603 (-Posto Berrante)',
+                'base_name'     => 'JARAGUÁ II / SANTO AMARO',
+                'variant_name'  => 'JARAGUÁ II / SANTO AMARO (-Posto Berrante / Jardim Alegre)',
+                'extra_bairros' => ['Posto Berrante', 'Posto da Produção', 'Anel Rodoviário Norte', 'Jardim Alegre']
+            ],
+            '4603' => [
+                'variant_key'   => '4603-TROPICAL',
+                'display_code'  => '4603 (-Cond. Tropical)',
+                'base_name'     => 'INDEPENDÊNCIA / SANTA RAFAELA - VIA SANTOS DUMONT',
+                'variant_name'  => 'INDEPENDÊNCIA / SANTA RAFAELA (-Condomínio Tropical / Vera Cruz)',
+                'extra_bairros' => ['Condomínio Tropical', 'São Judas Tadeu', 'Vera Cruz']
+            ],
+            '4701' => [
+                'variant_key'   => '4701-TERRAJARDINS',
+                'display_code'  => '4701 (-Terra Jardins)',
+                'base_name'     => 'ACÁCIAS / MAJOR PRATES - VIA CARMELO',
+                'variant_name'  => 'ACÁCIAS / MAJOR PRATES (-Bairro Terra Jardins)',
+                'extra_bairros' => ['Terra Jardins']
+            ],
+            '7101' => [
+                'variant_key'   => '7101-RESERVAREAL',
+                'display_code'  => '7101 (-Reserva Real)',
+                'base_name'     => 'MAJOR PRATES / VILA SÃO FRANCISCO DE ASSIS',
+                'variant_name'  => 'MAJOR PRATES / VILA SÃO FRANCISCO (-Reserva Real e Gran Royalle)',
+                'extra_bairros' => ['Reserva Real', 'Gran Royalle']
+            ]
+        ];
+    }
+
+    private function extractBaseCode(string $code): string {
+        $code = strtoupper(trim(urldecode($code)));
+        if (preg_match('/^([0-9]{4}[A-Z]?)/', $code, $m)) {
+            return $m[1];
+        }
+        return $code;
+    }
+
     private function loadCatalog(): array {
         $file = $this->dataDir . '/catalog.json';
         if (!file_exists($file)) {
             return ['lines' => []];
         }
-        return json_decode(file_get_contents($file), true) ?: ['lines' => []];
+        $raw = json_decode(file_get_contents($file), true) ?: ['lines' => []];
+        $dualDefs = $this->getDualLineDefinitions();
+        $expandedLines = [];
+
+        foreach (($raw['lines'] ?? []) as $code => $info) {
+            $codeStr = (string)$code;
+            $info['code'] = $codeStr;
+            $info['base_code'] = $codeStr;
+            $info['display_code'] = $codeStr;
+            $info['is_variant_line'] = false;
+
+            if (isset($dualDefs[$codeStr])) {
+                $def = $dualDefs[$codeStr];
+
+                // 1) Linha base (horários de itinerário padrão)
+                $baseLine = $info;
+                $baseLine['name'] = $def['base_name'];
+                foreach (['ida', 'volta'] as $d) {
+                    foreach (['weekdays', 'saturdays', 'sundays'] as $dayK) {
+                        $allT = $info['schedule'][$d][$dayK] ?? [];
+                        $regT = array_values(array_filter($allT, fn($t) => empty($t['special'])));
+                        // Se num dia específico todos os horários forem especiais (ex: sábado), mantém na variante e deixa vazio ou mantém conforme operação
+                        $baseLine['schedule'][$d][$dayK] = $regT;
+                    }
+                }
+                $expandedLines[$codeStr] = $baseLine;
+
+                // 2) Linha variante de segundo bairro (ex: 5801 (-Ibituruna))
+                $varKey = $def['variant_key'];
+                $varLine = $info;
+                $varLine['code'] = $varKey;
+                $varLine['base_code'] = $codeStr;
+                $varLine['display_code'] = $def['display_code'];
+                $varLine['is_variant_line'] = true;
+                $varLine['name'] = $def['variant_name'];
+                $varLine['neighborhoods'] = array_values(array_unique(array_merge(
+                    $def['extra_bairros'],
+                    $info['neighborhoods'] ?? []
+                )));
+                foreach (['ida', 'volta'] as $d) {
+                    foreach (['weekdays', 'saturdays', 'sundays'] as $dayK) {
+                        $allT = $info['schedule'][$d][$dayK] ?? [];
+                        $specT = array_values(array_filter($allT, fn($t) => !empty($t['special'])));
+                        $varLine['schedule'][$d][$dayK] = $specT;
+                    }
+                }
+                $expandedLines[$varKey] = $varLine;
+            } else {
+                $expandedLines[$codeStr] = $info;
+            }
+        }
+
+        $raw['lines'] = $expandedLines;
+        return $raw;
     }
 
     private function haversine(float $lat1, float $lon1, float $lat2, float $lon2): float {
@@ -69,6 +177,9 @@ class Api extends CI_Controller {
             $schedVolta = $info['schedule']['volta'] ?? [];
             $list[] = [
                 'code'            => (string)$info['code'],
+                'base_code'       => (string)($info['base_code'] ?? $info['code']),
+                'display_code'    => (string)($info['display_code'] ?? $info['code']),
+                'is_variant_line' => !empty($info['is_variant_line']),
                 'name'            => $info['name'],
                 'ida_label'       => $info['ida_label'] ?? 'Sentido Ida',
                 'volta_label'     => $info['volta_label'] ?? 'Sentido Volta',
@@ -98,15 +209,21 @@ class Api extends CI_Controller {
      * GET /api/line/{code}
      */
     public function line(string $code = '') {
-        $code = strtoupper(trim($code));
+        $code = strtoupper(trim(urldecode($code)));
         $cat = $this->loadCatalog();
         if (empty($cat['lines'][$code])) {
-            $this->jsonOut(['ok' => false, 'error' => 'Linha não encontrada no catálogo.'], 404);
+            $baseTry = $this->extractBaseCode($code);
+            if (!empty($cat['lines'][$baseTry])) {
+                $code = $baseTry;
+            } else {
+                $this->jsonOut(['ok' => false, 'error' => 'Linha não encontrada no catálogo.'], 404);
+            }
         }
 
         $lineData = $cat['lines'][$code];
-        $shapeIdaFile   = $this->dataDir . "/shapes/{$code}_ida.json";
-        $shapeVoltaFile = $this->dataDir . "/shapes/{$code}_volta.json";
+        $baseCode = $lineData['base_code'] ?? $this->extractBaseCode($code);
+        $shapeIdaFile   = $this->dataDir . "/shapes/{$baseCode}_ida.json";
+        $shapeVoltaFile = $this->dataDir . "/shapes/{$baseCode}_volta.json";
 
         $shapeIda   = file_exists($shapeIdaFile) ? json_decode(file_get_contents($shapeIdaFile), true) : ['coordinates' => [], 'total_distance_m' => 0];
         $shapeVolta = file_exists($shapeVoltaFile) ? json_decode(file_get_contents($shapeVoltaFile), true) : ['coordinates' => [], 'total_distance_m' => 0];
@@ -125,9 +242,10 @@ class Api extends CI_Controller {
      * GET /api/shape/{code}/{direction}
      */
     public function shape(string $code = '', string $direction = 'ida') {
-        $code = strtoupper(trim($code));
+        $code = strtoupper(trim(urldecode($code)));
+        $baseCode = $this->extractBaseCode($code);
         $direction = strtolower(trim($direction)) === 'volta' ? 'volta' : 'ida';
-        $file = $this->dataDir . "/shapes/{$code}_{$direction}.json";
+        $file = $this->dataDir . "/shapes/{$baseCode}_{$direction}.json";
         if (!file_exists($file)) {
             $this->jsonOut(['ok' => false, 'error' => 'Traçado não disponível.'], 404);
         }
@@ -135,6 +253,7 @@ class Api extends CI_Controller {
         $this->jsonOut([
             'ok'               => true,
             'routeCode'        => $code,
+            'baseCode'         => $baseCode,
             'direction'        => $direction,
             'coordinates'      => $data['coordinates'] ?? [],
             'total_distance_m' => $data['total_distance_m'] ?? 0
@@ -143,57 +262,55 @@ class Api extends CI_Controller {
 
     /**
      * GET /api/vehicles/{code}/{direction}
-     * Proxy + Cache de 10s + Normalização MOCBUS + Simulador Inteligente
+     * Proxy + Cache de 10s + Normalização MOCBUS + Fallback Automático para GPS Simulado
      */
     public function vehicles(string $code = '', string $direction = 'ida') {
-        $code = strtoupper(trim($code));
+        $code = strtoupper(trim(urldecode($code)));
+        $baseCode = $this->extractBaseCode($code);
         $direction = strtolower(trim($direction)) === 'volta' ? 'volta' : 'ida';
-        $simulate = $this->input->get('simulate') === '1';
 
-        $cacheFile = $this->cacheDir . "/gps_{$code}_{$direction}.json";
-        $cacheTtl  = 10; // 10 segundos conforme Roadmap Seção 6.1
+        $cacheFile = $this->cacheDir . "/gps_{$baseCode}_{$direction}.json";
+        $cacheTtl  = 10;
 
         $rawVehicles = [];
         $sourceStatus = 'live';
         $fetchedAt = time();
 
-        if (!$simulate) {
-            if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTtl)) {
-                $cached = json_decode(file_get_contents($cacheFile), true);
-                if (is_array($cached)) {
-                    $rawVehicles = $cached['data'] ?? [];
-                    $fetchedAt   = $cached['fetched_at'] ?? time();
-                    $sourceStatus = 'cache';
+        if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTtl)) {
+            $cached = json_decode(file_get_contents($cacheFile), true);
+            if (is_array($cached)) {
+                $rawVehicles = $cached['data'] ?? [];
+                $fetchedAt   = $cached['fetched_at'] ?? time();
+                $sourceStatus = 'cache';
+            }
+        } else {
+            $url = "https://www.mocbus.com.br/index.php/gps/obter_dados/{$baseCode}/{$direction}?t=" . (time() * 1000);
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_TIMEOUT        => 5,
+                CURLOPT_CONNECTTIMEOUT => 3,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_USERAGENT      => 'Mozilla/5.0 (Compatible; OnibusMC-BFF/1.0)'
+            ]);
+            $body = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode >= 200 && $httpCode < 300 && $body) {
+                $decoded = json_decode($body, true);
+                if (is_array($decoded)) {
+                    $rawVehicles = $decoded;
+                    @file_put_contents($cacheFile, json_encode([
+                        'fetched_at' => $fetchedAt,
+                        'data'       => $rawVehicles
+                    ]));
+                } else {
+                    $sourceStatus = 'invalid_json';
                 }
             } else {
-                $url = "https://www.mocbus.com.br/index.php/gps/obter_dados/{$code}/{$direction}?t=" . (time() * 1000);
-                $ch = curl_init($url);
-                curl_setopt_array($ch, [
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_TIMEOUT        => 6,
-                    CURLOPT_CONNECTTIMEOUT => 4,
-                    CURLOPT_SSL_VERIFYPEER => false,
-                    CURLOPT_USERAGENT      => 'Mozilla/5.0 (Compatible; OnibusMC-BFF/1.0)'
-                ]);
-                $body = curl_exec($ch);
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close($ch);
-
-                if ($httpCode >= 200 && $httpCode < 300 && $body) {
-                    $decoded = json_decode($body, true);
-                    if (is_array($decoded)) {
-                        $rawVehicles = $decoded;
-                        @file_put_contents($cacheFile, json_encode([
-                            'fetched_at' => $fetchedAt,
-                            'data'       => $rawVehicles
-                        ]));
-                    } else {
-                        $sourceStatus = 'invalid_json';
-                    }
-                } else {
-                    $sourceStatus = 'upstream_error';
-                }
+                $sourceStatus = 'upstream_error';
             }
         }
 
@@ -205,7 +322,7 @@ class Api extends CI_Controller {
                 continue;
             }
             $rawCode = $v['codigo'] ?? ('VEIC-' . ($idx + 1));
-            $opaqueId = 'BUS-' . strtoupper(substr(md5($code . '_' . $rawCode), 0, 6));
+            $opaqueId = 'BUS-' . strtoupper(substr(md5($baseCode . '_' . $rawCode), 0, 6));
             $vel = isset($v['velocidade']) ? max(0, (float)$v['velocidade']) : 0;
             $dirDeg = isset($v['direcao']) ? (int)$v['direcao'] : 0;
 
@@ -228,15 +345,17 @@ class Api extends CI_Controller {
             ];
         }
 
-        // Se o modo simulação estiver ativo (para testar alertas e ETA mesmo quando a linha está sem veículo ativo na API)
-        if ($simulate) {
-            $sourceStatus = 'simulated';
-            $normalized = $this->generateSimulatedVehicles($code, $direction);
+        // Fallback automático: quando a API oficial do GPS não responder ou não retornar veículos ativos,
+        // utiliza automaticamente o GPS simulado ao longo da rota oficial
+        if (empty($normalized)) {
+            $sourceStatus = 'fallback_simulated';
+            $normalized = $this->generateSimulatedVehicles($baseCode, $direction);
         }
 
         $this->jsonOut([
             'ok'        => true,
             'routeCode' => $code,
+            'baseCode'  => $baseCode,
             'direction' => $direction,
             'source'    => $sourceStatus,
             'fetchedAt' => gmdate('Y-m-d\TH:i:s\Z', $fetchedAt),
@@ -757,14 +876,18 @@ class Api extends CI_Controller {
         array $timeCtx,
         string $tripSearchNorm
     ): array {
-        $code     = (string)$lineInfo['code'];
-        $dayType  = $timeCtx['day_type']; // 'weekdays' | 'saturdays' | 'sundays'
-        $queryMin = (int)$timeCtx['minutes_of_day'];
+        $code          = (string)$lineInfo['code'];
+        $baseCode      = (string)($lineInfo['base_code'] ?? $this->extractBaseCode($code));
+        $displayCode   = (string)($lineInfo['display_code'] ?? $code);
+        $isVariantLine = !empty($lineInfo['is_variant_line']);
+        $dayType       = $timeCtx['day_type']; // 'weekdays' | 'saturdays' | 'sundays'
+        $queryMin      = (int)$timeCtx['minutes_of_day'];
 
         $schedDir = $lineInfo['schedule'][$dir] ?? [];
         $dayTimes = $schedDir[$dayType] ?? [];
         $obsList  = $schedDir['obs'] ?? [];
-        $rules    = $this->getLineVariantRules($code);
+        $rules    = $this->getLineVariantRules($baseCode);
+        $dualDefs = $this->getDualLineDefinitions();
 
         // Deslocamento estimado do terminal inicial (PF) até a parada de embarque (a ~21.6 km/h = 360 m/min)
         $boardDistM = (float)($boardStop['dist_m'] ?? 0.0);
@@ -851,6 +974,29 @@ class Api extends CI_Controller {
 
         $requiresVariant = ($requiresRed || $requiresAst || $requiresAst2);
 
+        // Se a linha possui versão desmembrada (ex: 5801 vs 5801 (-Ibituruna)) e o usuário precisa do bairro especial,
+        // mas este candidato é a linha base (sem os horários especiais), penaliza a linha base para priorizar a variante!
+        if ($requiresVariant && isset($dualDefs[$baseCode]) && !$isVariantLine) {
+            $varDisplay = $dualDefs[$baseCode]['display_code'];
+            return [
+                'operates_today'       => true,
+                'service_ended_today'  => false,
+                'status_code'          => 'variant_unavailable_now',
+                'status_badge'         => "Use {$varDisplay}",
+                'status_detail'        => "O itinerário padrão da linha {$baseCode} não entra neste trecho. Utilize a opção {$varDisplay}.",
+                'replaced_by_line'     => $dualDefs[$baseCode]['variant_key'],
+                'offset_from_pf_min'   => $offsetFromTerminalMin,
+                'next_trip'            => null,
+                'next_matching_trip'   => null,
+                'upcoming_trips'       => [],
+                'requires_variant'     => true,
+                'required_variant_desc'=> $requiredVariantDesc,
+                'variant_warning'      => "Para atendimento a {$requiredVariantDesc}, utilize a opção {$varDisplay}.",
+                'obs'                  => $obsList,
+                'score_penalty'        => 9500.0
+            ];
+        }
+
         // Processar todos os horários do dia para encontrar as próximas viagens que passam no ponto
         $upcomingTrips = [];
         $nextTrip = null;
@@ -866,7 +1012,6 @@ class Api extends CI_Controller {
             $ast    = $entry['asterisk'] ?? '';
             $isSpec = !empty($entry['special']);
 
-            // Descrição específica desta viagem
             $tripVariantDesc = null;
             if ($ast === '**' && !empty($rules['ast2_desc'])) {
                 $tripVariantDesc = $rules['ast2_desc'];
@@ -881,7 +1026,7 @@ class Api extends CI_Controller {
             }
 
             $matchesRequiredVariant = true;
-            if ($requiresVariant) {
+            if ($requiresVariant && !$isVariantLine) {
                 $matchesRequiredVariant = false;
                 if ($requiresRed && $isRed) $matchesRequiredVariant = true;
                 if ($requiresAst && ($ast === '*' || $ast === '**')) $matchesRequiredVariant = true;
@@ -891,13 +1036,13 @@ class Api extends CI_Controller {
             if ($estPassMin >= $earliestBoardMin) {
                 $waitMin = max(0, $estPassMin - $queryMin);
                 $tripObj = [
-                    'dep_time'          => $tStr,
-                    'est_board_time'    => $this->formatMinutesToHhMm($estPassMin),
-                    'wait_min'          => $waitMin,
-                    'special'           => $isSpec,
-                    'red'               => $isRed,
-                    'asterisk'          => $ast,
-                    'variant_desc'      => $tripVariantDesc,
+                    'dep_time'            => $tStr,
+                    'est_board_time'      => $this->formatMinutesToHhMm($estPassMin),
+                    'wait_min'            => $waitMin,
+                    'special'             => $isSpec,
+                    'red'                 => $isRed,
+                    'asterisk'            => $ast,
+                    'variant_desc'        => $tripVariantDesc,
                     'matches_requirement' => $matchesRequiredVariant
                 ];
 
@@ -935,9 +1080,15 @@ class Api extends CI_Controller {
             ];
         }
 
-        // Se o usuário precisa de uma variação de bairro específica (ex: UFMG, Serra do Mel, Reserva Real, Cond. Tropical)
         $variantWarning = null;
-        if ($requiresVariant) {
+        if ($isVariantLine) {
+            $scorePenalty = (min(60, $nextTrip['wait_min']) * 14.0) + ($requiresVariant ? -180.0 : 40.0);
+            $statusCode   = 'active_variant_ok';
+            $statusBadge  = "Ativo · Saída {$nextTrip['dep_time']} ({$displayCode})";
+            $descText     = $nextTrip['variant_desc'] ?: ($requiredVariantDesc ?: 'Horário específico de bairro');
+            $statusDetail = "Passa no ponto ~{$nextTrip['est_board_time']} (em {$nextTrip['wait_min']} min) · {$descText}";
+            $variantWarning = "Opção de bairro específico ({$displayCode}): {$descText}.";
+        } elseif ($requiresVariant) {
             if ($nextMatchingTrip === null) {
                 $variantWarning = "Atenção: não há mais horários hoje com atendimento específico para este trecho ({$requiredVariantDesc}).";
                 $scorePenalty = 8500.0;
@@ -957,7 +1108,6 @@ class Api extends CI_Controller {
                 $statusCode   = 'active_variant_ok';
             }
         } else {
-            // Viagem comum, mas se a próxima viagem tiver variação de itinerário (vermelho/asterisco), informa claramente o usuário
             $scorePenalty = min(60, $nextTrip['wait_min']) * 14.0;
             $statusCode   = 'active_normal';
             $statusBadge  = "Operando · Próxima saída {$nextTrip['dep_time']}";
@@ -1155,6 +1305,8 @@ class Api extends CI_Controller {
                         'legs'                => [
                             [
                                 'line_code'       => (string)$code,
+                                'display_code'    => (string)($lineInfo['display_code'] ?? $code),
+                                'base_code'       => (string)($lineInfo['base_code'] ?? $code),
                                 'line_name'       => $lineInfo['name'],
                                 'direction'       => $dir,
                                 'direction_label' => $lineInfo[$dir . '_label'] ?? strtoupper($dir),
@@ -1277,6 +1429,8 @@ class Api extends CI_Controller {
                             'legs'                => [
                                 [
                                     'line_code'       => $l1['code'],
+                                    'display_code'    => (string)($l1['line_info']['display_code'] ?? $l1['code']),
+                                    'base_code'       => (string)($l1['line_info']['base_code'] ?? $l1['code']),
                                     'line_name'       => $l1['name'],
                                     'direction'       => $l1['dir'],
                                     'direction_label' => $l1['dir_label'],
@@ -1291,6 +1445,8 @@ class Api extends CI_Controller {
                                 ],
                                 [
                                     'line_code'       => $l2['code'],
+                                    'display_code'    => (string)($l2['line_info']['display_code'] ?? $l2['code']),
+                                    'base_code'       => (string)($l2['line_info']['base_code'] ?? $l2['code']),
                                     'line_name'       => $l2['name'],
                                     'direction'       => $l2['dir'],
                                     'direction_label' => $l2['dir_label'],
@@ -1335,6 +1491,114 @@ class Api extends CI_Controller {
             'direct_count'     => count($uniqueDirect),
             'transfer_count'   => count($uniqueTransfers),
             'recommendations'  => $allRecommendations
+        ]);
+    }
+
+    private function bearingToCompass(int $deg): string {
+        $dirs = ['Norte', 'Nordeste', 'Leste', 'Sudeste', 'Sul', 'Sudoeste', 'Oeste', 'Noroeste'];
+        $idx = (int)round(($deg % 360) / 45) % 8;
+        return $dirs[$idx];
+    }
+
+    /**
+     * GET /api/nearby-stops?lat=...&lng=...&line=...&dir=...
+     * GPS Secundário: localiza os pontos de embarque mais próximos do usuário e fornece orientação a pé
+     */
+    public function nearby_stops() {
+        $lat  = (float)($this->input->get('lat') ?: 0);
+        $lng  = (float)($this->input->get('lng') ?: 0);
+        $line = strtoupper(trim((string)($this->input->get('line') ?: '')));
+        $dir  = strtolower(trim((string)($this->input->get('dir') ?: 'ida'))) === 'volta' ? 'volta' : 'ida';
+
+        if (!$lat || !$lng) {
+            $this->jsonOut(['ok' => false, 'error' => 'Coordenadas do GPS não informadas.'], 400);
+        }
+
+        $stopsFile = $this->dataDir . '/stops_index.json';
+        $allStops = file_exists($stopsFile) ? (json_decode(file_get_contents($stopsFile), true) ?: []) : [];
+        $dualDefs = $this->getDualLineDefinitions();
+
+        $nearestAll = [];
+        foreach ($allStops as $st) {
+            $sLat = (float)($st['lat'] ?? 0);
+            $sLng = (float)($st['lng'] ?? 0);
+            if (!$sLat || !$sLng) continue;
+
+            $distM = (int)round($this->haversine($lat, $lng, $sLat, $sLng));
+            if ($distM > 2500) continue;
+
+            $brng = $this->bearing($lat, $lng, $sLat, $sLng);
+            $compass = $this->bearingToCompass($brng);
+            $walkMin = max(1, (int)round($distM / 75.0));
+
+            // Expandir códigos de linhas que passam no ponto com suas variantes (ex: 5801 e 5801 (-Ibituruna))
+            $linesAtStop = [];
+            foreach (($st['lines'] ?? []) as $lc) {
+                $linesAtStop[] = ['code' => $lc, 'display_code' => $lc];
+                if (isset($dualDefs[$lc])) {
+                    $linesAtStop[] = [
+                        'code'         => $dualDefs[$lc]['variant_key'],
+                        'display_code' => $dualDefs[$lc]['display_code']
+                    ];
+                }
+            }
+
+            $nearestAll[] = [
+                'stop_id'      => $st['stop_id'],
+                'address'      => $st['address'],
+                'neighborhood' => $st['neighborhood'],
+                'lat'          => $sLat,
+                'lng'          => $sLng,
+                'dist_m'       => $distM,
+                'distance_m'   => $distM,
+                'walk_min'     => $walkMin,
+                'bearing'      => $brng,
+                'compass'      => $compass,
+                'lines'        => $st['lines'] ?? [],
+                'lines_detail' => $linesAtStop
+            ];
+        }
+
+        usort($nearestAll, fn($a, $b) => $a['dist_m'] <=> $b['dist_m']);
+        $nearestAll = array_slice($nearestAll, 0, 12);
+
+        $nearestLineStop = null;
+        if ($line !== '') {
+            $cat = $this->loadCatalog();
+            $lineData = $cat['lines'][$line] ?? ($cat['lines'][$this->extractBaseCode($line)] ?? null);
+            if ($lineData) {
+                $lStops = $lineData['stops'][$dir] ?? [];
+                $bestD = INF;
+                foreach ($lStops as $ls) {
+                    $d = $this->haversine($lat, $lng, (float)$ls['lat'], (float)$ls['lng']);
+                    if ($d < $bestD) {
+                        $bestD = $d;
+                        $brng = $this->bearing($lat, $lng, (float)$ls['lat'], (float)$ls['lng']);
+                        $nearestLineStop = [
+                            'stop_id'      => $ls['stop_id'],
+                            'seq'          => $ls['seq'],
+                            'address'      => $ls['address'],
+                            'neighborhood' => $ls['neighborhood'],
+                            'lat'          => (float)$ls['lat'],
+                            'lng'          => (float)$ls['lng'],
+                            'dist_m'       => (int)round($d),
+                            'distance_m'   => (int)round($d),
+                            'walk_min'     => max(1, (int)round($d / 75.0)),
+                            'compass'      => $this->bearingToCompass($brng),
+                            'line_code'    => $lineData['code'],
+                            'display_code' => $lineData['display_code'] ?? $lineData['code'],
+                            'direction'    => $dir
+                        ];
+                    }
+                }
+            }
+        }
+
+        $this->jsonOut([
+            'ok'                => true,
+            'user_location'     => ['lat' => $lat, 'lng' => $lng],
+            'nearest_line_stop' => $nearestLineStop,
+            'nearest_stops'     => $nearestAll
         ]);
     }
 

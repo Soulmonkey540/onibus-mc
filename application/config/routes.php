@@ -20,6 +20,7 @@ $route['api/vehicles/(:any)/(:any)']['get']       = 'api/vehicles/$1/$2';
 $route['api/route-plan']['get']                   = 'api/route_plan';
 $route['api/route-plan']['post']                  = 'api/route_plan';
 $route['api/time-context']['get']                 = 'api/time_context';
+$route['api/nearby-stops']['get']                 = 'api/nearby_stops';
 $route['api/search-stops']['get']                 = 'api/search_stops';
 $route['api/geocode']['get']                      = 'api/geocode';
 $route['api/alerts']['get']                       = 'api/alerts';
