@@ -319,7 +319,160 @@ body {
     background: #eef0f3;
 }
 
-/* Navegação de Abas (Sidebar e Botões Intuitivos para Mobile) */
+/* Elementos exclusivos Mobile ocultos no Desktop */
+.btn-hamburger,
+.mobile-drawer-backdrop,
+.mobile-sidebar-header,
+.mobile-only-btn {
+    display: none;
+}
+
+/* Input com ícone FontAwesome */
+.input-icon-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon-left {
+    position: absolute;
+    left: 11px;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    pointer-events: none;
+}
+
+.input-with-icon {
+    padding-left: 32px !important;
+}
+
+/* Sub-seletor de Variação por Bairro */
+.variant-selector-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.variant-selector-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Banner Destacado de Sentido (Ida / Volta) */
+.direction-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 11px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    font-size: 12px;
+    line-height: 1.35;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.direction-banner i {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.direction-banner__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.direction-banner__text strong {
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.direction-banner__text span {
+    font-size: 11px;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.direction-banner--ida {
+    background: var(--accent-soft);
+    border-color: #93c5fd;
+    color: var(--accent);
+}
+
+.direction-banner--volta {
+    background: var(--volta-soft);
+    border-color: #fcd34d;
+    color: #b45309;
+}
+
+body.dark-mode .direction-banner--ida {
+    border-color: rgba(59, 130, 246, 0.45);
+    color: #93c5fd;
+}
+
+body.dark-mode .direction-banner--volta {
+    border-color: rgba(245, 158, 11, 0.45);
+    color: #fcd34d;
+}
+
+.dot-icon--ida {
+    color: var(--accent);
+    margin-right: 4px;
+}
+
+.dot-icon--volta {
+    color: var(--volta);
+    margin-right: 4px;
+}
+
+/* Indicador de Sentido Flutuante no Mapa */
+.map-direction-pill {
+    position: absolute;
+    top: 12px;
+    left: 54px;
+    z-index: 900;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 13px;
+    border-radius: 99px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+    transition: transform 0.15s, background 0.2s;
+}
+
+.map-direction-pill:hover {
+    transform: translateY(-1px);
+}
+
+.map-direction-pill--ida {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.map-direction-pill--volta {
+    background: var(--volta);
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+/* Navegação de Abas (Desktop inalterado) */
 .tabs-nav {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -337,12 +490,16 @@ body {
     padding: 8px 4px;
     border-radius: var(--radius);
     font-family: inherit;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 500;
     color: var(--text-secondary);
     cursor: pointer;
     text-align: center;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
     transition: color 0.15s, background 0.15s, border-color 0.15s;
 }
 
@@ -1300,41 +1457,161 @@ body {
 
 @media (max-width: 860px) {
     .topbar {
-        height: auto;
-        min-height: 50px;
-        padding: 6px 10px;
-        flex-wrap: wrap;
+        height: 52px;
+        padding: 0 10px;
+        gap: 6px;
+        flex-wrap: nowrap;
+    }
+
+    .brand-title {
+        font-size: 13.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 130px;
+    }
+
+    .hide-xs {
+        display: none;
+    }
+
+    .topbar__right {
+        gap: 5px;
+        flex-shrink: 0;
+    }
+
+    .btn-hamburger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--bg-surface);
+        color: var(--text-primary);
+        font-size: 15px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    body.mobile-drawer-open .btn-hamburger {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    .mobile-only-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         gap: 6px;
     }
-    .topbar__right {
-        width: 100%;
-        justify-content: space-between;
-        overflow-x: auto;
-        padding-bottom: 2px;
-    }
+
+    /* Layout Mobile: Transição de Tela Inteira */
     .layout {
-        flex-direction: column-reverse;
-    }
-    .sidebar {
+        position: relative;
+        flex: 1;
         width: 100%;
-        height: 56%;
+        height: calc(100vh - 52px);
+        overflow: hidden;
+    }
+
+    /* O conteúdo da aba ativa assume 100% da tela principal */
+    .sidebar {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
         border-right: none;
-        border-top: 1px solid var(--border);
+        z-index: 1020;
+        background: var(--bg-app);
         display: flex;
         flex-direction: column;
     }
-    /* No mobile, posiciona os botões do menu na parte inferior para fácil alcance do polegar */
-    .tabs-nav {
-        order: 2;
-        border-bottom: none;
-        border-top: 1px solid var(--border);
-        padding: 7px 6px;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-    }
-    .tab-panel {
-        order: 1;
-    }
+
+    /* O mapa permanece montado em 100% da tela (sem recarregar/perder estado) */
     .map-wrapper {
-        height: 44%;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1010;
+    }
+
+    /* Quando o usuário alterna para visualização do mapa em tela cheia no mobile */
+    body.mobile-show-map .map-wrapper {
+        z-index: 1030;
+    }
+
+    /* Sidebar Retrátil (Menu Hambúrguer) no Mobile */
+    .tabs-nav {
+        position: fixed;
+        top: 52px;
+        left: 0;
+        bottom: 0;
+        width: 260px;
+        max-width: 78vw;
+        background: var(--bg-surface);
+        border-right: 1px solid var(--border);
+        border-bottom: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 14px 12px;
+        z-index: 2200;
+        box-shadow: 10px 0 28px rgba(0, 0, 0, 0.22);
+        transform: translateX(-105%);
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.mobile-drawer-open .tabs-nav {
+        transform: translateX(0);
+    }
+
+    .mobile-sidebar-header {
+        display: flex;
+        align-items: center;
+        padding: 4px 6px 10px;
+        border-bottom: 1px solid var(--border);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-muted);
+    }
+
+    .mobile- sidebar-header i {
+        margin-right: 6px;
+    }
+
+    .tabs-nav .tab-link {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 12px 14px;
+        font-size: 13.5px;
+        gap: 10px;
+    }
+
+    .tabs-nav .tab-link i {
+        width: 18px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    /* Backdrop para fechar apenas ao clicar fora da sidebar */
+    .mobile-drawer-backdrop {
+        position: fixed;
+        top: 52px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.46);
+        z-index: 2150;
+        display: none;
+    }
+
+    body.mobile-drawer-open .mobile-drawer-backdrop {
+        display: block;
     }
 }

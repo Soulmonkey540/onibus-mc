@@ -9,13 +9,18 @@
 
     const state = {
         lines: CONFIG.initialLines || [],
-        favorites: JSON.parse(localStorage.getItem('onibus_mc_favs') || '["5801", "5801-IBITURUNA", "1501", "2601"]'),
+        favorites: JSON.parse(localStorage.getItem('onibus_mc_favs') || '["5801", "1501", "2601", "5901"]'),
         googleApiKey: localStorage.getItem('onibus_mc_gkey') || '',
         darkMode: localStorage.getItem('onibus_mc_dark') === '1',
         onlyFavs: false,
         searchQuery: '',
         activeCode: '5801',
+        activeVariant: 'normal',
         activeDir: 'ida',
+        viewMode: 'line', // 'line' (Modo Seleção de Linha) | 'route' (Modo Definição de Rota)
+        activeRoutePlan: null,
+        schedViewCode: '5801',
+        schedViewDir: 'ida',
         lineCache: {},
         activeVehicles: [],
         selectedStop: null,
@@ -78,7 +83,7 @@
         renderLinesList();
         renderAlertsList();
         updateAutoAlightUI();
-        selectLine(state.activeCode, 'ida', true);
+        initSmartInitialLine();
 
         if (state.autoAlight && state.autoAlight.active) {
             ensureGpsWatch();
@@ -96,10 +101,15 @@
        ========================================================================= */
     function initDarkMode() {
         const btn = document.getElementById('btnToggleDarkMode');
+        const iconEl = document.getElementById('iconDarkMode');
+        const textEl = document.getElementById('textDarkMode');
         const applyDark = (isDark) => {
             document.body.classList.toggle('dark-mode', isDark);
-            if (btn) {
-                btn.textContent = isDark ? 'Modo claro' : 'Modo escuro';
+            if (iconEl) {
+                iconEl.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+            if (textEl) {
+                textEl.textContent = isDark ? 'Modo claro' : 'Modo escuro';
             }
         };
         applyDark(state.darkMode);
@@ -112,12 +122,155 @@
         }
     }
 
-    function getLineDisplayCode(code) {
+    function getLineDisplayCode(code, variantKey = null) {
         if (!code) return '';
-        const cached = state.lineCache[code]?.line?.display_code;
-        if (cached) return cached;
+        const bundle = state.lineCache[code];
+        const vKey = variantKey || (code === state.activeCode ? state.activeVariant : 'normal');
+        if (bundle?.line?.variants_data?.[vKey]?.display_code) {
+            return bundle.line.variants_data[vKey].display_code;
+        }
+        if (bundle?.line?.display_code) {
+            return bundle.line.display_code;
+        }
         const found = state.lines.find((l) => String(l.code) === String(code));
         return found?.display_code || String(code);
+    }
+
+    function getActiveLineViewData(code = state.activeCode, variantKey = state.activeVariant) {
+        const bundle = state.lineCache[code];
+        if (!bundle) return null;
+        const line = bundle.line || {};
+        const vData = line.variants_data?.[variantKey];
+        if (vData) {
+            return {
+                display_code: vData.display_code || line.display_code || code,
+                name: vData.name || line.name || '',
+                stops: vData.stops || line.stops || { ida: [], volta: [] },
+                shapes: vData.shapes || bundle.shapes || { ida: { coordinates: [] }, volta: { coordinates: [] } },
+                schedule: vData.schedule || line.schedule || {},
+                fullStops: line.full_stops || line.stops || { ida: [], volta: [] },
+                fullShapes: bundle.full_shapes || line.full_shapes || bundle.shapes || { ida: { coordinates: [] }, volta: { coordinates: [] } }
+            };
+        }
+        return {
+            display_code: line.display_code || code,
+            name: line.name || '',
+            stops: line.stops || { ida: [], volta: [] },
+            shapes: bundle.shapes || { ida: { coordinates: [] }, volta: { coordinates: [] } },
+            schedule: line.schedule || {},
+            fullStops: line.full_stops || line.stops || { ida: [], volta: [] },
+            fullShapes: bundle.full_shapes || bundle.shapes || { ida: { coordinates: [] }, volta: { coordinates: [] } }
+        };
+    }
+
+    /**
+     * Estado Inicial Inteligente do Mapa (Módulo 3):
+     * - Com GPS Desativado: seleciona uma linha tronco popular de alta demanda para o horário e dia da semana atuais (relógio do sistema)
+     * - Com GPS Ativo: identifica a localização do usuário, encontra a parada mais próxima e renderiza a linha mais comum/utilizada que passa naquele ponto
+     */
+    function pickPopularLineForCurrentTime() {
+        const now = new Date();
+        const day = now.getDay(); // 0 = Dom, 6 = Sáb
+        const hour = now.getHours();
+        const dayKey = day === 0 ? 'sundays' : (day === 6 ? 'saturdays' : 'weekdays');
+
+        // Linhas tronco de alta demanda por faixa de horário no relógio do sistema
+        let rankedTrunk = ['5801', '1501', '2601', '5901', '7101', '5101', '1702'];
+        if (hour >= 6 && hour <= 9) {
+            rankedTrunk = ['5801', '1501', '5901', '2601', '7101'];
+        } else if (hour >= 11 && hour <= 14) {
+            rankedTrunk = ['1501', '5801', '2601', '5101', '5901'];
+        } else if (hour >= 17 && hour <= 20) {
+            rankedTrunk = ['2601', '5801', '1501', '5901', '4701'];
+        }
+
+        for (const c of rankedTrunk) {
+            const lineMeta = state.lines.find((l) => String(l.code) === c);
+            if (!lineMeta) continue;
+            if (!lineMeta.operates_days || lineMeta.operates_days[dayKey] !== false) {
+                return c;
+            }
+        }
+        return state.lines[0]?.code || '5801';
+    }
+
+    function pickBestLineFromStopLines(stopLines) {
+        if (!Array.isArray(stopLines) || stopLines.length === 0) {
+            return pickPopularLineForCurrentTime();
+        }
+        const now = new Date();
+        const day = now.getDay();
+        const dayKey = day === 0 ? 'sundays' : (day === 6 ? 'saturdays' : 'weekdays');
+        const popularityWeights = {
+            '5801': 100,
+            '1501': 96,
+            '2601': 94,
+            '5901': 92,
+            '7101': 90,
+            '5101': 88,
+            '1702': 86,
+            '4701': 84,
+            '2201': 82,
+            '1102': 80
+        };
+
+        let bestCode = stopLines[0];
+        let bestScore = -1;
+        stopLines.forEach((rawCode) => {
+            const code = String(rawCode).split('-')[0];
+            const meta = state.lines.find((l) => String(l.code) === code);
+            const operates = meta?.operates_days ? meta.operates_days[dayKey] !== false : true;
+            const stopsSum = (meta?.stops_count?.ida || 25) + (meta?.stops_count?.volta || 25);
+            const popBonus = popularityWeights[code] || 50;
+            const score = (operates ? 1000 : 0) + popBonus + stopsSum * 0.4;
+            if (score > bestScore) {
+                bestScore = score;
+                bestCode = code;
+            }
+        });
+        return bestCode;
+    }
+
+    async function initSmartInitialLine() {
+        const fallbackCode = pickPopularLineForCurrentTime();
+        state.activeCode = fallbackCode;
+        state.schedViewCode = fallbackCode;
+
+        // Renderiza imediatamente a linha popular de alta demanda para que o mapa nunca inicie vazio
+        await selectLine(fallbackCode, 'ida', true, 'normal');
+
+        // Tenta detectar GPS ativo para ajustar automaticamente para a parada mais próxima e linha mais comum daquele ponto
+        if (!navigator.geolocation) return;
+
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                const lat = Number(pos.coords.latitude.toFixed(6));
+                const lng = Number(pos.coords.longitude.toFixed(6));
+                updateUserLocationMarker(lat, lng, false);
+                ensureGpsWatch();
+
+                try {
+                    const res = await fetch(`${API_BASE}api/nearby-stops?lat=${lat}&lng=${lng}`);
+                    const json = await res.json();
+                    if (json && json.ok && Array.isArray(json.nearest_stops) && json.nearest_stops.length > 0) {
+                        const nearestStop = json.nearest_stops[0];
+                        const chosenLine = pickBestLineFromStopLines(nearestStop.lines || []);
+                        // Só substitui se o usuário ainda não tiver definido uma rota manualmente
+                        if (state.viewMode === 'line') {
+                            await selectLine(chosenLine, 'ida', true, 'normal');
+                            window.__selectBoardingStop(nearestStop.stop_id, 'ida');
+                            showToast(
+                                `GPS ativo: exibindo linha ${chosenLine} na parada mais próxima (${nearestStop.address}).`
+                            );
+                        }
+                    }
+                } catch (e) {}
+            },
+            () => {
+                // Com GPS desativado/negado, mantém a linha popular de alta demanda já renderizada pelo relógio do sistema
+            },
+            { enableHighAccuracy: true, timeout: 4500, maximumAge: 15000 }
+        );
     }
     async function initMontesClarosClock() {
         await syncOfficialTimeContext();
@@ -175,9 +328,9 @@
 
     function updateTimeContextUI(ctx) {
         if (!ctx) return;
-        const clockPill = document.getElementById('mcClockPill');
-        if (clockPill && !ctx.is_custom) {
-            clockPill.textContent = `${ctx.time} · ${ctx.day_type_short}`;
+        const clockText = document.getElementById('mcClockText');
+        if (clockText && !ctx.is_custom) {
+            clockText.textContent = `${ctx.time} · ${ctx.day_type_short}`;
         }
 
         const nowText = document.getElementById('plannerTimeNowText');
@@ -193,7 +346,7 @@
     }
 
     /* =========================================================================
-       1. MAPA E CAMADAS (GOOGLE MAPS STREETS / SATÉLITE / LIMPO)
+       1. MAPA E CAMADAS (GOOGLE MAPS STREETS / SATÉLITE)
        ========================================================================= */
     function initMap() {
         map = L.map('map', {
@@ -225,13 +378,23 @@
 
             const label = `Ponto selecionado (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
             setPlannerPoint(mode, { label, lat, lng });
+            setMobileMapView(false);
             showToast(`Local de ${mode === 'origin' ? 'partida' : 'destino'} definido no mapa.`);
         });
 
         document.getElementById('btnMyLocation').addEventListener('click', () => {
+            setMobileMapView(true);
             locateUserOnMap(true);
             ensureGpsWatch();
         });
+
+        const mapDirBtn = document.getElementById('mapDirectionIndicator');
+        if (mapDirBtn) {
+            mapDirBtn.addEventListener('click', () => {
+                const nextDir = state.activeDir === 'volta' ? 'ida' : 'volta';
+                setDirection(nextDir);
+            });
+        }
     }
 
     function setMapTileStyle(styleKey) {
@@ -264,6 +427,9 @@
             userMarker.openPopup();
         }
 
+        if (state.viewMode === 'route' && state.activeRoutePlan) {
+            evaluateDynamicRouteProgressOnGps(lat, lng);
+        }
         updateWalkingGuideProgress();
         evaluateAutoAlightingAlert();
     }
@@ -323,14 +489,63 @@
     }
 
     /* =========================================================================
-       2. ABAS E CATÁLOGO DE LINHAS
+       2. NAVEGAÇÃO MOBILE (SIDEBAR RETRÁTIL) E CATÁLOGO DE LINHAS
        ========================================================================= */
     function initTabs() {
+        const btnMobileMenu = document.getElementById('btnMobileMenu');
+        const backdrop = document.getElementById('mobileDrawerBackdrop');
+        const btnMobileToggleMap = document.getElementById('btnMobileToggleMap');
+        const btnViewLineOnMapMobile = document.getElementById('btnViewLineOnMapMobile');
+
+        // Abrir/fechar sidebar mobile APENAS pelo botão hambúrguer (fa-bars) ou clicando fora (backdrop)
+        if (btnMobileMenu) {
+            btnMobileMenu.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = document.body.classList.toggle('mobile-drawer-open');
+                btnMobileMenu.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+        }
+
+        if (backdrop) {
+            backdrop.addEventListener('click', () => {
+                document.body.classList.remove('mobile-drawer-open');
+                if (btnMobileMenu) btnMobileMenu.setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        // Ao clicar em uma opção do menu, o conteúdo assume a tela principal inteira,
+        // mas a sidebar NÃO fecha automaticamente
         document.querySelectorAll('.tab-link').forEach((btn) => {
             btn.addEventListener('click', () => {
                 switchTab(btn.dataset.tab);
             });
         });
+
+        if (btnMobileToggleMap) {
+            btnMobileToggleMap.addEventListener('click', () => {
+                const showingMap = document.body.classList.contains('mobile-show-map');
+                setMobileMapView(!showingMap);
+            });
+        }
+
+        if (btnViewLineOnMapMobile) {
+            btnViewLineOnMapMobile.addEventListener('click', () => {
+                setMobileMapView(true);
+            });
+        }
+    }
+
+    function setMobileMapView(showMap) {
+        document.body.classList.toggle('mobile-show-map', Boolean(showMap));
+        const btnText = document.getElementById('btnMobileToggleMapText');
+        if (btnText) {
+            btnText.textContent = showMap ? 'Painel' : 'Mapa';
+        }
+        if (showMap && map) {
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 60);
+        }
     }
 
     function switchTab(tabName) {
@@ -342,6 +557,8 @@
         document.querySelectorAll('.tab-panel').forEach((pane) => {
             pane.classList.toggle('active', pane.id === `tab-${tabName}`);
         });
+        // No mobile, ao selecionar qualquer opção do menu, a tela principal inteira passa a exibir o conteúdo daquela opção
+        setMobileMapView(false);
     }
 
     function initCatalogEvents() {
@@ -351,9 +568,13 @@
         });
 
         const btnFilterFavs = document.getElementById('btnFilterFavs');
+        const iconFilterFavs = document.getElementById('iconFilterFavs');
         btnFilterFavs.addEventListener('click', () => {
             state.onlyFavs = !state.onlyFavs;
             btnFilterFavs.classList.toggle('active', state.onlyFavs);
+            if (iconFilterFavs) {
+                iconFilterFavs.className = state.onlyFavs ? 'fa-solid fa-star' : 'fa-regular fa-star';
+            }
             renderLinesList();
         });
 
@@ -361,22 +582,50 @@
             toggleFavorite(state.activeCode);
         });
 
-        ['btnDirIda', 'btnDirVolta', 'btnDirAmbos'].forEach((id) => {
-            document.getElementById(id).addEventListener('click', (e) => {
-                setDirection(e.currentTarget.dataset.dir);
+        const selectLineVariant = document.getElementById('selectLineVariant');
+        if (selectLineVariant) {
+            selectLineVariant.addEventListener('change', (e) => {
+                const newVar = e.target.value === 'variant' ? 'variant' : 'normal';
+                state.activeVariant = newVar;
+                state.viewMode = 'line';
+                state.activeRoutePlan = null;
+                if (layerPlanner) layerPlanner.clearLayers();
+
+                const viewData = getActiveLineViewData(state.activeCode, state.activeVariant);
+                if (viewData) {
+                    document.getElementById('activeLineCode').textContent = viewData.display_code;
+                    document.getElementById('activeLineName').textContent = formatTitleCase(viewData.name);
+                }
+
+                updateDirectionButtonsUI();
+                renderRouteShapesOnMap(true);
+                renderStopsOnMap();
+                populateAlertStopsSelect();
+                if (state.schedViewCode === state.activeCode) {
+                    renderScheduleTab();
+                }
+                showToast(
+                    newVar === 'variant'
+                        ? `Exibindo sub-rota: ${viewData?.display_code || state.activeCode}`
+                        : `Exibindo rota principal: ${state.activeCode}`
+                );
             });
+        }
+
+        ['btnDirIda', 'btnDirVolta'].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('click', (e) => {
+                    setDirection(e.currentTarget.dataset.dir);
+                });
+            }
         });
 
-        const toggleRouteBoth = document.getElementById('toggleRouteBoth');
-        if (toggleRouteBoth) {
-            toggleRouteBoth.addEventListener('change', (e) => {
-                const newDir = e.target.checked ? 'ambos' : 'ida';
+        const toggleDirTopbar = document.getElementById('toggleDirTopbar');
+        if (toggleDirTopbar) {
+            toggleDirTopbar.addEventListener('change', (e) => {
+                const newDir = e.target.checked ? 'volta' : 'ida';
                 setDirection(newDir);
-                showToast(
-                    e.target.checked
-                        ? 'Visualizando rota completa (Ida e Volta) no mapa.'
-                        : 'Visualizando apenas o sentido de Ida.'
-                );
             });
         }
 
@@ -410,7 +659,10 @@
     function updateFavButton() {
         const isFav = state.favorites.includes(state.activeCode);
         const btn = document.getElementById('btnToggleFavCurrent');
-        btn.textContent = isFav ? 'Salva' : 'Favoritar';
+        if (!btn) return;
+        btn.innerHTML = isFav
+            ? '<i class="fa-solid fa-bookmark"></i> Salva'
+            : '<i class="fa-regular fa-bookmark"></i> Favoritar';
         btn.classList.toggle('saved', isFav);
     }
 
@@ -423,7 +675,7 @@
                 return false;
             }
             if (!q) return true;
-            const hay = `${item.code} ${item.display_code || ''} ${item.name} ${(item.neighborhoods || []).join(' ')}`.toLowerCase();
+            const hay = `${item.code} ${item.display_code || ''} ${item.name} ${item.variant_label || ''} ${(item.neighborhoods || []).join(' ')}`.toLowerCase();
             return hay.includes(q);
         });
 
@@ -442,6 +694,9 @@
                 const displayCode = item.display_code || item.code;
                 const bairrosPreview = (item.neighborhoods || []).slice(0, 4).join(', ');
                 const operatesToday = item.operates_days ? item.operates_days[dayType] !== false : true;
+                const hasSubBadge = item.has_sub_routes
+                    ? `<span style="color:var(--primary);font-weight:600;"><i class="fa-solid fa-code-branch"></i> Sub-rota</span> · `
+                    : '';
                 return `
                 <div class="line-row ${isActive ? 'active' : ''}" data-code="${escapeHtml(item.code)}">
                     <div class="line-row__left">
@@ -449,31 +704,45 @@
                         <div style="min-width:0;">
                             <div class="line-row__name">${escapeHtml(formatTitleCase(item.name))}</div>
                             <div class="line-row__sub">
-                                ${!operatesToday ? '<span style="color:#b91c1c;font-weight:500;">Não opera hoje</span> · ' : ''}
-                                ${bairrosPreview ? escapeHtml(bairrosPreview) : 'Ida e volta'}
+                                ${!operatesToday ? '<span style="color:#b91c1c;font-weight:500;"><i class="fa-solid fa-circle-exclamation"></i> Não opera hoje</span> · ' : ''}
+                                ${hasSubBadge}${bairrosPreview ? escapeHtml(bairrosPreview) : 'Ida e volta'}
                             </div>
                         </div>
                     </div>
-                    ${isFav ? `<span class="fav-indicator">Salva</span>` : ''}
+                    ${isFav ? `<span class="fav-indicator"><i class="fa-solid fa-star"></i> Salva</span>` : ''}
                 </div>`;
             })
             .join('');
 
         container.querySelectorAll('.line-row').forEach((row) => {
             row.addEventListener('click', () => {
-                selectLine(row.dataset.code, state.activeDir === 'volta' ? 'volta' : (state.activeDir === 'ambos' ? 'ambos' : 'ida'), true);
+                // Padrão Inicial: A opção "Ida" vem selecionada por padrão sempre que uma linha for aberta
+                selectLine(row.dataset.code, 'ida', true, 'normal', false);
             });
         });
     }
 
     /* =========================================================================
-       3. LINHA ATIVA, TRAÇADOS E PARADAS
+       3. LINHA ATIVA, SUB-ROTAS, TRAÇADOS E PARADAS (SÓ IDA / SÓ VOLTA)
        ========================================================================= */
-    async function selectLine(code, dir = 'ida', fitBounds = true) {
-        state.activeCode = String(code);
-        state.activeDir = dir;
+    async function selectLine(code, dir = 'ida', fitBounds = true, variantKey = 'normal', preserveRouteMode = false) {
+        const rawCode = String(code).toUpperCase();
+        const baseCode = rawCode.includes('-') ? rawCode.split('-')[0] : rawCode;
+        state.activeCode = baseCode;
+        state.activeVariant = rawCode.includes('-') ? 'variant' : (variantKey === 'variant' ? 'variant' : 'normal');
+        // Padrão estrito: apenas 'ida' ou 'volta', sendo 'ida' o padrão inicial
+        state.activeDir = dir === 'volta' ? 'volta' : 'ida';
 
-        document.getElementById('activeLineCode').textContent = getLineDisplayCode(state.activeCode);
+        if (!preserveRouteMode) {
+            state.viewMode = 'line';
+            state.activeRoutePlan = null;
+            if (layerPlanner) layerPlanner.clearLayers();
+        }
+
+        state.schedViewCode = state.activeCode;
+        state.schedViewDir = state.activeDir;
+
+        document.getElementById('activeLineCode').textContent = getLineDisplayCode(state.activeCode, state.activeVariant);
         const schedSelect = document.getElementById('schedLineSelect');
         if (schedSelect) {
             schedSelect.value = state.activeCode;
@@ -488,14 +757,34 @@
                 const res = await fetch(`${API_BASE}api/line/${encodeURIComponent(state.activeCode)}`);
                 const json = await res.json();
                 if (!json.ok) throw new Error(json.error || 'Erro ao carregar linha');
-                bundle = { line: json.line, shapes: json.shapes };
+                bundle = {
+                    line: json.line,
+                    shapes: json.shapes,
+                    full_shapes: json.full_shapes || json.shapes
+                };
                 state.lineCache[state.activeCode] = bundle;
             }
 
             const line = bundle.line;
-            document.getElementById('activeLineCode').textContent = line.display_code || getLineDisplayCode(state.activeCode);
-            const cleanName = formatTitleCase(line.name);
-            document.getElementById('activeLineName').textContent = cleanName;
+            const variantBox = document.getElementById('lineVariantSelectorBox');
+            const variantSelect = document.getElementById('selectLineVariant');
+            if (variantBox && variantSelect) {
+                if (line.has_sub_routes && Array.isArray(line.sub_routes) && line.sub_routes.length > 0) {
+                    variantBox.style.display = 'block';
+                    variantSelect.innerHTML = line.sub_routes
+                        .map((sr) => `<option value="${escapeHtml(sr.key)}">${escapeHtml(sr.label)}</option>`)
+                        .join('');
+                    variantSelect.value = state.activeVariant;
+                } else {
+                    variantBox.style.display = 'none';
+                    state.activeVariant = 'normal';
+                }
+            }
+
+            const viewData = getActiveLineViewData(state.activeCode, state.activeVariant);
+            document.getElementById('activeLineCode').textContent = viewData?.display_code || getLineDisplayCode(state.activeCode);
+            document.getElementById('activeLineName').textContent = formatTitleCase(viewData?.name || line.name);
+
             const idaShort = (line.ida_label || 'Ida').replace(/^Sentido\s+/i, '');
             const voltaShort = (line.volta_label || 'Volta').replace(/^Sentido\s+/i, '');
             document.getElementById('labelDirIda').textContent = idaShort;
@@ -503,9 +792,10 @@
 
             const btnStopsIda = document.getElementById('schedBtnStopsIda');
             const btnStopsVolta = document.getElementById('schedBtnStopsVolta');
-            if (btnStopsIda) btnStopsIda.textContent = `Ida (${idaShort})`;
-            if (btnStopsVolta) btnStopsVolta.textContent = `Volta (${voltaShort})`;
+            if (btnStopsIda) btnStopsIda.innerHTML = `<i class="fa-solid fa-arrow-right"></i> Ida (${escapeHtml(idaShort)})`;
+            if (btnStopsVolta) btnStopsVolta.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Volta (${escapeHtml(voltaShort)})`;
 
+            updateDirectionButtonsUI();
             renderRouteShapesOnMap(fitBounds);
             renderStopsOnMap();
             populateAlertStopsSelect();
@@ -522,29 +812,93 @@
     }
 
     function setDirection(dir) {
-        state.activeDir = dir;
+        state.activeDir = dir === 'volta' ? 'volta' : 'ida';
+        state.viewMode = 'line';
+        state.activeRoutePlan = null;
+        if (layerPlanner) layerPlanner.clearLayers();
+
         updateDirectionButtonsUI();
         renderRouteShapesOnMap(false);
         renderStopsOnMap();
         populateAlertStopsSelect();
-        renderScheduleTab();
+        if (state.schedViewCode === state.activeCode) {
+            state.schedViewDir = state.activeDir;
+            renderScheduleTab();
+        }
         if (state.userLocation) {
             fetchAndRenderNearbyStops(state.userLocation.lat, state.userLocation.lng, false);
         }
         fetchVehiclesForActiveLine();
+        showToast(
+            state.activeDir === 'volta'
+                ? 'Visualizando: Trajeto de Volta'
+                : 'Visualizando: Trajeto de Ida'
+        );
     }
 
     function updateDirectionButtonsUI() {
+        const isVolta = state.activeDir === 'volta';
+        const stopDir = isVolta ? 'volta' : 'ida';
+
         document.querySelectorAll('#activeLineCard .seg-btn').forEach((btn) => {
-            btn.classList.toggle('active', btn.dataset.dir === state.activeDir);
-        });
-        const stopDir = state.activeDir === 'volta' ? 'volta' : 'ida';
-        document.querySelectorAll('.sched-dir-pill').forEach((btn) => {
             btn.classList.toggle('active', btn.dataset.dir === stopDir);
         });
-        const toggleRouteBoth = document.getElementById('toggleRouteBoth');
-        if (toggleRouteBoth) {
-            toggleRouteBoth.checked = state.activeDir === 'ambos';
+        document.querySelectorAll('.sched-dir-pill').forEach((btn) => {
+            btn.classList.toggle('active', btn.dataset.dir === (state.schedViewDir || stopDir));
+        });
+
+        const toggleDirTopbar = document.getElementById('toggleDirTopbar');
+        const topbarDirLabel = document.getElementById('topbarDirToggleLabel');
+        if (toggleDirTopbar) {
+            toggleDirTopbar.checked = isVolta;
+        }
+        if (topbarDirLabel) {
+            topbarDirLabel.textContent = isVolta ? 'Só Volta' : 'Só Ida';
+        }
+
+        const bundle = state.lineCache[state.activeCode];
+        const line = bundle?.line;
+        const viewData = getActiveLineViewData(state.activeCode, state.activeVariant);
+        const dispCode = viewData?.display_code || state.activeCode;
+        const dirShort = line
+            ? ((isVolta ? line.volta_label : line.ida_label) || (isVolta ? 'Volta' : 'Ida')).replace(/^Sentido\s+/i, '')
+            : (isVolta ? 'Sentido Volta' : 'Sentido Ida');
+
+        const banner = document.getElementById('directionStatusBanner');
+        const bannerIcon = document.getElementById('directionBannerIcon');
+        const bannerTitle = document.getElementById('directionBannerTitle');
+        const bannerSub = document.getElementById('directionBannerSub');
+
+        if (banner) {
+            banner.className = `direction-banner ${isVolta ? 'direction-banner--volta' : 'direction-banner--ida'}`;
+        }
+        if (bannerIcon) {
+            bannerIcon.className = isVolta ? 'fa-solid fa-circle-arrow-left' : 'fa-solid fa-circle-arrow-right';
+        }
+        if (bannerTitle) {
+            bannerTitle.textContent = isVolta
+                ? `Visualizando: Trajeto de Volta (${dispCode})`
+                : `Visualizando: Trajeto de Ida (${dispCode})`;
+        }
+        if (bannerSub) {
+            bannerSub.textContent = state.viewMode === 'route'
+                ? `Modo Rota Ativo · Sentido: ${dirShort}`
+                : `Sentido ativo: ${dirShort}`;
+        }
+
+        const mapPill = document.getElementById('mapDirectionIndicator');
+        const mapPillIcon = document.getElementById('mapDirIndicatorIcon');
+        const mapPillText = document.getElementById('mapDirIndicatorText');
+        if (mapPill) {
+            mapPill.className = `map-direction-pill ${isVolta ? 'direction-banner--volta map-direction-pill--volta' : 'map-direction-pill--ida'}`;
+        }
+        if (mapPillIcon) {
+            mapPillIcon.className = isVolta ? 'fa-solid fa-circle-arrow-left' : 'fa-solid fa-circle-arrow-right';
+        }
+        if (mapPillText) {
+            mapPillText.textContent = state.viewMode === 'route'
+                ? `Rota Filtrada (${dispCode}) · ${ isVolta ? 'Volta' : 'Ida' }`
+                : (isVolta ? `Trajeto de Volta · ${dirShort}` : `Trajeto de Ida · ${dirShort}`);
         }
     }
 
@@ -552,30 +906,34 @@
         if (layerPolyIda) { map.removeLayer(layerPolyIda); layerPolyIda = null; }
         if (layerPolyVolta) { map.removeLayer(layerPolyVolta); layerPolyVolta = null; }
 
-        const bundle = state.lineCache[state.activeCode];
-        if (!bundle) return;
+        // No Modo "Definição de Rota" (Módulo 4), oculta o restante desnecessário da linha
+        // e desenha exclusivamente: (1) Ônibus -> Embarque e (2) Embarque -> Desembarque
+        if (state.viewMode === 'route' && state.activeRoutePlan) {
+            renderActiveRoutePlanOnMap(fitBounds);
+            return;
+        }
 
-        const coordsIda = bundle.shapes?.ida?.coordinates || [];
-        const coordsVolta = bundle.shapes?.volta?.coordinates || [];
+        const viewData = getActiveLineViewData(state.activeCode, state.activeVariant);
+        if (!viewData) return;
+
+        const coordsIda = viewData.shapes?.ida?.coordinates || [];
+        const coordsVolta = viewData.shapes?.volta?.coordinates || [];
         let totalDistM = 0;
 
-        if ((state.activeDir === 'ida' || state.activeDir === 'ambos') && coordsIda.length > 1) {
+        if (state.activeDir === 'ida' && coordsIda.length > 1) {
             layerPolyIda = L.polyline(coordsIda, {
                 color: '#2563eb',
                 weight: 4.5,
-                opacity: 0.85
+                opacity: 0.88
             }).addTo(map);
-            totalDistM += Number(bundle.shapes.ida.total_distance_m || 0);
-        }
-
-        if ((state.activeDir === 'volta' || state.activeDir === 'ambos') && coordsVolta.length > 1) {
+            totalDistM = Number(viewData.shapes.ida.total_distance_m || 0);
+        } else if (state.activeDir === 'volta' && coordsVolta.length > 1) {
             layerPolyVolta = L.polyline(coordsVolta, {
                 color: '#d97706',
                 weight: 4.5,
-                opacity: 0.85,
-                dashArray: state.activeDir === 'ambos' ? '7, 5' : null
+                opacity: 0.88
             }).addTo(map);
-            totalDistM += Number(bundle.shapes.volta.total_distance_m || 0);
+            totalDistM = Number(viewData.shapes.volta.total_distance_m || 0);
         }
 
         document.getElementById('telRouteDist').textContent =
@@ -591,12 +949,29 @@
 
     function renderStopsOnMap() {
         layerStops.clearLayers();
-        const bundle = state.lineCache[state.activeCode];
-        if (!bundle) return;
+        const viewData = getActiveLineViewData(state.activeCode, state.activeVariant);
+        if (!viewData) return;
 
         const dirKey = state.activeDir === 'volta' ? 'volta' : 'ida';
-        const stops = bundle.line?.stops?.[dirKey] || [];
+        let stops = viewData.stops?.[dirKey] || [];
         const color = dirKey === 'volta' ? '#d97706' : '#2563eb';
+
+        // No Modo "Definição de Rota", exibe apenas as paradas compreendidas entre o embarque e o desembarque
+        if (state.viewMode === 'route' && state.activeRoutePlan && !state.activeRoutePlan.postAlightActive) {
+            const allStops = viewData.fullStops?.[dirKey] || stops;
+            const bStop = state.activeRoutePlan.currentBoardStop;
+            const aStop = state.activeRoutePlan.alightStop;
+            if (bStop && aStop) {
+                const bIdx = allStops.findIndex((s) => String(s.stop_id) === String(bStop.stop_id));
+                const aIdx = allStops.findIndex((s) => String(s.stop_id) === String(aStop.stop_id));
+                if (bIdx >= 0 && aIdx >= bIdx) {
+                    stops = allStops.slice(bIdx, aIdx + 1);
+                }
+            }
+        } else if (state.viewMode === 'route' && state.activeRoutePlan?.postAlightActive) {
+            // Na navegação pós-desembarque (última milha a pé), mantém apenas a parada de desembarque
+            stops = state.activeRoutePlan.alightStop ? [state.activeRoutePlan.alightStop] : [];
+        }
 
         stops.forEach((st) => {
             const isSelected = state.selectedStop && state.selectedStop.stop_id === st.stop_id;
@@ -613,7 +988,7 @@
             const popupHtml = `
                 <div style="font-family:Inter,sans-serif;min-width:210px;line-height:1.4;">
                     <div style="font-size:11px;font-weight:600;color:#6b7280;">
-                        Parada ${st.seq} · ${dirKey === 'volta' ? 'Volta' : 'Ida'}
+                        <i class="fa-solid fa-location-dot"></i> Parada ${st.seq} · ${dirKey === 'volta' ? 'Volta' : 'Ida'}
                     </div>
                     <div style="font-size:13px;font-weight:600;margin:3px 0;color:#1f2937;">
                         ${escapeHtml(st.address)}
@@ -625,15 +1000,15 @@
                     <div style="display:flex;flex-direction:column;gap:5px;">
                         <button type="button" onclick="window.__selectBoardingStop('${st.stop_id}', '${dirKey}')"
                             style="width:100%;background:#2563eb;color:#fff;border:none;padding:6px 10px;border-radius:6px;font-weight:500;font-size:11.5px;cursor:pointer;">
-                            Selecionar embarque
+                            <i class="fa-solid fa-check"></i> Selecionar embarque
                         </button>
                         <button type="button" onclick="window.__guideToStopById('${st.stop_id}', '${dirKey}')"
                             style="width:100%;background:#16a34a;color:#fff;border:none;padding:6px 10px;border-radius:6px;font-weight:500;font-size:11.5px;cursor:pointer;">
-                            Guiar a pé até aqui (GPS)
+                            <i class="fa-solid fa-person-walking"></i> Guiar a pé até aqui (GPS)
                         </button>
                         <button type="button" onclick="window.__setAlightingStop('${st.stop_id}', '${dirKey}')"
                             style="width:100%;background:#f3f4f6;color:#1f2937;border:1px solid #d1d5db;padding:5px 10px;border-radius:6px;font-weight:500;font-size:11.5px;cursor:pointer;">
-                            Avisar meu desembarque aqui
+                            <i class="fa-solid fa-bell"></i> Avisar meu desembarque aqui
                         </button>
                     </div>
                 </div>
@@ -643,9 +1018,9 @@
     }
 
     window.__selectBoardingStop = function (stopId, dirKey) {
-        const bundle = state.lineCache[state.activeCode];
-        if (!bundle) return;
-        const stops = bundle.line?.stops?.[dirKey] || [];
+        const viewData = getActiveLineViewData(state.activeCode, state.activeVariant);
+        if (!viewData) return;
+        const stops = viewData.stops?.[dirKey] || viewData.fullStops?.[dirKey] || [];
         const found = stops.find((s) => String(s.stop_id) === String(stopId));
         if (!found) return;
 
@@ -659,32 +1034,30 @@
 
     async function fetchVehiclesForActiveLine() {
         const code = state.activeCode;
-        const dirsToFetch = state.activeDir === 'ambos' ? ['ida', 'volta'] : [state.activeDir];
+        const dirToFetch = state.activeDir === 'volta' ? 'volta' : 'ida';
 
         try {
-            const requests = dirsToFetch.map((d) =>
-                fetch(`${API_BASE}api/vehicles/${encodeURIComponent(code)}/${d}`).then((r) => r.json())
-            );
-            const responses = await Promise.all(requests);
+            const res = await fetch(`${API_BASE}api/vehicles/${encodeURIComponent(code)}/${dirToFetch}`).then((r) => r.json());
 
             let allVehicles = [];
             let isFallbackSimulated = false;
 
-            responses.forEach((res) => {
-                if (res && res.ok && Array.isArray(res.vehicles)) {
-                    if (res.source === 'fallback_simulated' || res.source === 'simulated') {
-                        isFallbackSimulated = true;
-                    }
-                    res.vehicles.forEach((v) => {
-                        allVehicles.push({ ...v, direction: res.direction });
-                    });
+            if (res && res.ok && Array.isArray(res.vehicles)) {
+                if (res.source === 'fallback_simulated' || res.source === 'simulated') {
+                    isFallbackSimulated = true;
                 }
-            });
+                res.vehicles.forEach((v) => {
+                    allVehicles.push({ ...v, direction: res.direction || dirToFetch });
+                });
+            }
 
             state.activeVehicles = allVehicles;
             updateVehiclesOnMap(allVehicles);
             updateTelemetryUI(allVehicles, isFallbackSimulated);
             updateSelectedStopEta();
+            if (state.viewMode === 'route' && state.activeRoutePlan && !state.activeRoutePlan.postAlightActive) {
+                renderActiveRoutePlanOnMap(false);
+            }
             evaluateActiveAlerts(allVehicles);
             evaluateAutoAlightingAlert();
         } catch (err) {}
@@ -704,6 +1077,7 @@
 
             const iconHtml = `
                 <div class="bus-pin ${pinClass}">
+                    <i class="fa-solid fa-bus"></i>
                     <span>${escapeHtml(v.label)}</span>
                     <span style="opacity:0.85;font-weight:400;">· ${v.speedKmh} km/h</span>
                 </div>
@@ -712,7 +1086,7 @@
             const popupHtml = `
                 <div style="font-family:Inter,sans-serif;min-width:175px;line-height:1.45;">
                     <div style="font-weight:600;font-size:13px;color:#1f2937;">
-                        Veículo ${escapeHtml(v.label)} ${v.simulated ? '(GPS estimado)' : ''}
+                        <i class="fa-solid fa-bus"></i> Veículo ${escapeHtml(v.label)} ${v.simulated ? '(GPS estimado)' : ''}
                     </div>
                     <div style="font-size:12px;color:#4b5563;margin-top:4px;">
                         Linha ${escapeHtml(displayCode)} (${v.direction === 'volta' ? 'Volta' : 'Ida'})<br>
@@ -953,10 +1327,11 @@
             banner.style.display = 'none';
             map.getContainer().style.cursor = '';
         } else {
+            setMobileMapView(true);
             banner.style.display = 'flex';
-            text.textContent = mode === 'origin'
-                ? 'Clique no mapa para definir o ponto de partida'
-                : 'Clique no mapa para definir o destino';
+            text.innerHTML = mode === 'origin'
+                ? '<i class="fa-solid fa-crosshairs"></i> Clique no mapa para definir o ponto de partida'
+                : '<i class="fa-solid fa-location-dot"></i> Clique no mapa para definir o destino';
             map.getContainer().style.cursor = 'crosshair';
         }
     }
@@ -983,9 +1358,9 @@
         if (origin) {
             const origIcon = L.divIcon({
                 className: '',
-                html: `<div style="background:#15803d;color:#fff;padding:3px 8px;border-radius:99px;font-weight:600;font-size:11px;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.25);">Partida</div>`,
-                iconSize: [58, 22],
-                iconAnchor: [29, 11]
+                html: `<div style="background:#15803d;color:#fff;padding:3px 8px;border-radius:99px;font-weight:600;font-size:11px;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.25);white-space:nowrap;"><i class="fa-solid fa-circle-dot"></i> Partida</div>`,
+                iconSize: [70, 22],
+                iconAnchor: [35, 11]
             });
             L.marker([origin.lat, origin.lng], { icon: origIcon })
                 .addTo(layerPlanner)
@@ -995,9 +1370,9 @@
         if (dest) {
             const destIcon = L.divIcon({
                 className: '',
-                html: `<div style="background:#b91c1c;color:#fff;padding:3px 8px;border-radius:99px;font-weight:600;font-size:11px;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.25);">Destino</div>`,
-                iconSize: [58, 22],
-                iconAnchor: [29, 11]
+                html: `<div style="background:#b91c1c;color:#fff;padding:3px 8px;border-radius:99px;font-weight:600;font-size:11px;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.25);white-space:nowrap;"><i class="fa-solid fa-location-dot"></i> Destino</div>`,
+                iconSize: [70, 22],
+                iconAnchor: [35, 11]
             });
             L.marker([dest.lat, dest.lng], { icon: destIcon })
                 .addTo(layerPlanner)
@@ -1145,12 +1520,287 @@
         return null;
     }
 
+    /**
+     * Recorta o traçado exato da linha entre dois pontos [lat, lng] usando Turf.js (ou fallback por índice mais próximo)
+     */
+    function sliceShapeBetweenPoints(coords, ptStartLatLng, ptEndLatLng) {
+        if (!Array.isArray(coords) || coords.length < 2) {
+            return [ptStartLatLng, ptEndLatLng];
+        }
+        try {
+            if (typeof turf !== 'undefined') {
+                const lineGeo = turf.lineString(coords.map((c) => [c[1], c[0]]));
+                const startPt = turf.point([ptStartLatLng[1], ptStartLatLng[0]]);
+                const endPt = turf.point([ptEndLatLng[1], ptEndLatLng[0]]);
+                const sliced = turf.lineSlice(startPt, endPt, lineGeo);
+                if (sliced?.geometry?.coordinates?.length > 1) {
+                    return sliced.geometry.coordinates.map((c) => [c[1], c[0]]);
+                }
+            }
+        } catch (e) {}
+
+        // Fallback geométrico por vértice mais próximo
+        let idxA = 0;
+        let idxB = coords.length - 1;
+        let bestDA = Infinity;
+        let bestDB = Infinity;
+        coords.forEach((c, i) => {
+            const dA = haversineMeters(ptStartLatLng[0], ptStartLatLng[1], c[0], c[1]);
+            const dB = haversineMeters(ptEndLatLng[0], ptEndLatLng[1], c[0], c[1]);
+            if (dA < bestDA) { bestDA = dA; idxA = i; }
+            if (dB < bestDB) { bestDB = dB; idxB = i; }
+        });
+        const from = Math.min(idxA, idxB);
+        const to = Math.max(idxA, idxB);
+        const seg = coords.slice(from, to + 1);
+        return seg.length > 1 ? seg : [ptStartLatLng, ptEndLatLng];
+    }
+
+    /**
+     * Renderiza no mapa EXCLUSIVAMENTE:
+     * 1) O trajeto exato que o ônibus fará da sua posição atual até o ponto de embarque
+     * 2) O trajeto do ponto de embarque até o ponto de desembarque proposto
+     */
+    function renderActiveRoutePlanOnMap(fitBounds = false) {
+        if (!state.activeRoutePlan || !layerPlanner) return;
+        const plan = state.activeRoutePlan;
+
+        // Oculta o restante desnecessário da linha principal
+        if (layerPolyIda) { map.removeLayer(layerPolyIda); layerPolyIda = null; }
+        if (layerPolyVolta) { map.removeLayer(layerPolyVolta); layerPolyVolta = null; }
+        layerPlanner.clearLayers();
+
+        // Se já estiver na navegação pós-desembarque (Última Milha a pé), exibe apenas o destino e a parada de descida
+        if (plan.postAlightActive) {
+            const destIcon = L.divIcon({
+                className: '',
+                html: `<div style="background:#b91c1c;color:#fff;padding:3px 8px;border-radius:99px;font-weight:600;font-size:11px;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.25);white-space:nowrap;"><i class="fa-solid fa-flag-checkered"></i> Destino Final</div>`,
+                iconSize: [96, 22],
+                iconAnchor: [48, 11]
+            });
+            L.marker([plan.dest.lat, plan.dest.lng], { icon: destIcon })
+                .addTo(layerPlanner)
+                .bindPopup(`<b>Endereço Final:</b><br>${escapeHtml(plan.dest.label)}`);
+            return;
+        }
+
+        const viewData = getActiveLineViewData(plan.lineCode, plan.variantKey);
+        const fullCoords = viewData?.fullShapes?.[plan.direction]?.coordinates
+            || viewData?.shapes?.[plan.direction]?.coordinates
+            || [];
+
+        const bStop = plan.currentBoardStop;
+        const aStop = plan.alightStop;
+        if (!bStop || !aStop) return;
+
+        // 1. Trajeto exato que o ônibus fará da sua posição no momento presente até o ponto de embarque
+        let approachingBus = null;
+        if (state.activeVehicles.length > 0 && fullCoords.length > 1) {
+            const candidates = [];
+            state.activeVehicles
+                .filter((v) => v.direction === plan.direction)
+                .forEach((v) => {
+                    const app = computeBusApproachToStop(v, bStop, fullCoords);
+                    if (app && !app.passed) {
+                        candidates.push({ bus: v, remainingM: app.remainingM, minEta: app.minEta });
+                    }
+                });
+            candidates.sort((a, b) => a.remainingM - b.remainingM);
+            if (candidates.length > 0) {
+                approachingBus = candidates[0].bus;
+            } else {
+                approachingBus = state.activeVehicles.find((v) => v.direction === plan.direction) || state.activeVehicles[0];
+            }
+        }
+
+        const boundsPts = [
+            [bStop.lat, bStop.lng],
+            [aStop.lat, aStop.lng]
+        ];
+
+        if (approachingBus) {
+            const busToBoardCoords = sliceShapeBetweenPoints(
+                fullCoords,
+                [approachingBus.latitude, approachingBus.longitude],
+                [bStop.lat, bStop.lng]
+            );
+            L.polyline(busToBoardCoords, {
+                color: '#f59e0b',
+                weight: 4.5,
+                opacity: 0.92,
+                dashArray: '8, 6'
+            })
+                .addTo(layerPlanner)
+                .bindPopup(
+                    `<b>Trajeto do ônibus (${escapeHtml(approachingBus.label)}) até o embarque</b><br>Parada ${bStop.seq} — ${escapeHtml(bStop.address)}`
+                );
+            boundsPts.push([approachingBus.latitude, approachingBus.longitude]);
+        }
+
+        // 2. Trajeto exato do ponto de embarque até o ponto de desembarque proposto
+        const boardToAlightCoords = sliceShapeBetweenPoints(
+            fullCoords,
+            [bStop.lat, bStop.lng],
+            [aStop.lat, aStop.lng]
+        );
+        L.polyline(boardToAlightCoords, {
+            color: '#2563eb',
+            weight: 6,
+            opacity: 0.95
+        })
+            .addTo(layerPlanner)
+            .bindPopup(
+                `<b>Trajeto no ônibus: Embarque <i class="fa-solid fa-arrow-right"></i> Desembarque</b><br>${escapeHtml(bStop.address)} <i class="fa-solid fa-arrow-right"></i> ${escapeHtml(aStop.address)}`
+            );
+
+        // Marcadores claros de Embarque e Desembarque
+        const boardIcon = L.divIcon({
+            className: '',
+            html: `<div style="background:#15803d;color:#fff;padding:3px 9px;border-radius:99px;font-weight:600;font-size:11px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.28);white-space:nowrap;"><i class="fa-solid fa-bus"></i> Embarque (P${bStop.seq})</div>`,
+            iconSize: [110, 22],
+            iconAnchor: [55, 24]
+        });
+        L.marker([bStop.lat, bStop.lng], { icon: boardIcon })
+            .addTo(layerPlanner)
+            .bindPopup(`<b>Ponto de Embarque (Parada ${bStop.seq})</b><br>${escapeHtml(bStop.address)}`);
+
+        const alightIcon = L.divIcon({
+            className: '',
+            html: `<div style="background:#b91c1c;color:#fff;padding:3px 9px;border-radius:99px;font-weight:600;font-size:11px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.28);white-space:nowrap;"><i class="fa-solid fa-flag-checkered"></i> Desembarque (P${aStop.seq})</div>`,
+            iconSize: [124, 22],
+            iconAnchor: [62, 24]
+        });
+        L.marker([aStop.lat, aStop.lng], { icon: alightIcon })
+            .addTo(layerPlanner)
+            .bindPopup(`
+                <div style="font-family:Inter,sans-serif;min-width:195px;line-height:1.4;">
+                    <b>Ponto de Desembarque (Parada ${aStop.seq})</b><br>
+                    ${escapeHtml(aStop.address)}
+                    <div style="margin-top:8px;">
+                        <button type="button" onclick="window.__confirmAlightingArrival()"
+                            style="width:100%;background:#16a34a;color:#fff;border:none;padding:6px 10px;border-radius:6px;font-weight:600;font-size:11.5px;cursor:pointer;">
+                            <i class="fa-solid fa-person-walking"></i> Confirmar Desembarque (Última Milha)
+                        </button>
+                    </div>
+                </div>
+            `);
+
+        if (fitBounds && boundsPts.length >= 2) {
+            map.fitBounds(L.latLngBounds(boundsPts), { padding: [38, 38] });
+        }
+    }
+
+    /**
+     * Atualiza dinamicamente o ponto de embarque se o usuário com GPS ativo caminhar até outra parada da linha,
+     * e detecta chegada ao ponto de desembarque para iniciar a Última Milha a pé
+     */
+    function evaluateDynamicRouteProgressOnGps(uLat, uLng) {
+        const plan = state.activeRoutePlan;
+        if (!plan || plan.postAlightActive) return;
+
+        // 1. Checar se o usuário chegou ao ponto de desembarque (<= 65m)
+        if (plan.alightStop) {
+            const distToAlight = haversineMeters(uLat, uLng, plan.alightStop.lat, plan.alightStop.lng);
+            if (distToAlight <= 65) {
+                triggerPostAlightLastMile();
+                return;
+            }
+        }
+
+        // 2. Se o usuário estiver se movendo antes do embarque, verifica se ele se aproximou de outra parada da linha
+        const viewData = getActiveLineViewData(plan.lineCode, plan.variantKey);
+        const allStops = viewData?.fullStops?.[plan.direction] || viewData?.stops?.[plan.direction] || [];
+        if (allStops.length < 2 || !plan.currentBoardStop || !plan.alightStop) return;
+
+        const alightIdx = allStops.findIndex((s) => String(s.stop_id) === String(plan.alightStop.stop_id));
+        const limitIdx = alightIdx > 0 ? alightIdx : allStops.length - 1;
+        const currDist = haversineMeters(uLat, uLng, plan.currentBoardStop.lat, plan.currentBoardStop.lng);
+
+        let bestStop = null;
+        let bestDist = currDist;
+        for (let i = 0; i < limitIdx; i++) {
+            const st = allStops[i];
+            const d = haversineMeters(uLat, uLng, st.lat, st.lng);
+            if (d <= 150 && d + 35 < bestDist) {
+                bestDist = d;
+                bestStop = st;
+            }
+        }
+
+        if (bestStop && String(bestStop.stop_id) !== String(plan.currentBoardStop.stop_id)) {
+            plan.currentBoardStop = { ...bestStop };
+            state.selectedStop = { ...bestStop, dir: plan.direction };
+            renderActiveRoutePlanOnMap(false);
+            renderStopsOnMap();
+            showToast(`Embarque atualizado dinamicamente pelo GPS: Parada ${bestStop.seq} (${bestStop.address}).`);
+        }
+    }
+
+    /**
+     * Navegação Pós-Desembarque (Última Milha — Módulo 4):
+     * - Condição estrita: só é ativada se o GPS do usuário estiver ativo (state.userLocation !== null).
+     * - Caso o GPS esteja desativado, encerra a rota no desembarque.
+     */
+    window.__confirmAlightingArrival = function () {
+        triggerPostAlightLastMile();
+    };
+
+    async function triggerPostAlightLastMile() {
+        const plan = state.activeRoutePlan;
+        if (!plan) return;
+
+        // Condição estrita: se o GPS do usuário estiver desativado, encerra a rota no desembarque
+        if (!state.userLocation) {
+            state.viewMode = 'line';
+            state.activeRoutePlan = null;
+            if (layerPlanner) layerPlanner.clearLayers();
+            if (layerWalkingGuide) layerWalkingGuide.clearLayers();
+            clearAutoAlighting();
+            renderRouteShapesOnMap(true);
+            renderStopsOnMap();
+            showToast('Desembarque confirmado. Rota encerrada no ponto de desembarque (GPS desativado).');
+            return;
+        }
+
+        if (plan.postAlightActive) return;
+        plan.postAlightActive = true;
+
+        renderActiveRoutePlanOnMap(false);
+        renderStopsOnMap();
+
+        const startLat = plan.alightStop.lat;
+        const startLng = plan.alightStop.lng;
+        const destObj = {
+            stop_id: 'DEST-FINAL',
+            seq: 'Final',
+            address: plan.dest.label || 'Endereço de Destino',
+            neighborhood: 'Destino Final',
+            lat: plan.dest.lat,
+            lng: plan.dest.lng
+        };
+
+        state.walkingGuide = {
+            stop: destObj,
+            notifiedArrival: false
+        };
+
+        await drawWalkingRouteToStop(startLat, startLng, destObj);
+        updateWalkingGuideProgress();
+
+        const bounds = L.latLngBounds([
+            [startLat, startLng],
+            [plan.dest.lat, plan.dest.lng]
+        ]);
+        map.fitBounds(bounds, { padding: [44, 44] });
+        showToast(`Desembarque confirmado! Guiando a pé até o destino final: ${destObj.address}`, true);
+    }
+
     async function executeRouteCalculation() {
         const container = document.getElementById('routePlanResults');
         document.getElementById('originSuggestions').style.display = 'none';
         document.getElementById('destSuggestions').style.display = 'none';
 
-        container.innerHTML = `<div style="padding:14px;text-align:center;color:#6b7280;font-size:12.5px;">Localizando endereços no Google Maps e calculando linhas...</div>`;
+        container.innerHTML = `<div style="padding:14px;text-align:center;color:#6b7280;font-size:12.5px;"><i class="fa-solid fa-spinner fa-spin"></i> Localizando endereços e validando horários das linhas...</div>`;
 
         const origin = await resolvePointIfNeeded('origin', 'inputOrigin');
         const dest = await resolvePointIfNeeded('dest', 'inputDest');
@@ -1162,17 +1812,37 @@
         }
 
         try {
+            // Obtém por padrão o horário atual do dispositivo do usuário
+            const nowDevice = new Date();
+            const deviceDate = `${nowDevice.getFullYear()}-${String(nowDevice.getMonth() + 1).padStart(2, '0')}-${String(nowDevice.getDate()).padStart(2, '0')}`;
+            const deviceTime = `${String(nowDevice.getHours()).padStart(2, '0')}:${String(nowDevice.getMinutes()).padStart(2, '0')}`;
+
             const params = new URLSearchParams({
                 orig_lat: origin.lat,
                 orig_lng: origin.lng,
                 dest_lat: dest.lat,
                 dest_lng: dest.lng,
                 orig_label: origin.label || '',
-                dest_label: dest.label || ''
+                dest_label: dest.label || '',
+                device_date: deviceDate,
+                device_time: deviceTime
             });
-            if (state.planner.timeMode === 'custom') {
-                if (state.planner.customDate) params.set('query_date', state.planner.customDate);
-                if (state.planner.customTime) params.set('query_time', state.planner.customTime);
+
+            // Caso o usuário tenha preenchido o campo de horário específico na interface, usa-o como prioridade
+            const inputDateEl = document.getElementById('inputPlanDate');
+            const inputTimeEl = document.getElementById('inputPlanTime');
+            const customTimeVal = (state.planner.timeMode === 'custom' && inputTimeEl?.value)
+                ? inputTimeEl.value.trim()
+                : (state.planner.customTime || '');
+            const customDateVal = (state.planner.timeMode === 'custom' && inputDateEl?.value)
+                ? inputDateEl.value.trim()
+                : (state.planner.customDate || '');
+
+            if (customTimeVal) {
+                params.set('query_time', customTimeVal);
+            }
+            if (customDateVal) {
+                params.set('query_date', customDateVal);
             }
 
             const res = await fetch(`${API_BASE}api/route-plan?${params.toString()}`);
@@ -1190,7 +1860,7 @@
             const tCtx = json.time_context || state.timeContext;
             const contextHeaderHtml = tCtx
                 ? `<div style="font-size:11.5px;color:#4b5563;padding:2px 2px 0;">
-                    Cálculo para <strong>${escapeHtml(tCtx.time)}</strong> (${escapeHtml(tCtx.date_br)}) · ${escapeHtml(tCtx.day_label)}
+                    <i class="fa-regular fa-clock"></i> Cálculo para <strong>${escapeHtml(tCtx.time)}</strong> (${escapeHtml(tCtx.date_br)}) · ${escapeHtml(tCtx.day_label)}
                    </div>`
                 : '';
 
@@ -1235,7 +1905,7 @@
                                        </div>`
                                     : '';
 
-                                const legDisplayCode = leg.display_code || getLineDisplayCode(leg.line_code);
+                                const legDisplayCode = leg.display_code || getLineDisplayCode(leg.line_code, leg.variant_key);
                                 return `
                                 <div class="route-step">
                                     <div class="route-step__line" style="justify-content:space-between;flex-wrap:wrap;">
@@ -1267,39 +1937,52 @@
                                 ${legsHtml}
                                 <div class="grid-2" style="margin-top:4px;">
                                     <button type="button" class="btn-outline btn-sm btn-apply-route" data-idx="${idx}">
-                                        Visualizar no mapa
+                                        <i class="fa-solid fa-map"></i> Visualizar no mapa
                                     </button>
                                     <button type="button" class="btn-primary btn-sm btn-guide-route" data-idx="${idx}">
-                                        Guiar embarque + descida
+                                        <i class="fa-solid fa-location-arrow"></i> Guiar embarque + descida
                                     </button>
                                 </div>
+                                <button type="button" class="btn-ghost btn-xs btn-confirm-alight-route" data-idx="${idx}" style="margin-top:4px;width:100%;">
+                                    <i class="fa-solid fa-person-walking"></i> Já desembarquei — guiar a pé até o endereço final (GPS)
+                                </button>
                             </div>
                         `;
                     })
                     .join('');
 
-            const applyRouteOnMap = async (rec, activateGpsGuide = false) => {
+            const applyRouteOnMap = async (rec, activateGpsGuide = false, switchMobileView = true) => {
                 const firstLeg = rec.legs[0];
-                await selectLine(firstLeg.line_code, firstLeg.direction, false);
-
-                renderPlannerPinsOnMap();
-                const bStop = firstLeg.board_stop;
                 const lastLeg = rec.legs[rec.legs.length - 1];
+                const bStop = firstLeg.board_stop;
                 const aStop = lastLeg.alight_stop;
+                const varKey = firstLeg.variant_key || 'normal';
 
-                L.polyline([[origin.lat, origin.lng], [bStop.lat, bStop.lng]], {
-                    color: '#15803d',
-                    weight: 3.5,
-                    dashArray: '5, 5'
-                }).addTo(layerPlanner);
+                state.viewMode = 'route';
+                state.activeRoutePlan = {
+                    rec,
+                    origin,
+                    dest,
+                    lineCode: firstLeg.line_code,
+                    variantKey: varKey,
+                    direction: firstLeg.direction,
+                    currentBoardStop: { ...bStop },
+                    alightStop: { ...aStop },
+                    postAlightActive: false
+                };
 
-                L.polyline([[aStop.lat, aStop.lng], [dest.lat, dest.lng]], {
-                    color: '#b91c1c',
-                    weight: 3.5,
-                    dashArray: '5, 5'
-                }).addTo(layerPlanner);
+                await selectLine(firstLeg.line_code, firstLeg.direction, false, varKey, true);
+                if (switchMobileView) {
+                    setMobileMapView(true);
+                }
 
-                window.__selectBoardingStop(bStop.stop_id, firstLeg.direction);
+                state.selectedStop = { ...bStop, dir: firstLeg.direction };
+                document.getElementById('selectedStopBanner').style.display = 'flex';
+                document.getElementById('selectedStopName').textContent = `Parada ${bStop.seq} — ${bStop.address}`;
+
+                renderActiveRoutePlanOnMap(true);
+                renderStopsOnMap();
+                updateDirectionButtonsUI();
 
                 if (activateGpsGuide) {
                     startWalkingGuideToStop({
@@ -1315,7 +1998,7 @@
 
                     activateAutoAlighting({
                         line_code: lastLeg.line_code,
-                        display_code: lastLeg.display_code || getLineDisplayCode(lastLeg.line_code),
+                        display_code: lastLeg.display_code || getLineDisplayCode(lastLeg.line_code, varKey),
                         direction: lastLeg.direction,
                         stop_id: aStop.stop_id,
                         seq: aStop.seq,
@@ -1325,27 +2008,30 @@
                         dist_m: 450
                     }, true);
                 }
-
-                const bounds = L.latLngBounds([
-                    [origin.lat, origin.lng],
-                    [bStop.lat, bStop.lng],
-                    [aStop.lat, aStop.lng],
-                    [dest.lat, dest.lng]
-                ]);
-                map.fitBounds(bounds, { padding: [36, 36] });
             };
+
+            // Renderiza automaticamente no mapa a melhor rota calculada (sem forçar troca de tela no mobile)
+            await applyRouteOnMap(json.recommendations[0], false, false);
 
             container.querySelectorAll('.btn-apply-route').forEach((btn) => {
                 btn.addEventListener('click', () => {
                     const rec = json.recommendations[Number(btn.dataset.idx)];
-                    applyRouteOnMap(rec, false);
+                    applyRouteOnMap(rec, false, true);
                 });
             });
 
             container.querySelectorAll('.btn-guide-route').forEach((btn) => {
                 btn.addEventListener('click', () => {
                     const rec = json.recommendations[Number(btn.dataset.idx)];
-                    applyRouteOnMap(rec, true);
+                    applyRouteOnMap(rec, true, true);
+                });
+            });
+
+            container.querySelectorAll('.btn-confirm-alight-route').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    const rec = json.recommendations[Number(btn.dataset.idx)];
+                    await applyRouteOnMap(rec, false, true);
+                    triggerPostAlightLastMile();
                 });
             });
         } catch (err) {
@@ -2091,7 +2777,7 @@
     }
 
     /* =========================================================================
-       7. QUADRO DE HORÁRIOS E PARADAS
+       7. QUADRO DE HORÁRIOS E PARADAS (COM PERSISTÊNCIA DO ESTADO DO MAPA)
        ========================================================================= */
     function initScheduleEvents() {
         const schedSelect = document.getElementById('schedLineSelect');
@@ -2104,9 +2790,25 @@
                 }
             });
 
-            schedSelect.addEventListener('change', (e) => {
-                const newCode = e.target.value;
-                selectLine(newCode, state.activeDir === 'volta' ? 'volta' : 'ida', true);
+            // Persistência de Estado (Módulo 3): consultar outra linha na aba "Horários"
+            // atualiza apenas o painel de horários/paradas, SEM alterar ou recarregar o mapa
+            schedSelect.addEventListener('change', async (e) => {
+                const newCode = String(e.target.value).toUpperCase();
+                state.schedViewCode = newCode;
+                if (!state.lineCache[newCode]) {
+                    try {
+                        const res = await fetch(`${API_BASE}api/line/${encodeURIComponent(newCode)}`);
+                        const json = await res.json();
+                        if (json && json.ok) {
+                            state.lineCache[newCode] = {
+                                line: json.line,
+                                shapes: json.shapes,
+                                full_shapes: json.full_shapes || json.shapes
+                            };
+                        }
+                    } catch (err) {}
+                }
+                renderScheduleTab();
             });
         }
 
@@ -2131,16 +2833,31 @@
 
         document.querySelectorAll('.sched-dir-pill').forEach((btn) => {
             btn.addEventListener('click', () => {
-                setDirection(btn.dataset.dir);
+                state.schedViewDir = btn.dataset.dir === 'volta' ? 'volta' : 'ida';
+                document.querySelectorAll('.sched-dir-pill').forEach((b) => {
+                    b.classList.toggle('active', b.dataset.dir === state.schedViewDir);
+                });
+                renderScheduleTab();
             });
         });
     }
 
     function renderScheduleTab() {
-        const bundle = state.lineCache[state.activeCode];
-        if (!bundle) return;
+        const targetCode = state.schedViewCode || state.activeCode;
+        const targetVariant = targetCode === state.activeCode ? state.activeVariant : 'normal';
+        const viewData = getActiveLineViewData(targetCode, targetVariant);
+        const bundle = state.lineCache[targetCode];
+        if (!bundle || !viewData) return;
 
-        const sched = bundle.line?.schedule || {};
+        const line = bundle.line || {};
+        const idaShort = (line.ida_label || 'Ida').replace(/^Sentido\s+/i, '');
+        const voltaShort = (line.volta_label || 'Volta').replace(/^Sentido\s+/i, '');
+        const btnStopsIda = document.getElementById('schedBtnStopsIda');
+        const btnStopsVolta = document.getElementById('schedBtnStopsVolta');
+        if (btnStopsIda) btnStopsIda.innerHTML = `<i class="fa-solid fa-arrow-right"></i> Ida (${escapeHtml(idaShort)})`;
+        if (btnStopsVolta) btnStopsVolta.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Volta (${escapeHtml(voltaShort)})`;
+
+        const sched = viewData.schedule || line.schedule || {};
         const timesContainer = document.getElementById('scheduleTimesContainer');
         const stopsContainer = document.getElementById('scheduleStopsContainer');
 
@@ -2200,8 +2917,8 @@
             })
             .join('');
 
-        const dirKey = state.activeDir === 'volta' ? 'volta' : 'ida';
-        const stops = bundle.line?.stops?.[dirKey] || [];
+        const dirKey = (state.schedViewDir || state.activeDir) === 'volta' ? 'volta' : 'ida';
+        const stops = viewData.stops?.[dirKey] || [];
 
         stopsContainer.innerHTML = stops
             .map(
@@ -2220,7 +2937,9 @@
 
         stopsContainer.querySelectorAll('.stop-row').forEach((item) => {
             item.addEventListener('click', () => {
-                window.__selectBoardingStop(item.dataset.stopId, item.dataset.dir);
+                if (targetCode === state.activeCode) {
+                    window.__selectBoardingStop(item.dataset.stopId, item.dataset.dir);
+                }
             });
         });
     }

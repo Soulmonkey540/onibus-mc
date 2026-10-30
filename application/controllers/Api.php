@@ -30,51 +30,284 @@ class Api extends CI_Controller {
         exit;
     }
 
-    private function getDualLineDefinitions(): array {
+    /**
+     * Definições de Sub-rotas / Variações por Bairro obtidas do cruzamento entre onibusmoc.com e catalog.json
+     * - detour_seqs / detour_dist: paradas e trecho exclusivo do desvio de bairro (removidos na Rota Principal)
+     * - variant_seqs / variant_dist: paradas e traçado específico do atendimento ao bairro (exibidos na Sub-rota)
+     */
+    private function getSubRouteDefinitions(): array {
         return [
             '5801' => [
-                'variant_key'   => '5801-IBITURUNA',
-                'display_code'  => '5801 (-Ibituruna)',
-                'base_name'     => 'VILA SION II / VILA MAURICÉIA - VIA SANTA RITA',
-                'variant_name'  => 'VILA SION II / VILA MAURICÉIA (-Ibituruna: Serra do Mel, Portal da Serra e Vivendas)',
-                'extra_bairros' => ['Ibituruna', 'Serra do Mel', 'Portal da Serra', 'Vivendas do Lago']
+                'variant_key'    => 'variant',
+                'legacy_code'    => '5801-IBITURUNA',
+                'display_code'   => '5801 (-Ibituruna)',
+                'normal_label'   => '5801 — Rota Principal / Normal (Padrão)',
+                'variant_label'  => '5801 (-Ibituruna) — Serra do Mel, Portal da Serra e Vivendas',
+                'base_name'      => 'VILA SION II / VILA MAURICÉIA - VIA SANTA RITA',
+                'variant_name'   => 'ATENDIMENTO IBITURUNA (SERRA DO MEL, PORTAL DA SERRA E VIVENDAS)',
+                'extra_bairros'  => ['Ibituruna', 'Serra do Mel', 'Portal da Serra', 'Vivendas do Lago'],
+                'keywords'       => ['serra do mel', 'portal da serra', 'vivendas do lago', 'vivendas', 'padre janjao', 'joao wilson', 'norival guilherme'],
+                'ida' => [
+                    'detour_seqs'  => [42, 43, 44, 45],
+                    'detour_dist'  => [15600, 17550],
+                    'variant_seqs' => range(35, 50),
+                    'variant_dist' => [13400, 19100]
+                ],
+                'volta' => [
+                    'detour_seqs'  => [9, 10, 11, 12, 18],
+                    'detour_dist'  => [2500, 4650],
+                    'variant_seqs' => range(4, 20),
+                    'variant_dist' => [1750, 6800]
+                ]
             ],
             '2601' => [
-                'variant_key'   => '2601-UNIVERSITARIA',
-                'display_code'  => '2601 (-Universitária)',
-                'base_name'     => 'RECANTO DAS ÁGUAS / MARACANÃ - VIA RENASCENÇA',
-                'variant_name'  => 'RECANTO DAS ÁGUAS / MARACANÃ (-Av. Universitária / UFMG / Hosp. Veterinário)',
-                'extra_bairros' => ['Universitário', 'Av. Universitária', 'UFMG', 'Hospital Veterinário Funorte']
+                'variant_key'    => 'variant',
+                'legacy_code'    => '2601-UNIVERSITARIA',
+                'display_code'   => '2601 (-Universitária)',
+                'normal_label'   => '2601 — Rota Principal / Normal (Padrão)',
+                'variant_label'  => '2601 (-Universitária) — Av. Universitária / UFMG / Hosp. Veterinário',
+                'base_name'      => 'RECANTO DAS ÁGUAS / MARACANÃ - VIA RENASCENÇA',
+                'variant_name'   => 'ATENDIMENTO AV. UNIVERSITÁRIA / UFMG / HOSP. VETERINÁRIO',
+                'extra_bairros'  => ['Universitário', 'Av. Universitária', 'UFMG', 'Hospital Veterinário Funorte'],
+                'keywords'       => ['universitaria', 'ufmg', 'ciencias agrarias', 'ica', 'hospital veterinario', 'veterinario', 'agronomia'],
+                'ida' => [
+                    'detour_seqs'  => [14, 15, 16, 17, 18],
+                    'detour_dist'  => [4400, 6400],
+                    'variant_seqs' => range(13, 23),
+                    'variant_dist' => [3400, 8100]
+                ],
+                'volta' => [
+                    'detour_seqs'  => [46, 47, 48, 49, 50, 51],
+                    'detour_dist'  => [15880, 18200],
+                    'variant_seqs' => range(43, 52),
+                    'variant_dist' => [14800, 19000]
+                ]
             ],
             '2603' => [
-                'variant_key'   => '2603-BERRANTE',
-                'display_code'  => '2603 (-Posto Berrante)',
-                'base_name'     => 'JARAGUÁ II / SANTO AMARO',
-                'variant_name'  => 'JARAGUÁ II / SANTO AMARO (-Posto Berrante / Jardim Alegre)',
-                'extra_bairros' => ['Posto Berrante', 'Posto da Produção', 'Anel Rodoviário Norte', 'Jardim Alegre']
+                'variant_key'    => 'variant',
+                'legacy_code'    => '2603-BERRANTE',
+                'display_code'   => '2603 (-Posto Berrante)',
+                'normal_label'   => '2603 — Rota Principal / Normal (Padrão)',
+                'variant_label'  => '2603 (-Posto Berrante) — Estrada da Produção e Jardim Alegre',
+                'base_name'      => 'JARAGUÁ II / SANTO AMARO',
+                'variant_name'   => 'ATENDIMENTO POSTO BERRANTE / ESTRADA DA PRODUÇÃO / JARDIM ALEGRE',
+                'extra_bairros'  => ['Posto Berrante', 'Posto da Produção', 'Anel Rodoviário Norte', 'Jardim Alegre'],
+                'keywords'       => ['posto berrante', 'berrante', 'posto da producao', 'estrada da producao', 'anel rodoviario', 'jardim alegre'],
+                'ida' => [
+                    'detour_seqs'  => [1, 2, 3],
+                    'detour_dist'  => [0, 2020],
+                    'variant_seqs' => range(1, 7),
+                    'variant_dist' => [0, 3000]
+                ],
+                'volta' => [
+                    'detour_seqs'  => [57],
+                    'detour_dist'  => [22600, 24100],
+                    'variant_seqs' => range(53, 57),
+                    'variant_dist' => [21500, 24100]
+                ]
             ],
             '4603' => [
-                'variant_key'   => '4603-TROPICAL',
-                'display_code'  => '4603 (-Cond. Tropical)',
-                'base_name'     => 'INDEPENDÊNCIA / SANTA RAFAELA - VIA SANTOS DUMONT',
-                'variant_name'  => 'INDEPENDÊNCIA / SANTA RAFAELA (-Condomínio Tropical / Vera Cruz)',
-                'extra_bairros' => ['Condomínio Tropical', 'São Judas Tadeu', 'Vera Cruz']
+                'variant_key'    => 'variant',
+                'legacy_code'    => '4603-TROPICAL',
+                'display_code'   => '4603 (-Cond. Tropical)',
+                'normal_label'   => '4603 — Rota Principal / Normal (Padrão)',
+                'variant_label'  => '4603 (-Cond. Tropical) — Condomínio Tropical e Vera Cruz',
+                'base_name'      => 'INDEPENDÊNCIA / SANTA RAFAELA - VIA SANTOS DUMONT',
+                'variant_name'   => 'ATENDIMENTO CONDOMÍNIO TROPICAL / SÃO JUDAS TADEU / VERA CRUZ',
+                'extra_bairros'  => ['Condomínio Tropical', 'São Judas Tadeu', 'Vera Cruz'],
+                'keywords'       => ['condominio tropical', 'sao judas tadeu', 'vera cruz'],
+                'ida' => [
+                    'detour_seqs'  => [44],
+                    'detour_dist'  => [14450, 15000],
+                    'variant_seqs' => range(40, 48),
+                    'variant_dist' => [13400, 16200]
+                ],
+                'volta' => [
+                    'detour_seqs'  => [10],
+                    'detour_dist'  => [2800, 3400],
+                    'variant_seqs' => range(6, 13),
+                    'variant_dist' => [1700, 4100]
+                ]
             ],
             '4701' => [
-                'variant_key'   => '4701-TERRAJARDINS',
-                'display_code'  => '4701 (-Terra Jardins)',
-                'base_name'     => 'ACÁCIAS / MAJOR PRATES - VIA CARMELO',
-                'variant_name'  => 'ACÁCIAS / MAJOR PRATES (-Bairro Terra Jardins)',
-                'extra_bairros' => ['Terra Jardins']
+                'variant_key'    => 'variant',
+                'legacy_code'    => '4701-TERRAJARDINS',
+                'display_code'   => '4701 (-Terra Jardins)',
+                'normal_label'   => '4701 — Rota Principal / Normal (Padrão)',
+                'variant_label'  => '4701 (-Terra Jardins) — Atendimento Bairro Terra Jardins',
+                'base_name'      => 'ACÁCIAS / MAJOR PRATES - VIA CARMELO',
+                'variant_name'   => 'ATENDIMENTO BAIRRO TERRA JARDINS',
+                'extra_bairros'  => ['Terra Jardins'],
+                'keywords'       => ['terra jardins'],
+                'ida' => [
+                    'detour_seqs'  => [1, 2],
+                    'detour_dist'  => [0, 750],
+                    'variant_seqs' => range(1, 4),
+                    'variant_dist' => [0, 1200]
+                ],
+                'volta' => [
+                    'detour_seqs'  => [40, 41],
+                    'detour_dist'  => [12100, 12950],
+                    'variant_seqs' => range(38, 41),
+                    'variant_dist' => [11700, 12950]
+                ]
+            ],
+            '5702' => [
+                'variant_key'    => 'variant',
+                'legacy_code'    => '5702-IPIRANGA',
+                'display_code'   => '5702 (-Ipiranga)',
+                'normal_label'   => '5702 — Rota Principal / Normal (Padrão)',
+                'variant_label'  => '5702 (-Ipiranga) — Ruas João Mendes Leal e Santarém',
+                'base_name'      => 'MONTE CARMELO / JARDIM LIBERDADE - VIA RUA DO ATLÂNTICO',
+                'variant_name'   => 'ATENDIMENTO RUAS JOÃO MENDES LEAL E SANTARÉM (IPIRANGA)',
+                'extra_bairros'  => ['Ipiranga', 'Rua João Mendes Leal', 'Rua Santarém'],
+                'keywords'       => ['joao mendes leal', 'santarem', 'brasilino duraes'],
+                'ida' => [
+                    'detour_seqs'  => [4],
+                    'detour_dist'  => [1400, 1720],
+                    'variant_seqs' => range(3, 6),
+                    'variant_dist' => [1200, 2200]
+                ],
+                'volta' => [
+                    'detour_seqs'  => [40],
+                    'detour_dist'  => [12600, 13500],
+                    'variant_seqs' => range(39, 42),
+                    'variant_dist' => [12400, 13800]
+                ]
+            ],
+            '6901' => [
+                'variant_key'    => 'variant',
+                'legacy_code'    => '6901-CENTRO',
+                'display_code'   => '6901 (-Praça Cel. Ribeiro)',
+                'normal_label'   => '6901 — Rota Principal / Normal (Completa)',
+                'variant_label'  => '6901 (-Centro) — Partida Especial Praça Coronel Ribeiro',
+                'base_name'      => 'MORADA DO PARQUE / CIDADE NOVA - VIA SÃO JOSÉ',
+                'variant_name'   => 'PARTIDA ESPECIAL PRAÇA CORONEL RIBEIRO (CENTRO)',
+                'extra_bairros'  => ['Praça Coronel Ribeiro'],
+                'keywords'       => ['praca coronel ribeiro'],
+                'ida' => [
+                    'detour_seqs'  => [],
+                    'detour_dist'  => [-1, -1],
+                    'variant_seqs' => range(28, 41),
+                    'variant_dist' => [9100, 13900]
+                ],
+                'volta' => [
+                    'detour_seqs'  => [],
+                    'detour_dist'  => [-1, -1],
+                    'variant_seqs' => range(1, 14),
+                    'variant_dist' => [0, 5300]
+                ]
             ],
             '7101' => [
-                'variant_key'   => '7101-RESERVAREAL',
-                'display_code'  => '7101 (-Reserva Real)',
-                'base_name'     => 'MAJOR PRATES / VILA SÃO FRANCISCO DE ASSIS',
-                'variant_name'  => 'MAJOR PRATES / VILA SÃO FRANCISCO (-Reserva Real e Gran Royalle)',
-                'extra_bairros' => ['Reserva Real', 'Gran Royalle']
+                'variant_key'    => 'variant',
+                'legacy_code'    => '7101-RESERVAREAL',
+                'display_code'   => '7101 (-Reserva Real)',
+                'normal_label'   => '7101 — Rota Principal / Normal (Padrão)',
+                'variant_label'  => '7101 (-Reserva Real) — Reserva Real e Gran Royalle',
+                'base_name'      => 'MAJOR PRATES / VILA SÃO FRANCISCO DE ASSIS',
+                'variant_name'   => 'ATENDIMENTO RESERVA REAL E GRAN ROYALLE',
+                'extra_bairros'  => ['Reserva Real', 'Gran Royalle'],
+                'keywords'       => ['reserva real', 'gran royalle', 'royalle'],
+                'ida' => [
+                    'detour_seqs'  => [1, 2],
+                    'detour_dist'  => [0, 1250],
+                    'variant_seqs' => range(1, 4),
+                    'variant_dist' => [0, 2200]
+                ],
+                'volta' => [
+                    'detour_seqs'  => [29, 30],
+                    'detour_dist'  => [11200, 12300],
+                    'variant_seqs' => range(27, 30),
+                    'variant_dist' => [10700, 12300]
+                ]
+            ],
+            '2203' => [
+                'variant_key'    => 'variant',
+                'legacy_code'    => '2203-NOVOJARAGUA',
+                'display_code'   => '2203 (-Novo Jaraguá)',
+                'normal_label'   => '2203 — Rota Principal / Normal (Padrão)',
+                'variant_label'  => '2203 (-Novo Jaraguá) — Al. Paineiras e Salgueiros',
+                'base_name'      => 'JARAGUÁ I / DISTRITO INDUSTRIAL - VIA NOVO JARAGUÁ',
+                'variant_name'   => 'ATENDIMENTO NOVO JARAGUÁ (AL. PAINEIRAS E SALGUEIROS)',
+                'extra_bairros'  => ['Novo Jaraguá', 'Alameda das Paineiras'],
+                'keywords'       => ['novo jaragua', 'alameda das paineiras', 'salgueiros', 'carvalhos'],
+                'ida' => [
+                    'detour_seqs'  => [7, 8, 9],
+                    'detour_dist'  => [1800, 3400],
+                    'variant_seqs' => range(6, 11),
+                    'variant_dist' => [1500, 3800]
+                ],
+                'volta' => [
+                    'detour_seqs'  => [13, 14, 15],
+                    'detour_dist'  => [4200, 5800],
+                    'variant_seqs' => range(12, 17),
+                    'variant_dist' => [3900, 6200]
+                ]
             ]
         ];
+    }
+
+    /**
+     * Remove o desvio de bairro da polyline para exibir apenas o traçado da Rota Principal (Normal)
+     */
+    private function cutPolylineDetour(array $coords, float $cutStartM, float $cutEndM): array {
+        if ($cutStartM < 0 || $cutEndM <= $cutStartM || count($coords) < 3) {
+            return ['coordinates' => $coords, 'total_distance_m' => $this->computePolylineDistance($coords)];
+        }
+        $cum = 0.0;
+        $filtered = [];
+        $n = count($coords);
+        for ($i = 0; $i < $n; $i++) {
+            if ($i > 0) {
+                $cum += $this->haversine((float)$coords[$i - 1][0], (float)$coords[$i - 1][1], (float)$coords[$i][0], (float)$coords[$i][1]);
+            }
+            if ($cum < $cutStartM || $cum > $cutEndM) {
+                $filtered[] = $coords[$i];
+            }
+        }
+        if (count($filtered) < 2) {
+            $filtered = $coords;
+        }
+        return [
+            'coordinates'      => $filtered,
+            'total_distance_m' => round($this->computePolylineDistance($filtered), 1)
+        ];
+    }
+
+    /**
+     * Recorta apenas o segmento específico do bairro para exibir na Sub-rota / Variação
+     */
+    private function slicePolylineSegment(array $coords, float $startM, float $endM): array {
+        if (count($coords) < 2) {
+            return ['coordinates' => $coords, 'total_distance_m' => 0];
+        }
+        $cum = 0.0;
+        $sliced = [];
+        $n = count($coords);
+        for ($i = 0; $i < $n; $i++) {
+            if ($i > 0) {
+                $cum += $this->haversine((float)$coords[$i - 1][0], (float)$coords[$i - 1][1], (float)$coords[$i][0], (float)$coords[$i][1]);
+            }
+            if ($cum >= $startM && $cum <= $endM) {
+                $sliced[] = $coords[$i];
+            }
+        }
+        if (count($sliced) < 2) {
+            $sliced = $coords;
+        }
+        return [
+            'coordinates'      => $sliced,
+            'total_distance_m' => round($this->computePolylineDistance($sliced), 1)
+        ];
+    }
+
+    private function computePolylineDistance(array $coords): float {
+        $dist = 0.0;
+        $n = count($coords);
+        for ($i = 1; $i < $n; $i++) {
+            $dist += $this->haversine((float)$coords[$i - 1][0], (float)$coords[$i - 1][1], (float)$coords[$i][0], (float)$coords[$i][1]);
+        }
+        return $dist;
     }
 
     private function extractBaseCode(string $code): string {
@@ -91,58 +324,44 @@ class Api extends CI_Controller {
             return ['lines' => []];
         }
         $raw = json_decode(file_get_contents($file), true) ?: ['lines' => []];
-        $dualDefs = $this->getDualLineDefinitions();
-        $expandedLines = [];
+        $subDefs = $this->getSubRouteDefinitions();
+        $catalogLines = [];
 
         foreach (($raw['lines'] ?? []) as $code => $info) {
             $codeStr = (string)$code;
             $info['code'] = $codeStr;
             $info['base_code'] = $codeStr;
             $info['display_code'] = $codeStr;
-            $info['is_variant_line'] = false;
+            $info['has_sub_routes'] = isset($subDefs[$codeStr]);
 
-            if (isset($dualDefs[$codeStr])) {
-                $def = $dualDefs[$codeStr];
-
-                // 1) Linha base (horários de itinerário padrão)
-                $baseLine = $info;
-                $baseLine['name'] = $def['base_name'];
-                foreach (['ida', 'volta'] as $d) {
-                    foreach (['weekdays', 'saturdays', 'sundays'] as $dayK) {
-                        $allT = $info['schedule'][$d][$dayK] ?? [];
-                        $regT = array_values(array_filter($allT, fn($t) => empty($t['special'])));
-                        // Se num dia específico todos os horários forem especiais (ex: sábado), mantém na variante e deixa vazio ou mantém conforme operação
-                        $baseLine['schedule'][$d][$dayK] = $regT;
-                    }
-                }
-                $expandedLines[$codeStr] = $baseLine;
-
-                // 2) Linha variante de segundo bairro (ex: 5801 (-Ibituruna))
-                $varKey = $def['variant_key'];
-                $varLine = $info;
-                $varLine['code'] = $varKey;
-                $varLine['base_code'] = $codeStr;
-                $varLine['display_code'] = $def['display_code'];
-                $varLine['is_variant_line'] = true;
-                $varLine['name'] = $def['variant_name'];
-                $varLine['neighborhoods'] = array_values(array_unique(array_merge(
-                    $def['extra_bairros'],
-                    $info['neighborhoods'] ?? []
+            if (isset($subDefs[$codeStr])) {
+                $def = $subDefs[$codeStr];
+                $info['neighborhoods'] = array_values(array_unique(array_merge(
+                    $info['neighborhoods'] ?? [],
+                    $def['extra_bairros']
                 )));
-                foreach (['ida', 'volta'] as $d) {
-                    foreach (['weekdays', 'saturdays', 'sundays'] as $dayK) {
-                        $allT = $info['schedule'][$d][$dayK] ?? [];
-                        $specT = array_values(array_filter($allT, fn($t) => !empty($t['special'])));
-                        $varLine['schedule'][$d][$dayK] = $specT;
-                    }
-                }
-                $expandedLines[$varKey] = $varLine;
+                $info['sub_routes'] = [
+                    [
+                        'key'          => 'normal',
+                        'label'        => $def['normal_label'],
+                        'display_code' => $codeStr,
+                        'name'         => $def['base_name']
+                    ],
+                    [
+                        'key'          => 'variant',
+                        'label'        => $def['variant_label'],
+                        'display_code' => $def['display_code'],
+                        'name'         => $def['variant_name']
+                    ]
+                ];
             } else {
-                $expandedLines[$codeStr] = $info;
+                $info['sub_routes'] = [];
             }
+
+            $catalogLines[$codeStr] = $info;
         }
 
-        $raw['lines'] = $expandedLines;
+        $raw['lines'] = $catalogLines;
         return $raw;
     }
 
@@ -179,7 +398,8 @@ class Api extends CI_Controller {
                 'code'            => (string)$info['code'],
                 'base_code'       => (string)($info['base_code'] ?? $info['code']),
                 'display_code'    => (string)($info['display_code'] ?? $info['code']),
-                'is_variant_line' => !empty($info['is_variant_line']),
+                'has_sub_routes'  => !empty($info['has_sub_routes']),
+                'sub_routes'      => $info['sub_routes'] ?? [],
                 'name'            => $info['name'],
                 'ida_label'       => $info['ida_label'] ?? 'Sentido Ida',
                 'volta_label'     => $info['volta_label'] ?? 'Sentido Volta',
@@ -209,8 +429,11 @@ class Api extends CI_Controller {
      * GET /api/line/{code}
      */
     public function line(string $code = '') {
-        $code = strtoupper(trim(urldecode($code)));
+        $rawCode = strtoupper(trim(urldecode($code)));
+        $requestedVariant = (strpos($rawCode, '-') !== false) ? 'variant' : 'normal';
         $cat = $this->loadCatalog();
+
+        $code = $rawCode;
         if (empty($cat['lines'][$code])) {
             $baseTry = $this->extractBaseCode($code);
             if (!empty($cat['lines'][$baseTry])) {
@@ -225,16 +448,102 @@ class Api extends CI_Controller {
         $shapeIdaFile   = $this->dataDir . "/shapes/{$baseCode}_ida.json";
         $shapeVoltaFile = $this->dataDir . "/shapes/{$baseCode}_volta.json";
 
-        $shapeIda   = file_exists($shapeIdaFile) ? json_decode(file_get_contents($shapeIdaFile), true) : ['coordinates' => [], 'total_distance_m' => 0];
-        $shapeVolta = file_exists($shapeVoltaFile) ? json_decode(file_get_contents($shapeVoltaFile), true) : ['coordinates' => [], 'total_distance_m' => 0];
+        $fullShapeIda   = file_exists($shapeIdaFile) ? json_decode(file_get_contents($shapeIdaFile), true) : ['coordinates' => [], 'total_distance_m' => 0];
+        $fullShapeVolta = file_exists($shapeVoltaFile) ? json_decode(file_get_contents($shapeVoltaFile), true) : ['coordinates' => [], 'total_distance_m' => 0];
+        $fullShapes = [
+            'ida'   => $fullShapeIda,
+            'volta' => $fullShapeVolta
+        ];
+
+        $subDefs = $this->getSubRouteDefinitions();
+        if (isset($subDefs[$baseCode])) {
+            $def = $subDefs[$baseCode];
+            $normalStops = ['ida' => [], 'volta' => []];
+            $variantStops = ['ida' => [], 'volta' => []];
+            $normalShapes = ['ida' => $fullShapeIda, 'volta' => $fullShapeVolta];
+            $variantShapes = ['ida' => $fullShapeIda, 'volta' => $fullShapeVolta];
+            $normalSched = $lineData['schedule'] ?? [];
+            $variantSched = $lineData['schedule'] ?? [];
+
+            foreach (['ida', 'volta'] as $d) {
+                $allStopsDir = $lineData['stops'][$d] ?? [];
+                $detourSeqs  = $def[$d]['detour_seqs'] ?? [];
+                $variantSeqs = $def[$d]['variant_seqs'] ?? [];
+
+                $nSeq = 1;
+                foreach ($allStopsDir as $st) {
+                    if (!in_array((int)$st['seq'], $detourSeqs, true)) {
+                        $stCopy = $st;
+                        $stCopy['orig_seq'] = $st['seq'];
+                        $stCopy['seq'] = $nSeq++;
+                        $normalStops[$d][] = $stCopy;
+                    }
+                }
+
+                $vSeq = 1;
+                foreach ($allStopsDir as $st) {
+                    if (in_array((int)$st['seq'], $variantSeqs, true)) {
+                        $stCopy = $st;
+                        $stCopy['orig_seq'] = $st['seq'];
+                        $stCopy['seq'] = $vSeq++;
+                        $variantStops[$d][] = $stCopy;
+                    }
+                }
+
+                $detourDist = $def[$d]['detour_dist'] ?? [-1, -1];
+                $varDist    = $def[$d]['variant_dist'] ?? [0, 99999];
+                $coordsDir  = $fullShapes[$d]['coordinates'] ?? [];
+
+                $normalShapes[$d]  = $this->cutPolylineDetour($coordsDir, (float)$detourDist[0], (float)$detourDist[1]);
+                $variantShapes[$d] = $this->slicePolylineSegment($coordsDir, (float)$varDist[0], (float)$varDist[1]);
+
+                foreach (['weekdays', 'saturdays', 'sundays'] as $dayK) {
+                    $allT = $lineData['schedule'][$d][$dayK] ?? [];
+                    $regT = array_values(array_filter($allT, fn($t) => empty($t['special'])));
+                    $specT = array_values(array_filter($allT, fn($t) => !empty($t['special'])));
+                    $normalSched[$d][$dayK]  = !empty($regT) ? $regT : $allT;
+                    $variantSched[$d][$dayK] = $specT;
+                }
+            }
+
+            $lineData['variants_data'] = [
+                'normal' => [
+                    'key'          => 'normal',
+                    'label'        => $def['normal_label'],
+                    'display_code' => $baseCode,
+                    'name'         => $def['base_name'],
+                    'stops'        => $normalStops,
+                    'shapes'       => $normalShapes,
+                    'schedule'     => $normalSched
+                ],
+                'variant' => [
+                    'key'          => 'variant',
+                    'label'        => $def['variant_label'],
+                    'display_code' => $def['display_code'],
+                    'name'         => $def['variant_name'],
+                    'stops'        => $variantStops,
+                    'shapes'       => $variantShapes,
+                    'schedule'     => $variantSched
+                ]
+            ];
+            $lineData['full_stops']  = $lineData['stops'];
+            $lineData['full_shapes'] = $fullShapes;
+            $lineData['initial_variant'] = $requestedVariant;
+
+            // Define os dados padrão iniciais como a Rota Principal (normal)
+            $activeVarData = $lineData['variants_data'][$requestedVariant];
+            $lineData['stops']    = $activeVarData['stops'];
+            $lineData['schedule'] = $activeVarData['schedule'];
+            $shapesOut            = $activeVarData['shapes'];
+        } else {
+            $shapesOut = $fullShapes;
+        }
 
         $this->jsonOut([
-            'ok'     => true,
-            'line'   => $lineData,
-            'shapes' => [
-                'ida'   => $shapeIda,
-                'volta' => $shapeVolta
-            ]
+            'ok'          => true,
+            'line'        => $lineData,
+            'shapes'      => $shapesOut,
+            'full_shapes' => $fullShapes
         ]);
     }
 
@@ -876,18 +1185,18 @@ class Api extends CI_Controller {
         array $timeCtx,
         string $tripSearchNorm
     ): array {
-        $code          = (string)$lineInfo['code'];
-        $baseCode      = (string)($lineInfo['base_code'] ?? $this->extractBaseCode($code));
-        $displayCode   = (string)($lineInfo['display_code'] ?? $code);
-        $isVariantLine = !empty($lineInfo['is_variant_line']);
-        $dayType       = $timeCtx['day_type']; // 'weekdays' | 'saturdays' | 'sundays'
-        $queryMin      = (int)$timeCtx['minutes_of_day'];
+        $code        = (string)$lineInfo['code'];
+        $baseCode    = (string)($lineInfo['base_code'] ?? $this->extractBaseCode($code));
+        $displayCode = (string)($lineInfo['display_code'] ?? $code);
+        $dayType     = $timeCtx['day_type']; // 'weekdays' | 'saturdays' | 'sundays'
+        $queryMin    = (int)$timeCtx['minutes_of_day'];
 
         $schedDir = $lineInfo['schedule'][$dir] ?? [];
         $dayTimes = $schedDir[$dayType] ?? [];
         $obsList  = $schedDir['obs'] ?? [];
         $rules    = $this->getLineVariantRules($baseCode);
-        $dualDefs = $this->getDualLineDefinitions();
+        $subDefs  = $this->getSubRouteDefinitions();
+        $subDef   = $subDefs[$baseCode] ?? null;
 
         // Deslocamento estimado do terminal inicial (PF) até a parada de embarque (a ~21.6 km/h = 360 m/min)
         $boardDistM = (float)($boardStop['dist_m'] ?? 0.0);
@@ -929,6 +1238,8 @@ class Api extends CI_Controller {
                 'next_matching_trip'   => null,
                 'upcoming_trips'       => [],
                 'requires_variant'     => false,
+                'variant_key'          => 'normal',
+                'display_code'         => $displayCode,
                 'required_variant_desc'=> null,
                 'variant_warning'      => null,
                 'obs'                  => $obsList,
@@ -936,23 +1247,40 @@ class Api extends CI_Controller {
             ];
         }
 
-        // Verifica se o trajeto do usuário exige uma variação específica de bairro (vermelho ou asterisco)
+        // Verifica se o ponto de embarque/desembarque pertence a um desvio exclusivo de sub-rota (detour_seqs)
+        // ou se os termos de busca/endereço exigem uma variação de bairro (vermelho / asterisco)
+        $detourSeqs = $subDef[$dir]['detour_seqs'] ?? [];
+        $boardSeq   = (int)($boardStop['orig_seq'] ?? $boardStop['seq'] ?? 0);
+        $alightSeq  = (int)($alightStop['orig_seq'] ?? $alightStop['seq'] ?? 0);
+        $inDetourSeq = in_array($boardSeq, $detourSeqs, true) || in_array($alightSeq, $detourSeqs, true);
+
         $haystack = $this->stripAccents(mb_strtolower(
             $tripSearchNorm . ' ' . ($boardStop['address'] ?? '') . ' ' . ($boardStop['neighborhood'] ?? '') . ' ' .
             ($alightStop['address'] ?? '') . ' ' . ($alightStop['neighborhood'] ?? ''),
             'UTF-8'
         ));
 
-        $requiresRed  = false;
+        $requiresRed  = $inDetourSeq;
         $requiresAst  = false;
         $requiresAst2 = false;
-        $requiredVariantDesc = null;
+        $requiredVariantDesc = $inDetourSeq ? ($rules['red_desc'] ?? ($subDef['variant_name'] ?? 'Variação de Bairro')) : null;
 
-        foreach (($rules['red_keywords'] ?? []) as $kw) {
-            if ($kw !== '' && mb_strpos($haystack, $kw) !== false) {
-                $requiresRed = true;
-                $requiredVariantDesc = $rules['red_desc'] ?? 'Horário em destaque (vermelho)';
-                break;
+        if (!$requiresRed) {
+            foreach (($rules['red_keywords'] ?? []) as $kw) {
+                if ($kw !== '' && mb_strpos($haystack, $kw) !== false) {
+                    $requiresRed = true;
+                    $requiredVariantDesc = $rules['red_desc'] ?? 'Horário em destaque (vermelho)';
+                    break;
+                }
+            }
+        }
+        if (!$requiresRed && $subDef) {
+            foreach (($subDef['keywords'] ?? []) as $kw) {
+                if ($kw !== '' && mb_strpos($haystack, $kw) !== false) {
+                    $requiresRed = true;
+                    $requiredVariantDesc = $rules['red_desc'] ?? $subDef['variant_name'];
+                    break;
+                }
             }
         }
         foreach (($rules['ast_keywords'] ?? []) as $kw) {
@@ -973,29 +1301,8 @@ class Api extends CI_Controller {
         }
 
         $requiresVariant = ($requiresRed || $requiresAst || $requiresAst2);
-
-        // Se a linha possui versão desmembrada (ex: 5801 vs 5801 (-Ibituruna)) e o usuário precisa do bairro especial,
-        // mas este candidato é a linha base (sem os horários especiais), penaliza a linha base para priorizar a variante!
-        if ($requiresVariant && isset($dualDefs[$baseCode]) && !$isVariantLine) {
-            $varDisplay = $dualDefs[$baseCode]['display_code'];
-            return [
-                'operates_today'       => true,
-                'service_ended_today'  => false,
-                'status_code'          => 'variant_unavailable_now',
-                'status_badge'         => "Use {$varDisplay}",
-                'status_detail'        => "O itinerário padrão da linha {$baseCode} não entra neste trecho. Utilize a opção {$varDisplay}.",
-                'replaced_by_line'     => $dualDefs[$baseCode]['variant_key'],
-                'offset_from_pf_min'   => $offsetFromTerminalMin,
-                'next_trip'            => null,
-                'next_matching_trip'   => null,
-                'upcoming_trips'       => [],
-                'requires_variant'     => true,
-                'required_variant_desc'=> $requiredVariantDesc,
-                'variant_warning'      => "Para atendimento a {$requiredVariantDesc}, utilize a opção {$varDisplay}.",
-                'obs'                  => $obsList,
-                'score_penalty'        => 9500.0
-            ];
-        }
+        $variantKey = $requiresVariant && $subDef ? 'variant' : 'normal';
+        $effectiveDisplayCode = ($variantKey === 'variant' && $subDef) ? $subDef['display_code'] : $baseCode;
 
         // Processar todos os horários do dia para encontrar as próximas viagens que passam no ponto
         $upcomingTrips = [];
@@ -1026,9 +1333,9 @@ class Api extends CI_Controller {
             }
 
             $matchesRequiredVariant = true;
-            if ($requiresVariant && !$isVariantLine) {
+            if ($requiresVariant) {
                 $matchesRequiredVariant = false;
-                if ($requiresRed && $isRed) $matchesRequiredVariant = true;
+                if ($requiresRed && ($isRed || $isSpec)) $matchesRequiredVariant = true;
                 if ($requiresAst && ($ast === '*' || $ast === '**')) $matchesRequiredVariant = true;
                 if ($requiresAst2 && $ast === '**') $matchesRequiredVariant = true;
             }
@@ -1073,6 +1380,8 @@ class Api extends CI_Controller {
                 'next_matching_trip'   => null,
                 'upcoming_trips'       => [],
                 'requires_variant'     => $requiresVariant,
+                'variant_key'          => $variantKey,
+                'display_code'         => $effectiveDisplayCode,
                 'required_variant_desc'=> $requiredVariantDesc,
                 'variant_warning'      => null,
                 'obs'                  => $obsList,
@@ -1081,31 +1390,25 @@ class Api extends CI_Controller {
         }
 
         $variantWarning = null;
-        if ($isVariantLine) {
-            $scorePenalty = (min(60, $nextTrip['wait_min']) * 14.0) + ($requiresVariant ? -180.0 : 40.0);
-            $statusCode   = 'active_variant_ok';
-            $statusBadge  = "Ativo · Saída {$nextTrip['dep_time']} ({$displayCode})";
-            $descText     = $nextTrip['variant_desc'] ?: ($requiredVariantDesc ?: 'Horário específico de bairro');
-            $statusDetail = "Passa no ponto ~{$nextTrip['est_board_time']} (em {$nextTrip['wait_min']} min) · {$descText}";
-            $variantWarning = "Opção de bairro específico ({$displayCode}): {$descText}.";
-        } elseif ($requiresVariant) {
+        if ($requiresVariant) {
             if ($nextMatchingTrip === null) {
-                $variantWarning = "Atenção: não há mais horários hoje com atendimento específico para este trecho ({$requiredVariantDesc}).";
+                $variantWarning = "Atenção: não há mais horários hoje com atendimento específico para este bairro ({$requiredVariantDesc}).";
                 $scorePenalty = 8500.0;
                 $statusBadge  = 'Sem horário para esta variação hoje';
                 $statusDetail = $variantWarning;
                 $statusCode   = 'variant_unavailable_now';
             } elseif ($nextMatchingTrip['dep_time'] !== $nextTrip['dep_time']) {
-                $variantWarning = "O horário das {$nextTrip['dep_time']} faz apenas o itinerário padrão. O próximo horário que atende este bairro ({$requiredVariantDesc}) sai às {$nextMatchingTrip['dep_time']} (passa no ponto ~{$nextMatchingTrip['est_board_time']}).";
+                $variantWarning = "O horário das {$nextTrip['dep_time']} faz apenas a Rota Principal. O próximo horário que atende esta variação ({$effectiveDisplayCode} — {$requiredVariantDesc}) sai às {$nextMatchingTrip['dep_time']} (passa no ponto ~{$nextMatchingTrip['est_board_time']}).";
                 $scorePenalty = min(90, $nextMatchingTrip['wait_min']) * 16.0;
-                $statusBadge  = "Próximo horário p/ bairro às {$nextMatchingTrip['dep_time']}";
+                $statusBadge  = "Sub-rota {$effectiveDisplayCode} às {$nextMatchingTrip['dep_time']}";
                 $statusDetail = "Passa no ponto de embarque ~{$nextMatchingTrip['est_board_time']} (em {$nextMatchingTrip['wait_min']} min)";
                 $statusCode   = 'active_wait_variant';
             } else {
-                $scorePenalty = min(60, $nextMatchingTrip['wait_min']) * 14.0;
-                $statusBadge  = "Ativo · Saída {$nextMatchingTrip['dep_time']} (Atende bairro)";
+                $scorePenalty = min(60, $nextMatchingTrip['wait_min']) * 14.0 - 80.0;
+                $statusBadge  = "Ativo · Saída {$nextMatchingTrip['dep_time']} ({$effectiveDisplayCode})";
                 $statusDetail = "Passa no ponto ~{$nextMatchingTrip['est_board_time']} (em {$nextMatchingTrip['wait_min']} min) · {$requiredVariantDesc}";
                 $statusCode   = 'active_variant_ok';
+                $variantWarning = "Sub-rota ativa neste horário ({$effectiveDisplayCode}): {$requiredVariantDesc}.";
             }
         } else {
             $scorePenalty = min(60, $nextTrip['wait_min']) * 14.0;
@@ -1131,6 +1434,8 @@ class Api extends CI_Controller {
             'next_matching_trip'   => $nextMatchingTrip ?: $nextTrip,
             'upcoming_trips'       => $upcomingTrips,
             'requires_variant'     => $requiresVariant,
+            'variant_key'          => $variantKey,
+            'display_code'         => $effectiveDisplayCode,
             'required_variant_desc'=> $requiredVariantDesc,
             'variant_warning'      => $variantWarning,
             'obs'                  => $obsList,
@@ -1141,10 +1446,11 @@ class Api extends CI_Controller {
     /**
      * GET|POST /api/route-plan
      * Calcula a melhor linha e pontos entre Origem e Destino considerando:
-     * - Horário oficial de Montes Claros (ou data/hora simulada pelo usuário)
+     * - Por padrão o horário atual do dispositivo do usuário (device_date / device_time)
+     * - Prioridade para o campo de horário específico preenchido pelo usuário na interface (query_date / query_time)
      * - Dia da semana e calendário de feriados (Nacionais, MG e Municipais de Montes Claros)
      * - Substituição de linhas em sábados, domingos e feriados (ex: 3301 -> 3302 no sábado e 2603 no domingo)
-     * - Variações de itinerário por bairro e horário (horários em vermelho e com asterisco * / **)
+     * - Validação estrita de sub-rotas/variações de bairro por horário
      */
     public function route_plan() {
         $origLat = (float)($this->input->get_post('orig_lat') ?: 0);
@@ -1152,16 +1458,24 @@ class Api extends CI_Controller {
         $destLat = (float)($this->input->get_post('dest_lat') ?: 0);
         $destLng = (float)($this->input->get_post('dest_lng') ?: 0);
 
-        $origLabel = trim((string)($this->input->get_post('orig_label') ?: ''));
-        $destLabel = trim((string)($this->input->get_post('dest_label') ?: ''));
-        $queryDate = $this->input->get_post('query_date');
-        $queryTime = $this->input->get_post('query_time');
+        $origLabel  = trim((string)($this->input->get_post('orig_label') ?: ''));
+        $destLabel  = trim((string)($this->input->get_post('dest_label') ?: ''));
+        $queryDate  = trim((string)($this->input->get_post('query_date') ?: ''));
+        $queryTime  = trim((string)($this->input->get_post('query_time') ?: ''));
+        $deviceDate = trim((string)($this->input->get_post('device_date') ?: ''));
+        $deviceTime = trim((string)($this->input->get_post('device_time') ?: ''));
 
         if (!$origLat || !$origLng || !$destLat || !$destLng) {
             $this->jsonOut(['ok' => false, 'error' => 'Informe as coordenadas de origem e destino.'], 400);
         }
 
-        $timeCtx = $this->getMontesClarosTimeContext($queryDate, $queryTime);
+        // Prioriza o campo de horário específico da interface (query_date/query_time);
+        // caso não preenchido, usa por padrão o horário atual do dispositivo do usuário (device_date/device_time)
+        $effectiveDate = $queryDate !== '' ? $queryDate : ($deviceDate !== '' ? $deviceDate : null);
+        $effectiveTime = $queryTime !== '' ? $queryTime : ($deviceTime !== '' ? $deviceTime : null);
+        $timeCtx = $this->getMontesClarosTimeContext($effectiveDate, $effectiveTime);
+        $timeCtx['is_custom'] = ($queryDate !== '' || $queryTime !== '');
+
         $dayType = $timeCtx['day_type'];
         $tripSearchNorm = $origLabel . ' ' . $destLabel;
 
@@ -1169,8 +1483,6 @@ class Api extends CI_Controller {
         $lines = $cat['lines'] ?? [];
 
         // Extensão automática de paradas para linhas substitutas oficiais em Sábados e Domingos/Feriados:
-        // - Aos sábados, a linha 3302 atende a região da linha 3301 (Jardim Primavera)
-        // - Aos domingos e feriados, a linha 2603 atende a região das linhas 3301 (Jardim Primavera) e 3302 (Jardim Alegre)
         if ($dayType === 'saturdays' && isset($lines['3302'], $lines['3301'])) {
             foreach (['ida', 'volta'] as $d) {
                 $existingIds = array_column($lines['3302']['stops'][$d] ?? [], 'stop_id');
@@ -1198,10 +1510,8 @@ class Api extends CI_Controller {
             }
         }
 
-        $maxWalkRadius = 1500.0; // Até 1.5 km de caminhada máxima se necessário
+        $maxWalkRadius = 1500.0;
         $directOptions = [];
-
-        // Mapa auxiliar para buscar linhas que passam próximas à Origem e linhas que chegam próximas ao Destino
         $linesFromOrigin = [];
         $linesToDest     = [];
 
@@ -1305,7 +1615,8 @@ class Api extends CI_Controller {
                         'legs'                => [
                             [
                                 'line_code'       => (string)$code,
-                                'display_code'    => (string)($lineInfo['display_code'] ?? $code),
+                                'variant_key'     => $schedEval['variant_key'] ?? 'normal',
+                                'display_code'    => (string)($schedEval['display_code'] ?? $lineInfo['display_code'] ?? $code),
                                 'base_code'       => (string)($lineInfo['base_code'] ?? $code),
                                 'line_name'       => $lineInfo['name'],
                                 'direction'       => $dir,
@@ -1338,7 +1649,7 @@ class Api extends CI_Controller {
             if (count($uniqueDirect) >= 5) break;
         }
 
-        // Passo 2: Calcular Baldeações (1 conexão) quando não houver linha direta operando agora ou se a caminhada direta for longa
+        // Passo 2: Calcular Baldeações (1 conexão)
         $transferOptions = [];
         $activeDirectCount = count(array_filter($uniqueDirect, fn($d) => $d['operates_today'] && !$d['service_ended_today']));
         $bestDirectWalk = !empty($uniqueDirect) ? $uniqueDirect[0]['walk_total_m'] : INF;
@@ -1398,7 +1709,6 @@ class Api extends CI_Controller {
                             $origLabel
                         );
 
-                        // Para a 2ª perna da conexão, avança o relógio estimado pelo tempo da 1ª perna
                         $leg2Min = ($timeCtx['minutes_of_day'] + ($schedEval1['next_trip']['wait_min'] ?? 5) + $bus1Min) % 1440;
                         $timeCtxLeg2 = $timeCtx;
                         $timeCtxLeg2['minutes_of_day'] = $leg2Min;
@@ -1429,7 +1739,8 @@ class Api extends CI_Controller {
                             'legs'                => [
                                 [
                                     'line_code'       => $l1['code'],
-                                    'display_code'    => (string)($l1['line_info']['display_code'] ?? $l1['code']),
+                                    'variant_key'     => $schedEval1['variant_key'] ?? 'normal',
+                                    'display_code'    => (string)($schedEval1['display_code'] ?? $l1['line_info']['display_code'] ?? $l1['code']),
                                     'base_code'       => (string)($l1['line_info']['base_code'] ?? $l1['code']),
                                     'line_name'       => $l1['name'],
                                     'direction'       => $l1['dir'],
@@ -1445,7 +1756,8 @@ class Api extends CI_Controller {
                                 ],
                                 [
                                     'line_code'       => $l2['code'],
-                                    'display_code'    => (string)($l2['line_info']['display_code'] ?? $l2['code']),
+                                    'variant_key'     => $schedEval2['variant_key'] ?? 'normal',
+                                    'display_code'    => (string)($schedEval2['display_code'] ?? $l2['line_info']['display_code'] ?? $l2['code']),
                                     'base_code'       => (string)($l2['line_info']['base_code'] ?? $l2['code']),
                                     'line_name'       => $l2['name'],
                                     'direction'       => $l2['dir'],
@@ -1516,7 +1828,7 @@ class Api extends CI_Controller {
 
         $stopsFile = $this->dataDir . '/stops_index.json';
         $allStops = file_exists($stopsFile) ? (json_decode(file_get_contents($stopsFile), true) ?: []) : [];
-        $dualDefs = $this->getDualLineDefinitions();
+        $subDefs  = $this->getSubRouteDefinitions();
 
         $nearestAll = [];
         foreach ($allStops as $st) {
@@ -1531,14 +1843,14 @@ class Api extends CI_Controller {
             $compass = $this->bearingToCompass($brng);
             $walkMin = max(1, (int)round($distM / 75.0));
 
-            // Expandir códigos de linhas que passam no ponto com suas variantes (ex: 5801 e 5801 (-Ibituruna))
             $linesAtStop = [];
             foreach (($st['lines'] ?? []) as $lc) {
                 $linesAtStop[] = ['code' => $lc, 'display_code' => $lc];
-                if (isset($dualDefs[$lc])) {
+                if (isset($subDefs[$lc])) {
                     $linesAtStop[] = [
-                        'code'         => $dualDefs[$lc]['variant_key'],
-                        'display_code' => $dualDefs[$lc]['display_code']
+                        'code'         => $lc,
+                        'variant_key'  => 'variant',
+                        'display_code' => $subDefs[$lc]['display_code']
                     ];
                 }
             }
