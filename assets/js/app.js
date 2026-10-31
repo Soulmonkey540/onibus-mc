@@ -515,8 +515,17 @@
 
         // Ao clicar em uma opção do menu, o conteúdo assume a tela principal inteira,
         // mas a sidebar NÃO fecha automaticamente
+        const sidebarNav = document.getElementById('mobileSidebarNav');
+        if (sidebarNav) {
+            sidebarNav.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+
         document.querySelectorAll('.tab-link').forEach((btn) => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 switchTab(btn.dataset.tab);
             });
         });

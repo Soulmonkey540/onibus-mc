@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="<?= $base_url ?>assets/css/app.css?v=2.6.0">
+    <link rel="stylesheet" href="<?= $base_url ?>assets/css/app.css?v=2.7.0">
 </head>
 <body>
     <header class="topbar">
@@ -521,6 +521,6 @@
     </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
-    <script src="<?= $base_url ?>assets/js/app.js?v=2.6.0"></script>
+    <script src="<?= $base_url ?>assets/js/app.js?v=2.7.0"></script>
 </body>
 </html>

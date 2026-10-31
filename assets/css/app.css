@@ -1457,6 +1457,8 @@ body.dark-mode .direction-banner--volta {
 
 @media (max-width: 860px) {
     .topbar {
+        position: relative;
+        z-index: 2400;
         height: 52px;
         padding: 0 10px;
         gap: 6px;
@@ -1508,26 +1510,36 @@ body.dark-mode .direction-banner--volta {
         gap: 6px;
     }
 
-    /* Layout Mobile: Transição de Tela Inteira */
+    /* Layout Mobile: Transição de Tela Inteira (sem contexto de empilhamento que prenda a sidebar) */
     .layout {
         position: relative;
+        display: block;
         flex: 1;
         width: 100%;
         height: calc(100vh - 52px);
         overflow: hidden;
+        z-index: auto;
+    }
+
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: 100%;
+        border-right: none;
+        z-index: auto;
+        background: transparent;
+        display: block;
     }
 
     /* O conteúdo da aba ativa assume 100% da tela principal */
-    .sidebar {
+    .tab-panel {
         position: absolute;
         inset: 0;
         width: 100%;
         height: 100%;
-        border-right: none;
         z-index: 1020;
+        overflow-y: auto;
         background: var(--bg-app);
-        display: flex;
-        flex-direction: column;
     }
 
     /* O mapa permanece montado em 100% da tela (sem recarregar/perder estado) */
@@ -1540,11 +1552,15 @@ body.dark-mode .direction-banner--volta {
     }
 
     /* Quando o usuário alterna para visualização do mapa em tela cheia no mobile */
+    body.mobile-show-map .tab-panel.active {
+        display: none;
+    }
+
     body.mobile-show-map .map-wrapper {
         z-index: 1030;
     }
 
-    /* Sidebar Retrátil (Menu Hambúrguer) no Mobile */
+    /* Sidebar Retrátil (Menu Hambúrguer) no Mobile — sempre acima do mapa, painéis e backdrop */
     .tabs-nav {
         position: fixed;
         top: 52px;
@@ -1559,7 +1575,8 @@ body.dark-mode .direction-banner--volta {
         flex-direction: column;
         gap: 8px;
         padding: 14px 12px;
-        z-index: 2200;
+        z-index: 2300;
+        pointer-events: auto;
         box-shadow: 10px 0 28px rgba(0, 0, 0, 0.22);
         transform: translateX(-105%);
         transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1581,7 +1598,7 @@ body.dark-mode .direction-banner--volta {
         color: var(--text-muted);
     }
 
-    .mobile- sidebar-header i {
+    .mobile-sidebar-header i {
         margin-right: 6px;
     }
 
@@ -1591,6 +1608,7 @@ body.dark-mode .direction-banner--volta {
         padding: 12px 14px;
         font-size: 13.5px;
         gap: 10px;
+        pointer-events: auto;
     }
 
     .tabs-nav .tab-link i {
