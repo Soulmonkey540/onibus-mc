@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="<?= $base_url ?>assets/css/app.css?v=2.7.0">
+    <link rel="stylesheet" href="<?= $base_url ?>assets/css/app.css?v=2.7.1">
 </head>
 <body>
     <header class="topbar">
